@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  frontend:
+    # Usa Dockerfile de la carpeta frontend
+    build: ./frontend 
+    # Expone la app en el navegador por el puerto 3000
+    ports:
+      - '3000:3000'
+    # Sincroniza código local con el contenedor
+    volumes:
+      - ./frontend:/app
+    # Asegura autorecarga al editar archivos
+    environment:
+      - CHOKIDAR_USEPOLLING=true
