@@ -1,29 +1,33 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/navbar';
-import Home from './components/Home';
-import Menu from './components/Menu';
-import OrderForm from './components/OrderForm';
-import ReservationForm from './components/ReservationForm';
-import Registro from './components/registro';
-import InicioSesion from './components/inicioSesion';
+import Home from './pages/Home';
+import Menu from './pages/Menu';
+import OrderForm from './pages/OrderForm';
+import ReservationForm from './pages/reservationForm';
+import Registro from './pages/Registro';
+import InicioSesion from './pages/InicioSesion';
 
 function App() {
   return (
-    <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-[#064e3b] -z-10" />
-
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar />
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/order" element={<OrderForm />} />
-        <Route path="/reserve" element={<ReservationForm />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/inicioSesion" element={<InicioSesion />} /> {/* sin guion */}
-      </Routes>
-    </>
+      
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/order" element={<OrderForm />} />
+          <Route path="/reserve" element={<ReservationForm />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/inicioSesion" element={<InicioSesion />} />
+        </Routes>
+      </main>
+      
+      <footer className="bg-red-700 text-white p-4 text-center">
+        <p>© {new Date().getFullYear()} Mi Restaurante. Todos los derechos reservados.</p>
+      </footer>
+    </div>
   );
 }
 

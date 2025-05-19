@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Signup() {
+export default function Registro() {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
@@ -106,12 +106,12 @@ export default function Signup() {
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input type="text" name="firstName" placeholder="Nombre" required value={form.firstName} onChange={handleChange} className="input" />
-          <input type="text" name="lastName" placeholder="Apellido" required value={form.lastName} onChange={handleChange} className="input" />
-          <input type="text" name="username" placeholder="Nombre de usuario" required value={form.username} onChange={handleChange} className="input" />
-          <input type="email" name="email" placeholder="Email" required value={form.email} onChange={handleChange} className="input" />
-          <input type="date" name="birthday" required value={form.birthday} onChange={handleChange} className="input" />
-          <input type="password" name="password" placeholder="Contraseña" required value={form.password} onChange={handleChange} className="input" />
+          <input type="text" name="firstName" placeholder="Nombre" required value={form.firstName} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input type="text" name="lastName" placeholder="Apellido" required value={form.lastName} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input type="text" name="username" placeholder="Nombre de usuario" required value={form.username} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input type="email" name="email" placeholder="Email" required value={form.email} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input type="date" name="birthday" required value={form.birthday} onChange={handleChange} className="w-full p-2 border rounded" />
+          <input type="password" name="password" placeholder="Contraseña" required value={form.password} onChange={handleChange} className="w-full p-2 border rounded" />
 
           <div className="flex items-center mb-3">
             <input type="checkbox" required className="mr-2" />
@@ -126,7 +126,7 @@ export default function Signup() {
         </form>
 
         <div className="text-center text-sm mt-4">
-          ¿Ya tienes cuenta? <a href="/login" className="text-blue-600 font-semibold">Inicia sesión</a>
+          ¿Ya tienes cuenta? <a href="/inicioSesion" className="text-blue-600 font-semibold">Inicia sesión</a>
         </div>
       </div>
     </section>
