@@ -1,32 +1,23 @@
-# Logs : Ignora todos los archivos de registro generados por "npm", y es útil para no subir archivos temporales de errores o procesos.
+# Logs
 logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# Dependencias y builds : evita subir basura pesada o irrelevante del proyecto, incluso para otros usuarios que quieran ver la carpeta del proyecto.
-# NODE-MODULES : es la carpeta donde se instalan todas las dependencias, que es muy pesado y se regenera con "npm install".
+# Dependencias y builds
 node_modules
-# DIST y DIST-SSR : son carpetas de "build" generadas por compiladores (Vite)
 dist
-dist-ssr
-# *.LOCAL : son archivos de configuración locales
 *.local
 
-# Editor directories and files - Archivos de editores
-# !.vscode/extensions.json y .idea : ignora configuraciones locales de editores como VSCode (.vscode), WebStorm (.idea), Visual Studio, etc.
-!.vscode/extensions.json
+# Archivos de entorno
+.env
+.env.*
+
+# Editor/IDE
+.vscode
 .idea
-# .DS_Store : archivo oculto de macOS
 .DS_Store
-# *.suo, *.sln : archivos de soluciones de Visual Studio
 *.suo
 *.sln
-# .ntvs* : archivos del plugin "Node.js Tools for Visual Studio" (NTVS), usado para configurar proyectos Node en Visual Studio.
 *.ntvs*
-# .njsproj : archivo de proyecto Node.js específico de Visual Studio.
 *.njsproj
-# *.sw? : archivos temporales generados por algunos editores
 *.sw?
-
