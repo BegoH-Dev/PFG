@@ -23,7 +23,6 @@ Thumbs.db
 
 # Archivos del editor o IDE : configuraciones de VS Code, JetBrains (WebStorm, etc.) y archivos temporales de editores
 # El "*" indica que ignora todos los archivos que terminen en ".swp"
-.vscode/
 .idea/
 *.swp
 
