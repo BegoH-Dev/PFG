@@ -41,3 +41,4 @@ JOIN producto_alergenos pa ON p.id = pa.producto_id
 JOIN alergenos a ON pa.alergeno_id = a.id
 WHERE p.id = 11
 GROUP BY p.id, p.nombre;
+

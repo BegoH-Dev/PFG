@@ -4,8 +4,7 @@
 INSERT INTO alergenos (nombre) VALUES
 ('Vegetariano'), ('Gluten'), ('Lácteos'), ('Huevo'), ('Pescado'), ('Marisco'), ('Frutos secos'), ('Picante');
 
-
-/* INSERTAR "PRODUCTOS" */
+/* INSERTAR "PRODUCTOS" PARA LA CARTA*/
 INSERT INTO productos (nombre, precio, tipo) VALUES
 ('Jamón ibérico de bellota con pan de cristal y tomate', 16.90, 'Entrantes'),
 ('Croquetas caseras de cocido (6 uds.)', 9.50, 'Entrantes'),
