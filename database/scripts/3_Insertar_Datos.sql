@@ -56,3 +56,22 @@ VALUES
 (25, 2), (25, 3), (25, 4), (26, 2), (26, 3), (26, 4),(27, 1),
 (34, 3);
 
+/* INSERTAR DATOS DE LAS MESAS => PRUEBA PARA POSTMAN */
+INSERT INTO mesas (numero, capacidad, disponible) VALUES
+(1, 4, TRUE),
+(2, 6, TRUE),
+(3, 2, TRUE),
+(4, 8, TRUE),
+(5, 4, TRUE);
+
+/* INSERTAR DATOS EN PEDIDOS => PRUEBA PARA POSTMAN */
+INSERT INTO pedidos (usuario_id, total, estado, direccion_entrega, metodo_pago) VALUES
+(5, 59.99, 'pendiente', 'Calle Falsa 123', 'tarjeta');
+
+/* INSERTAR DATOS EN RESERVAS => PRUEBA PARA POSTMAN */
+INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado, email_envio, comentarios) VALUES 
+(5, 1, '2025-05-28 20:00:00', 2, 'confirmada', 'cliente@example.com', 'Ventana si es posible');
+
+/* INSERTAR DATOS EN VALORACIONES => PRUEBAS PARA POSTMAN */
+INSERT INTO valoraciones (usuario_id, producto_id, puntuacion, comentario, fecha) VALUES
+(5, 5, 4, 'Muy bueno, me gustó el sabor y la presentación.', '2025-05-25 12:00:00');
