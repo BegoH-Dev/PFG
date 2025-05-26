@@ -75,3 +75,4 @@ INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado, e
 /* INSERTAR DATOS EN VALORACIONES => PRUEBAS PARA POSTMAN */
 INSERT INTO valoraciones (usuario_id, producto_id, puntuacion, comentario, fecha) VALUES
 (5, 5, 4, 'Muy bueno, me gustó el sabor y la presentación.', '2025-05-25 12:00:00');
+

@@ -228,9 +228,9 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
 
 // Registro
 app.post('/auth/register', async (req, res) => {
-  const { nombre, apellidos, email, password } = req.body;
+  const { nombre, apellidos, email, contraseña } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
     const result = await pool.query(
       'INSERT INTO usuarios (nombre, apellidos, email, contraseña) VALUES ($1, $2, $3, $4) RETURNING *',
       [nombre, apellidos, email, hashedPassword]
@@ -247,16 +247,16 @@ app.post('/auth/register', async (req, res) => {
 
 // Login
 app.post('/auth/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, contraseña } = req.body;
   try {
     const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
     const user = result.rows[0];
     if (!user) return res.status(401).send('Credenciales inválidas');
 
-    const match = await bcrypt.compare(password, user.contraseña);
+    const match = await bcrypt.compare(contraseña, user.contraseña);
     if (!match) return res.status(401).send('Credenciales inválidas');
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id, email: user.email, rol: user.rol }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ 
       message: "Inicio de sesión exitoso", 
       token 
@@ -265,6 +265,55 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).send('Error en el login');
   }
 });
+
+// DELETE /usuarios/:id: elimina un usuario por ID (sólo administradores)
+app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('DELETE FROM usuarios WHERE id = $1 RETURNING *', [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+    res.json({ mensaje: 'Usuario eliminado', usuario: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al eliminar usuario');
+  }
+});
+
+// DELETE /eliminar-cuenta: para que el propio usuario borre su cuenta
+app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
+  const userId = req.user.userId; // del token
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM usuarios WHERE id = $1 RETURNING *',
+      [userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    res.json({ mensaje: 'Tu cuenta ha sido eliminada', usuario: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ mensaje: 'Error al eliminar tu cuenta' });
+  }
+});
+
+// Middleware para verificar si es admin
+function verificarAdmin(req, res, next) {
+  if (req.user.rol !== 'admin') {
+    return res.status(403).json({ mensaje: 'Acceso restringido a administradores' });
+  }
+  next();
+}
+
+app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
+  // solo entra si es admin
+});
+
 
 // Middleware "verificarToken" que valida el token en rutas protegidas.
 function verificarToken(req, res, next) {
