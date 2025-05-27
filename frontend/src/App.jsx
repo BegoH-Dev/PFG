@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/navbar';
+import Footer from './components/footer';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import OrderForm from './pages/OrderForm';
@@ -24,9 +25,7 @@ function App() {
         </Routes>
       </main>
       
-      <footer className="bg-red-700 text-white p-4 text-center">
-        <p>© {new Date().getFullYear()} Mi Restaurante. Todos los derechos reservados.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
