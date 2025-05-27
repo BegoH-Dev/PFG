@@ -41,15 +41,20 @@ const port = process.env.PORT || 3000;
  *     responses:
  *       200:
  *         description: Lista de productos
+ *       500:
+ *         description: Error al obtener los productos
  */
 
 app.get('/productos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM productos');
-    res.json(result.rows);
+    res.json({
+      mensaje: 'Lista de productos',
+      productos: result.rows
+    });  
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error en la base de datos');
+    console.error('Error al obtener los productos:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -79,7 +84,9 @@ app.get('/productos', async (req, res) => {
  *                 format: date
  *     responses:
  *       201:
- *         description: Pedido creado exitosamente
+ *         description: Pedido creado con éxito
+ * *     500:
+ *         description: Error al crear el pedido
  */
 
 app.post('/pedidos', async (req, res) => {
@@ -89,10 +96,13 @@ app.post('/pedidos', async (req, res) => {
       'INSERT INTO pedidos (usuario_id, total, estado, fecha) VALUES ($1, $2, $3, $4) RETURNING *',
       [usuario_id, total, estado, fecha]
     );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({
+      mensaje: 'Pedido creado con éxito',
+      reserva: result.rows[0]
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al crear el pedido');
+    console.error('Error al crear el pedido:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -135,10 +145,13 @@ app.get('/productos/alergenos', async (req, res) => {
       GROUP BY p.id, p.nombre
       ORDER BY p.id;
     `);
-    res.json(result.rows);
+    res.json({
+      mensaje: 'Lista de productos con sus alérgenos',
+      productos: result.rows
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener productos' });
+    console.error('Error al obtener productos:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -170,7 +183,7 @@ app.get('/productos/alergenos', async (req, res) => {
  *                 type: string
  *     responses:
  *       201:
- *         description: Reserva creada exitosamente
+ *         description: Reserva creada con éxito
  *       500:
  *         description: Error al crear la reserva
  */
@@ -182,10 +195,13 @@ app.post('/reservas', async (req, res) => {
       'INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [usuario_id, mesa_id, fecha_hora, num_comensales, estado]
     );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({
+      mensaje: 'Reserva creada con éxito',
+      reserva: result.rows[0]
+    });
   } catch (err) {
-    console.error('Error detalle:', err);
-    res.status(500).send('Error al crear la reserva');
+    console.error('Error al crear la reserva:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -202,14 +218,17 @@ app.post('/reservas', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de pedidos
- *       403:
- *         description: Acceso restringido
+ *       500:
+ *         description: Error al obtener los pedidos
  */
 
 app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM pedidos ORDER BY fecha DESC');
-    res.json(result.rows);
+      res.json({
+        mensaje: 'Lista de pedidos',
+        productos: result.rows
+      });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error al obtener los pedidos');
@@ -229,12 +248,17 @@ app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de reservas
+ *       500:
+ *         description: Error al obtener las reservas
  */
 
 app.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM reservas ORDER BY fecha_hora DESC');
-    res.json(result.rows);
+    res.json({
+      mensaje: 'Lista de reservas',
+      productos: result.rows
+    });  
   } catch (err) {
     console.error('Error en /admin/reservas:', err);
     res.status(500).send('Error al obtener las reservas');
@@ -261,6 +285,8 @@ app.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
  *         description: Detalles del producto
  *       404:
  *         description: Producto no encontrado
+ *       500:
+ *         description: Error al obtener el producto
  */
 
 app.get('/productos/:id', async (req, res) => {
@@ -279,9 +305,14 @@ app.get('/productos/:id', async (req, res) => {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    res.json(result.rows[0] || {});
+    res.json({
+      mensaje: 'Detalles del producto',
+      producto: result.rows[0]
+    });  
+  
   } catch (err) {
-    res.status(500).send('Error al obtener producto');
+    console.error('Error al obtener el producto por ID:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -324,7 +355,9 @@ app.get('/productos/:id', async (req, res) => {
  *                 type: string
  *     responses:
  *       201:
- *         description: Usuario creado exitosamente
+ *         description: Usuario creado con éxito
+ *       400:
+ *         description: Faltan campos requeridos
  *       500:
  *         description: Error al crear usuario
  */
@@ -337,8 +370,7 @@ app.post('/usuarios', async (req, res) => {
   }
   
   try {
-    // Hashear la contraseña antes de almacenarla
-    const hashedPassword = await bcrypt.hash(contraseña, 10); // 10 es el "salt rounds"
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
 
     const result = await pool.query(
       `INSERT INTO usuarios 
@@ -346,10 +378,14 @@ app.post('/usuarios', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7, 'cliente')) RETURNING *`,
       [nombre, apellidos, email, telefono, direccion, hashedPassword, rol]
     );
-    res.status(201).json(result.rows[0]);
+    const { id } = result.rows[0];
+    res.status(201).json({ 
+      message: 'Usuario creado con éxito', 
+      user: { id, email } 
+    });
   } catch (err) {
-    console.error('Error al crear usuario:', err);
-    res.status(500).send('Error al crear usuario');
+    console.error('Error al crear usuario:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -371,6 +407,8 @@ app.post('/usuarios', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de pedidos
+ *       500:
+ *         description: Error al obtener los pedidos
  */
 
 app.get('/usuarios/:id/pedidos', async (req, res) => {
@@ -382,7 +420,8 @@ app.get('/usuarios/:id/pedidos', async (req, res) => {
     );
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send('Error al obtener pedidos');
+    console.error('Error al obtener los pedidos:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -405,22 +444,39 @@ app.get('/usuarios/:id/pedidos', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de reservas
+ *       404:
+ *         description: Reserva no encontrada
  *       500:
- *         description: Error al obtener reservas
+ *         description: Error al obtener las reservas
  */
 
 app.get('/reservas', async (req, res) => {
   const { fecha } = req.query;
+
+  let query;
+  let params = [];
+
+  if (fecha) {
+    query = `SELECT * FROM reservas WHERE DATE(fecha_hora) = $1 ORDER BY fecha_hora`;
+    params = [fecha];
+  } else {
+    query = `SELECT * FROM reservas WHERE fecha_hora >= CURRENT_DATE ORDER BY fecha_hora`;
+  }
+
   try {
-    const result = await pool.query(
-      fecha
-        ? `SELECT * FROM reservas WHERE DATE(fecha_hora) = $1 ORDER BY fecha_hora`
-        : `SELECT * FROM reservas WHERE fecha_hora >= CURRENT_DATE ORDER BY fecha_hora`,
-      fecha ? [fecha] : []
-    );
-    res.json(result.rows);
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
+    }
+
+    res.json({
+      mensaje: 'Lista de reservas',
+      productos: result.rows
+    });  
   } catch (err) {
-    res.status(500).send('Error al obtener reservas');
+    console.error('Error al obtener las reservas:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -455,6 +511,8 @@ app.get('/reservas', async (req, res) => {
  *     responses:
  *       200:
  *         description: Reserva actualizada
+ *       404:
+ *         description: Reserva no encontrada
  *       500:
  *         description: Error al modificar reserva
  */
@@ -470,10 +528,18 @@ app.put('/reservas/:id', async (req, res) => {
        RETURNING *`,
       [fecha, estado, id]
     );
-    res.json(result.rows[0]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
+    }
+
+    res.json({
+      mensaje: 'Reserva actualizada',
+      reserva: result.rows[0]
+    });    
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al modificar reserva');
+    console.error('Error al modificar reserva:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -488,6 +554,8 @@ app.put('/reservas/:id', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de alérgenos
+ *      500:
+ *        description: Error al obtener alérgenos
  */
 
 app.get('/alergenos', async (req, res) => {
@@ -495,7 +563,8 @@ app.get('/alergenos', async (req, res) => {
     const result = await pool.query('SELECT * FROM alergenos');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send('Error al obtener alérgenos');
+    console.error('Error al obtener alérgenos:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -517,6 +586,10 @@ app.get('/alergenos', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de alérgenos del producto
+ *       404: 
+ *        description: Producto no encontrado o sin alérgenos
+ *       500:
+ *        description: Error al obtener alérgenos del producto
  */
 
 app.get('/productos/:id/alergenos', async (req, res) => {
@@ -528,9 +601,19 @@ app.get('/productos/:id/alergenos', async (req, res) => {
        WHERE pa.producto_id = $1`,
       [id]
     );
-    res.json(result.rows.map(row => row.nombre));
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado o sin alérgenos' });
+    }
+
+    res.json({
+      mensaje: 'Lista de alérgenos del producto',
+      alergenos: result.rows.map(row => row.nombre)
+    });
+
   } catch (err) {
-    res.status(500).send('Error al obtener alérgenos del producto');
+    console.error('Error al obtener alérgenos del producto:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -550,8 +633,10 @@ app.get('/productos/:id/alergenos', async (req, res) => {
  *           type: integer
  *         description: ID del producto
  *     responses:
- *       200:
+ *      200:
  *         description: Lista de valoraciones
+ *      500:
+ *         description: Error al obtener valoraciones
  */
 
 app.get('/valoraciones/:producto_id', async (req, res) => {
@@ -561,9 +646,13 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
       'SELECT * FROM valoraciones WHERE producto_id = $1 ORDER BY fecha DESC',
       [producto_id]
     );
-    res.json(result.rows);
+    res.json({
+      mensaje: 'Lista de valoraciones',
+      productos: result.rows
+    });  
   } catch (err) {
-    res.status(500).send('Error al obtener valoraciones');
+    console.error('Error al obtener valoraciones:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -592,9 +681,13 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
  *                 type: string
  *     responses:
  *       201:
- *         description: Usuario registrado exitosamente
+ *         description: Registrado con éxito
+ *       400:
+ *         description: Faltan campos requeridos
+ *       401:
+ *         description: Ya existe un usuario con ese email
  *       500:
- *         description: Error en el servidor
+ *         description: Error en registro
  */
 
 app.post('/auth/register', async (req, res) => {
@@ -604,19 +697,25 @@ app.post('/auth/register', async (req, res) => {
     return res.status(400).json({ message: "Faltan campos requeridos" });
   }
 
+  const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
+    if (existe.rows.length > 0) {
+      return res.status(401).json({ message: 'Ya existe un usuario con ese email' });
+    }
+
   try {
     const hashedPassword = await bcrypt.hash(contraseña, 10);
     const result = await pool.query(
       'INSERT INTO usuarios (nombre, apellidos, email, contraseña, rol) VALUES ($1, $2, $3, $4) RETURNING *',
-      [nombre, apellidos, email, hashedPassword]
+      [nombre, apellidos, email, hashedPassword, 'cliente']
     );
+    const { id } = result.rows[0];
     res.status(201).json({ 
       message: "Registrado con éxito", 
-      user: { id: result.rows[0].id, email } 
-    });  
-  } catch (err) {
-    console.error('Error en registro:', err);
-    res.status(500).send('Error al registrar usuario');
+      user: { id, email } 
+    });
+    } catch (err) {
+      console.error('Error en registro:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -643,7 +742,9 @@ app.post('/auth/register', async (req, res) => {
  *       200:
  *         description: Inicio de sesión exitoso
  *       401:
- *         description: Credenciales inválidas
+ *         description: Contraseña no válida o usuario no encontrado
+ *       500:
+ *         description: Error en el servidor
  */
 
 app.post('/auth/login', async (req, res) => {
@@ -651,20 +752,26 @@ app.post('/auth/login', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
     const user = result.rows[0];
-    if (!user) return res.status(401).send('Credenciales inválidas');
 
-    const match = await bcrypt.compare(contraseña, user.contraseña);
-    if (!match) return res.status(401).send('Credenciales inválidas');
+    if (!user) {
+      return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
+    }
+    
+    const passwordMatch = await bcrypt.compare(contraseña, user.contraseña);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
+    }
 
     const token = jwt.sign({ userId: user.id, email: user.email, rol: user.rol }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ 
-      message: "Inicio de sesión exitoso", 
-      token 
-    });
+    
+    res.json({ message: "Inicio de sesión exitoso", token });
   } catch (err) {
-    res.status(500).send('Error en el login');
+    console.error('Error en login:', err.message);
+    res.status(500).json({ error: 'Error en el servidor' });  
   }
 });
+
 
 // DELETE /usuarios/:id: elimina un usuario por ID (sólo administradores)
 /**
@@ -684,13 +791,11 @@ app.post('/auth/login', async (req, res) => {
  *         description: ID del usuario a eliminar
  *     responses:
  *       200:
- *         description: Usuario eliminado correctamente
- *       403:
- *         description: Acceso no autorizado
+ *         description: Usuario eliminado
  *       404:
  *         description: Usuario no encontrado
  *       500:
- *         description: Error en el servidor
+ *         description: Error al eliminar usuario
  */
 
 app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
@@ -702,8 +807,8 @@ app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => 
     }
     res.json({ mensaje: 'Usuario eliminado', usuario: result.rows[0] });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al eliminar usuario');
+    console.error('Error al eliminar usuario:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -719,11 +824,11 @@ app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => 
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Cuenta eliminada exitosamente
+ *         description: Tu cuenta ha sido eliminada
  *       404:
  *         description: Usuario no encontrado
  *       500:
- *         description: Error al eliminar la cuenta
+ *         description: Error al eliminar tu cuenta
  */
 
 app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
@@ -741,8 +846,8 @@ app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
 
     res.json({ mensaje: 'Tu cuenta ha sido eliminada', usuario: result.rows[0] });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ mensaje: 'Error al eliminar tu cuenta' });
+    console.error('Error al eliminar tu cuenta:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -762,7 +867,7 @@ function verificarToken(req, res, next) {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    return res.status(401).json({ mensaje: 'Requiere token' });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -779,6 +884,7 @@ function verificarToken(req, res, next) {
 app.get('/perfil', verificarToken, (req, res) => {
   res.json({ mensaje: 'Ruta protegida', user: req.user });
 });
+
 
 // Iniciar el servidor
 app.listen(port, () => {
