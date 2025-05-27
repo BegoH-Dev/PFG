@@ -1,25 +1,39 @@
 import { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import '../styles/home.css';
+
+import slide1 from '/public/images/pedido.png';
+import slide2 from '/public/images/reserva.png';
+import slide3 from '/public/images/registro.png';
 
 const slides = [
   {
-    title: 'Comida deliciosa',
-    description: 'Explora nuestros platos caseros preparados con ingredientes frescos.',
-    image: 'https://source.unsplash.com/800x400/?food',
+    title: 'Disfruta de nuestros platos desde casa',
+    description: 'La mejor comida, con el sabor de siempre, directo a tu mesa.',
+    image: slide1,
+    buttonText: 'Haz tu pedido',
+    buttonLink: '/pedido',    
   },
   {
-    title: 'Ambiente acogedor',
+    title: 'Ven a conocernos',
     description: 'Disfruta de un ambiente perfecto para cualquier ocasión.',
-    image: 'https://source.unsplash.com/800x400/?restaurant',
+    image: slide2,
+    buttonText: 'Haz tu reserva',
+    buttonLink: '/reserva',
   },
   {
-    title: 'Pedidos fáciles',
-    description: 'Haz tu pedido desde casa con unos pocos clics.',
-    image: 'https://source.unsplash.com/800x400/?delivery',
+    title: 'Únete a la comunidad Biter',
+    description: 'Comparte tu pasión por la gastronomía, descubre novedades y sé parte de algo delicioso.',
+    image: slide3,
+    buttonText: 'Resgístrate ahora',
+    buttonLink: '/registro',
   },
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => {
@@ -33,14 +47,27 @@ const Home = () => {
   return (
     <div className="pt-4">
       <section id="home" className="relative w-full h-[400px] overflow-hidden mx-auto max-w-6xl">
-        {/* Slide */}
+        {/* SECCIÓN DE DIAPOSITIVAS */}
         <div
-          className="w-full h-full bg-cover bg-center transition-all duration-700 ease-in-out flex items-center justify-center text-white"
+          className="w-full h-full bg-cover bg-center transition-all duration-700 ease-in-out relative flex items-center justify-center"
           style={{ backgroundImage: `url(${slides[current].image})` }}
         >
-          <div className="bg-black bg-opacity-50 p-6 rounded">
-            <h2 className="text-3xl font-bold mb-2">{slides[current].title}</h2>
-            <p className="text-lg">{slides[current].description}</p>
+
+        {/* Overlay oscuro */}
+        <div className="image-overlay"></div>
+
+        {/* CONTENIDO DE LAS DIAPOSITIVAS */}
+          <div className="bg-black bg-opacity-50 p-6 rounded flex flex-col items-center justify-center text-center relative z-20">
+            <h2 className="text-3xl font-bold mb-2 slide-text">{slides[current].title}</h2>
+            <p className="text-lg slide-text mb-4">{slides[current].description}</p>
+            {slides[current].buttonText && (
+            <button
+              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300"
+              onClick={() => navigate(slides[current].buttonLink)}
+            >
+              {slides[current].buttonText}
+            </button>
+          )}
           </div>
         </div>
 
