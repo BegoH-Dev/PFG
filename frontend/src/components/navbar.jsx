@@ -11,7 +11,7 @@ function Navbar() {
         <div className="flex justify-center h-16">
           <div className="flex items-center gap-4">
             {/* LOGO */}
-            <img src="/images/logo.jpg" alt="Logo" style={{ height: '120px', width: 'auto' }}/>
+            <img src="/images/Logo_Book_Bite.png" alt="Logo" style={{ height: '120px', width: 'auto' }}/>
             {/* ENLACES */}
             <Link to="/carta" className="nav-link nav-link-margin">
               Carta
@@ -22,13 +22,13 @@ function Navbar() {
             {/* BOTONES */}
             <button
               onClick={() => navigate('/inicioSesion')}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+              className="nav-button nav-button-primary"
             >
               Iniciar Sesión
             </button>
             <button
               onClick={() => navigate('/registro')}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              className="nav-button nav-button-secondary"
             >
               Registrarse
             </button>
