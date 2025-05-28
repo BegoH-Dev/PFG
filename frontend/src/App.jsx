@@ -1,7 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Navbar from './components/navbar';
-import Footer from './components/footer';
 import Home from './pages/Home';
 import Carta from './pages/Carta';
 import OrderForm from './pages/OrderForm';
@@ -11,9 +9,7 @@ import InicioSesion from './pages/InicioSesion';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <Navbar />
-      
+    <div className="flex flex-col min-h-screen bg-gray-100">      
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -24,8 +20,6 @@ function App() {
           <Route path="/inicioSesion" element={<InicioSesion />} />
         </Routes>
       </main>
-      
-      <Footer />
     </div>
   );
 }

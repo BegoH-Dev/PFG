@@ -110,8 +110,8 @@ const Home = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#menu">
-                  Menú
+                <a className="nav-link" href="#carta">
+                  Carta
                 </a>
               </li>
               <li className="nav-item">
@@ -153,7 +153,6 @@ const Home = () => {
               <button 
                 className="btn btn-primary-custom btn-lg"
                 onClick={() => {
-                  // Aquí puedes manejar las acciones específicas
                   console.log(`Acción: ${slide.buttonAction}`);
                 }}
               >
