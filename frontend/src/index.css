@@ -7,5 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@import "tailwindcss/preflight";
-@tailwind utilities;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
