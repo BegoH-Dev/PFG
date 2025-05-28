@@ -1,134 +1,320 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Registro() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const initialRole = queryParams.get('role') === 'artist' ? 'artist' : 'user';
-
-  const [form, setForm] = useState({
-    username: '',
+const Registro = () => {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    apellidos: '',
+    nombreUsuario: '',
     email: '',
-    password: '',
-    birthday: '',
-    firstName: '',
-    lastName: '',
-    role: initialRole,
+    fechaNacimiento: '',
+    contraseña: '',
+    aceptaTerminos: false
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  const handleRoleSelect = (role) => {
-    setForm({ ...form, role });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const res = await fetch('http://localhost:8000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al registrar');
-      }
-
-      setSuccess('Usuario registrado con éxito');
-      setForm({
-        username: '',
-        email: '',
-        password: '',
-        birthday: '',
-        firstName: '',
-        lastName: '',
-        role: 'user',
-      });
-
-      setTimeout(() => {
-        navigate('/inicioSesion?registered=true');
-      }, 1000);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!formData.aceptaTerminos) {
+      alert('Debes aceptar los términos y condiciones');
+      return;
     }
+    console.log('Datos del formulario:', formData);
+  };
+
+  const handleIniciarSesion = () => {
+    console.log('Redirigir a página de iniciar sesión');
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('/images/fondo3cuadros.png')" }}></div>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: 'white',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      {/* Logo */}
+      <div style={{
+        textAlign: 'center',
+        paddingTop: '40px',
+        paddingBottom: '30px'
+      }}>
+        <img 
+          src="/images/Logo_Book_Bite.png" 
+          alt="Book & Bite Logo" 
+          style={{ 
+            height: '120px',
+            maxWidth: '100%'
+          }}
+        />
+      </div>
 
-      <div className="relative z-10 w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
-        <div className="text-center mb-6">
-          <a href="/">
-            <img src="/images/logo-light.png" alt="logo" className="mx-auto w-24" />
-          </a>
-          <h2 className="text-xl font-bold mt-4">Registra tu cuenta</h2>
-        </div>
+      {/* Formulario de Registro */}
+      <div style={{
+        maxWidth: '500px',
+        margin: '0 auto',
+        padding: '0 20px',
+        paddingBottom: '40px'
+      }}>
+        <h2 style={{
+          textAlign: 'center',
+          marginBottom: '30px',
+          color: '#333',
+          fontSize: '28px',
+          fontWeight: 'bold'
+        }}>
+          Registra tu cuenta
+        </h2>
 
-        {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>}
-        {success && <div className="bg-green-100 text-green-700 p-2 rounded mb-4">{success}</div>}
+        <form onSubmit={handleSubmit} style={{
+          backgroundColor: '#f8f9fa',
+          padding: '40px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+          {/* Nombre */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Nombre *
+            </label>
+            <input
+              type="text"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
 
-        {/* Rol */}
-        <div className="flex justify-center gap-2 mb-4">
-          <button
-            type="button"
-            className={`px-4 py-2 rounded ${form.role === 'user' ? 'bg-blue-600 text-white' : 'border border-blue-600 text-blue-600'}`}
-            onClick={() => handleRoleSelect('user')}
-          >
-            Usuario
-          </button>
-          <button
-            type="button"
-            className={`px-4 py-2 rounded ${form.role === 'artist' ? 'bg-blue-600 text-white' : 'border border-blue-600 text-blue-600'}`}
-            onClick={() => handleRoleSelect('artist')}
-          >
-            Artista
-          </button>
-        </div>
+          {/* Apellidos */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Apellidos *
+            </label>
+            <input
+              type="text"
+              name="apellidos"
+              value={formData.apellidos}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input type="text" name="firstName" placeholder="Nombre" required value={form.firstName} onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="text" name="lastName" placeholder="Apellido" required value={form.lastName} onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="text" name="username" placeholder="Nombre de usuario" required value={form.username} onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="email" name="email" placeholder="Email" required value={form.email} onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="date" name="birthday" required value={form.birthday} onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="password" name="password" placeholder="Contraseña" required value={form.password} onChange={handleChange} className="w-full p-2 border rounded" />
+          {/* Nombre de usuario */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Nombre de usuario *
+            </label>
+            <input
+              type="text"
+              name="nombreUsuario"
+              value={formData.nombreUsuario}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
 
-          <div className="flex items-center mb-3">
-            <input type="checkbox" required className="mr-2" />
-            <label className="text-sm text-gray-600">
-              Acepto <a href="#" className="text-blue-600">Términos y Condiciones</a>
+          {/* Email */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Email *
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          {/* Fecha de nacimiento */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Fecha de nacimiento (dd/mm/aa) *
+            </label>
+            <input
+              type="date"
+              name="fechaNacimiento"
+              value={formData.fechaNacimiento}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          {/* Contraseña */}
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Contraseña *
+            </label>
+            <input
+              type="password"
+              name="contraseña"
+              value={formData.contraseña}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          {/* Términos y condiciones */}
+          <div style={{ 
+            marginBottom: '25px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px'
+          }}>
+            <input
+              type="checkbox"
+              name="aceptaTerminos"
+              checked={formData.aceptaTerminos}
+              onChange={handleInputChange}
+              style={{
+                marginTop: '3px',
+                width: '16px',
+                height: '16px'
+              }}
+            />
+            <label style={{
+              color: '#333',
+              fontSize: '14px',
+              lineHeight: '1.4'
+            }}>
+              Acepto términos y condiciones
             </label>
           </div>
 
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded" disabled={loading}>
-            {loading ? 'Registrando...' : 'Registrar'}
+          {/* Botón Registrarse */}
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: '#d4af37',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              marginBottom: '20px',
+              transition: 'background-color 0.3s ease'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#b8941f'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#d4af37'}
+          >
+            Registrarse
           </button>
-        </form>
 
-        <div className="text-center text-sm mt-4">
-          ¿Ya tienes cuenta? <a href="/inicioSesion" className="text-blue-600 font-semibold">Inicia sesión</a>
-        </div>
+          {/* Link a iniciar sesión */}
+          <div style={{ textAlign: 'center' }}>
+            <span style={{ color: '#666', fontSize: '14px' }}>
+              ¿Tienes ya una cuenta?{' '}
+              <button
+                type="button"
+                onClick={handleIniciarSesion}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#d4af37',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}
+                onMouseOver={(e) => e.target.style.color = '#b8941f'}
+                onMouseOut={(e) => e.target.style.color = '#d4af37'}
+              >
+                Iniciar sesión
+              </button>
+            </span>
+          </div>
+        </form>
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default Registro;
