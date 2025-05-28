@@ -3,9 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './pages/Home';
-import Menu from './pages/Menu';
+import Carta from './pages/Carta';
 import OrderForm from './pages/OrderForm';
-import ReservationForm from './pages/reservationForm';
+import ReservationForm from './pages/ReservationForm';
 import Registro from './pages/Registro';
 import InicioSesion from './pages/InicioSesion';
 
@@ -17,7 +17,7 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
+          <Route path="/carta" element={<Carta />} />
           <Route path="/order" element={<OrderForm />} />
           <Route path="/reserve" element={<ReservationForm />} />
           <Route path="/registro" element={<Registro />} />
