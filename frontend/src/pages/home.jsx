@@ -62,7 +62,7 @@ const Home = () => {
             <p className="text-lg slide-text mb-4">{slides[current].description}</p>
             {slides[current].buttonText && (
             <button
-              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300"
+              className="btn bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300"
               onClick={() => navigate(slides[current].buttonLink)}
             >
               {slides[current].buttonText}
@@ -73,7 +73,7 @@ const Home = () => {
 
         {/* Botón izquierdo */}
         <button
-          className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75"
+          className="slider-button slider-button-left"
           onClick={prevSlide}
           aria-label="Anterior"
         >
@@ -82,7 +82,7 @@ const Home = () => {
 
         {/* Botón derecho */}
         <button
-          className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75"
+          className="slider-button slider-button-right"
           onClick={nextSlide}
           aria-label="Siguiente"
         >

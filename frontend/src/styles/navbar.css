@@ -34,13 +34,13 @@
 }
 
 .nav-button-primary {
-    background-color: #dc2626; /* Rojo */
+    background-color: #f87930; /* Rojo */
     color: #ffffff; /* Blanco */
     border: none;
 }
 
 .nav-button-primary:hover {
-    background-color: #b91c1c; /* Rojo más oscuro */
+    background-color: #b15521; /* Rojo más oscuro */
 }
 
 .nav-button-secondary {

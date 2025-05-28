@@ -11,3 +11,40 @@
   background-color: rgba(0, 0, 0, 0.5); /* Negro con 40% de opacidad */
   z-index: 1; /* Para que esté detrás del texto y botón */
 }
+
+.slider-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%); /* Solo en el eje Y */
+  color: black;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+  z-index: 10; /* Asegura que estén encima */
+}
+
+.slider-button:hover {
+  background-color: grey;
+}
+
+.slider-button-left {
+  left: 1rem;
+}
+
+.slider-button-right {
+  right: 1rem;
+}
+
+.btn {
+  background-color: #b15521;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #af4101;
+}
