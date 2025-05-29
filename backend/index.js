@@ -1,14 +1,21 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const PORT = 5000;
 
 const app = express();
-app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.url}`);
+  next();
+});
 
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -749,28 +756,55 @@ app.post('/auth/register', async (req, res) => {
  */
 
 app.post('/auth/login', async (req, res) => {
-  const { email, contraseña } = req.body;
-  try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
-    const user = result.rows[0];
+  console.log('Intentando login:', req.body);
 
-    if (!user) {
-      return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
+  const { nombre_usuario, contraseña } = req.body;
+
+    if (!nombre_usuario || !contraseña) {
+      return res.status(400).json({ error: 'Nombre de usuario y contraseña requeridos' });
+    } 
+
+    try {
+      const result = await pool.query(
+        'SELECT * FROM usuarios WHERE nombre_usuario = $1',
+        [nombre_usuario]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(401).json({ error: 'Usuario no encontrado' });
+      }
+
+      const user = result.rows[0];
+      
+      const passwordMatch = await bcrypt.compare(contraseña, user.contraseña);
+      if (!passwordMatch) {
+        return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
+      }
+
+      // Generar token JWT
+      const token = jwt.sign(
+        { userId: user.id, 
+          email: user.email, 
+          rol: user.rol },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      
+      // Enviar respuesta
+      res.json({ 
+        message: "Inicio de sesión exitoso", 
+        token,
+        user: {
+          id: user.id,
+          nombre_usuario: user.nombre_usuario,
+          rol: user.rol
+        }
+       });
+
+    } catch (error) {
+      console.error('Error en /auth/login:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     }
-    
-    const passwordMatch = await bcrypt.compare(contraseña, user.contraseña);
-
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
-    }
-
-    const token = jwt.sign({ userId: user.id, email: user.email, rol: user.rol }, JWT_SECRET, { expiresIn: '1h' });
-    
-    res.json({ message: "Inicio de sesión exitoso", token });
-  } catch (err) {
-    console.error('Error en login:', err.message);
-    res.status(500).json({ error: 'Error en el servidor' });  
-  }
 });
 
 

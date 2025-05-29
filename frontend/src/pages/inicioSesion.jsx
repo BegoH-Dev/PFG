@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onLogin }) => {
+  console.log('API URL:', process.env.REACT_APP_API_URL);
+
   const [formData, setFormData] = useState({
     nombre_usuario: '',
     contraseña: '',
@@ -31,7 +33,7 @@ const Login = ({ onLogin }) => {
     console.log('Datos de login:', payload);
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

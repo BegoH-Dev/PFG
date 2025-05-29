@@ -4,11 +4,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const authRoutes = require('./routes/auth'); // Importa la ruta corregida
+const authRoutes = require('./routes/auth');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors({ origin: 'http://localhost:3000' })); // Permite el frontend
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 // Conexión a PostgreSQL 
 const pool = new Pool({
@@ -19,7 +19,6 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
-// Usa la ruta corregida
 app.use('/api', authRoutes);
 
 app.listen(5000, () => { 
