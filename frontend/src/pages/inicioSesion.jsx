@@ -1,104 +1,266 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export default function InicioSesion() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const wasRegistered = new URLSearchParams(location.search).get('registered') === 'true';
-  
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
+const Login = ({ onLogin }) => {
+  const [formData, setFormData] = useState({
+    nombre_usuario: '',
+    contraseña: '',
+    recordarme: false
   });
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+
+  const handleSubmit = async () => {
+    if (!formData.nombre_usuario || !formData.contraseña) {
+      alert('Por favor completa todos los campos');
+      return;
+    }
+    
+    const payload = {
+      nombre_usuario: formData.nombre_usuario,
+      contraseña: formData.contraseña
+    };
+
+    console.log('Datos de login:', payload);
     
     try {
-      // Implementar llamada al API de login
-      console.log('Iniciando sesión con:', form);
-      
-      // Simulando redirección tras login exitoso
-      setTimeout(() => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', formData.nombre_usuario);
         navigate('/');
-      }, 1000);
-    } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
-    } finally {
-      setLoading(false);
+      } else {
+        alert(data.error || 'Error al iniciar sesión');
+      }
+    } catch (error) {
+      console.error('Error de red:', error.message);
+      alert('Error al conectar con el servidor');
     }
   };
-  
+
+  const handleRegistrarse = () => {
+    console.log('Redirigir a página de registro');
+  };
+
+  const handleOlvidoContraseña = () => {
+    console.log('Redirigir a recuperar contraseña');
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('/images/fondo3cuadros.png')" }}></div>
-      
-      <div className="relative z-10 w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
-        <div className="text-center mb-6">
-          <a href="/">
-            <img src="/images/logo-light.png" alt="logo" className="mx-auto w-24" />
-          </a>
-          <h2 className="text-xl font-bold mt-4">Iniciar Sesión</h2>
-        </div>
-        
-        {wasRegistered && (
-          <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
-            Usuario registrado correctamente. Por favor inicia sesión.
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: 'white',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      {/* Logo */}
+      <div style={{
+        textAlign: 'center',
+        paddingTop: '40px',
+        paddingBottom: '30px'
+      }}>
+        <img 
+          src="/images/Logo_Book_Bite.png" 
+          alt="Book & Bite Logo" 
+          style={{ 
+            height: '120px',
+            maxWidth: '100%'
+          }}
+        />
+      </div>
+
+      {/* Formulario de Login */}
+      <div style={{
+        maxWidth: '450px',
+        margin: '0 auto',
+        padding: '0 20px',
+        paddingBottom: '40px'
+      }}>
+        <h2 style={{
+          textAlign: 'center',
+          marginBottom: '30px',
+          color: '#333',
+          fontSize: '28px',
+          fontWeight: 'bold'
+        }}>
+          Iniciar sesión
+        </h2>
+
+        <div style={{
+          backgroundColor: '#f8f9fa',
+          padding: '40px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+          {/* Nombre de usuario */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Nombre de usuario *
+            </label>
+            <input
+              type="text"
+              name="nombre_usuario"
+              value={formData.nombre_usuario}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
           </div>
-        )}
-        
-        {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>}
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Email" 
-            required 
-            value={form.email} 
-            onChange={handleChange} 
-            className="w-full p-2 border rounded" 
-          />
-          <input 
-            type="password" 
-            name="password" 
-            placeholder="Contraseña" 
-            required 
-            value={form.password} 
-            onChange={handleChange} 
-            className="w-full p-2 border rounded" 
-          />
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              <label className="text-sm text-gray-600">Recordarme</label>
+
+          {/* Contraseña */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
+              Contraseña *
+            </label>
+            <input
+              type="password"
+              name="contraseña"
+              value={formData.contraseña}
+              onChange={handleInputChange}
+              required
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          {/* Recordarme y Olvidar contraseña */}
+          <div style={{ 
+            marginBottom: '25px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <input
+                type="checkbox"
+                name="recordarme"
+                checked={formData.recordarme}
+                onChange={handleInputChange}
+                style={{
+                  width: '16px',
+                  height: '16px'
+                }}
+              />
+              <label style={{
+                color: '#333',
+                fontSize: '14px'
+              }}>
+                Recordarme
+              </label>
             </div>
-            <a href="#" className="text-sm text-blue-600">¿Olvidaste tu contraseña?</a>
+            
+            <button
+              type="button"
+              onClick={handleOlvidoContraseña}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#d4af37',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '600'
+              }}
+              onMouseOver={(e) => e.target.style.color = '#b8941f'}
+              onMouseOut={(e) => e.target.style.color = '#d4af37'}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
           </div>
-          
-          <button 
-            type="submit" 
-            className="w-full bg-blue-600 text-white py-2 rounded"
-            disabled={loading}
+
+          {/* Botón Iniciar sesión */}
+          <button
+            type="button"
+            onClick={handleSubmit}
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: '#d4af37',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              marginBottom: '20px',
+              transition: 'background-color 0.3s ease'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#b8941f'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#d4af37'}
           >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            Iniciar sesión
           </button>
-        </form>
-        
-        <div className="text-center text-sm mt-4">
-          ¿No tienes cuenta? <a href="/registro" className="text-blue-600 font-semibold">Regístrate</a>
+
+          {/* Link a registro */}
+          <div style={{ textAlign: 'center' }}>
+            <span style={{ color: '#666', fontSize: '14px' }}>
+              ¿No tienes una cuenta?{' '}
+              <button
+                type="button"
+                onClick={handleRegistrarse}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#d4af37',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}
+                onMouseOver={(e) => e.target.style.color = '#b8941f'}
+                onMouseOut={(e) => e.target.style.color = '#d4af37'}
+              >
+                Registrarse
+              </button>
+            </span>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default Login;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -42,10 +43,6 @@ const Registro = () => {
       console.error('Error:', error);
       alert('Error al conectar con el servidor');
       }
-  };
-
-  const handleIniciarSesion = () => {
-    console.log('Redirigir a página de iniciar sesión');
   };
 
   return (
@@ -308,9 +305,8 @@ const Registro = () => {
           <div style={{ textAlign: 'center' }}>
             <span style={{ color: '#666', fontSize: '14px' }}>
               ¿Tienes ya una cuenta?{' '}
-              <button
-                type="button"
-                onClick={handleIniciarSesion}
+              <Link
+                to="/InicioSesion"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -324,7 +320,7 @@ const Registro = () => {
                 onMouseOut={(e) => e.target.style.color = '#d4af37'}
               >
                 Iniciar sesión
-              </button>
+              </Link>
             </span>
           </div>
         </form>

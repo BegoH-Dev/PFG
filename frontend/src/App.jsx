@@ -16,8 +16,8 @@ function App() {
           <Route path="/carta" element={<Carta />} />
           <Route path="/order" element={<OrderForm />} />
           <Route path="/reserve" element={<ReservationForm />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/inicioSesion" element={<InicioSesion />} />
+          <Route path="/Registro" element={<Registro />} />
+          <Route path="/InicioSesion" element={<InicioSesion />} />
         </Routes>
       </main>
     </div>

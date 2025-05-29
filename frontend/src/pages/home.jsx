@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/global.css';
 
 const Home = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const storedUsername = localStorage.getItem('username') || '';
+    setIsLoggedIn(loggedIn);
+    setUsername(storedUsername);
+  }, []);
 
   // Configuración de las diapositivas
   const slides = [
@@ -52,7 +63,6 @@ const Home = () => {
       titulo: "Entrega rápida",
       descripcion: "El hambre no espera, y nosotros tampoco: preparamos y entregamos tu pedido rápido y con el mismo cuidado que en el restaurante.",
       imagen: "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=400&h=250&fit=crop"
-
     },
     {
       id: 2,
@@ -100,17 +110,17 @@ const Home = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <a className="nav-link" href="#home" onClick={() => scrollToSection('home')}>
+                <a className="nav-link" href="#reservas" onClick={() => scrollToSection('reservas')}>
                   Reservas
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#contacto">
+                <a className="nav-link" href="#pedidos" onClick={() => scrollToSection('pedidos')}>
                   Pedidos
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#carta">
+                <a className="nav-link" href="#carta" onClick={() => scrollToSection('carta')}>
                   Carta
                 </a>
               </li>
@@ -122,12 +132,36 @@ const Home = () => {
             </ul>
             
             <div className="d-flex flex-column flex-lg-row gap-2">
-              <button className="btn btn-secondary-custom" onClick={() => window.location.href = '/login'}>
-                Iniciar Sesión
-              </button>
-              <button className="btn btn-primary-custom" onClick={() => window.location.href = '/registro'}>
-                Registrarse
-              </button>
+              {isLoggedIn ? (
+                <div className="d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    className="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      localStorage.removeItem('isLoggedIn');
+                      localStorage.removeItem('username');
+                      window.location.reload(); // Recargar para actualizar el estado
+                    }}
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                    <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 1.613A7 7 0 0 0 8 1z" />
+                  </svg>
+                </div>
+              ) : (
+                <>
+                  <button className="btn btn-secondary-custom" onClick={() => navigate('/InicioSesion')}>
+                    Iniciar Sesión
+                  </button>
+                  <button className="btn btn-primary-custom" onClick={() => navigate('/registro')}>
+                    Registrarse
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -306,9 +340,9 @@ const Home = () => {
             
             <div className="col-lg-3 col-md-6 mb-4">
               <h6 className="footer-title">Contacto</h6>
-              <p className="text-light mb-1">📍 Calle Principal 123</p>
-              <p className="text-light mb-1">📞 +34 123 456 789</p>
-              <p className="text-light mb-1">✉️ info@saborgourmet.com</p>
+              <p className="text-light mb-1">📍 c/ del Marqués 10</p>
+              <p className="text-light mb-1">📞 +34 987 654 321</p>
+              <p className="text-light mb-1">✉️ info@bookandbite.com</p>
               <p className="text-light">🕒 Lun-Dom: 12:00-24:00</p>
             </div>
           </div>
