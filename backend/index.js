@@ -4,11 +4,14 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-/*const swaggerUi = require('swagger-ui-express'); //Documentación Swagger
-const swaggerSpec = require('./swagger'); //Documentación Swagger */
-const PORT = 5000;
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
@@ -17,10 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-/*
-// Documentación Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));  */
-
+// Conexión a PostgreSQL
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -40,20 +40,6 @@ const port = process.env.PORT || 5000;
 
 // ENDPOINTS
 
-// GET /productos: obtener todos los productos
-/**
- * @swagger
- * /productos:
- *   get:
- *     summary: Obtener todos los productos
- *     tags: [Productos]
- *     responses:
- *       200:
- *         description: Lista de productos
- *       500:
- *         description: Error al obtener los productos
- */
-
 app.get('/productos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM productos');
@@ -67,36 +53,6 @@ app.get('/productos', async (req, res) => {
   }
 });
 
-
-// POST /pedidos: hacer un nuevo pedido
-/**
- * @swagger
- * /pedidos:
- *   post:
- *     summary: Crear nuevo pedido
- *     tags: [Pedidos]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               usuario_id:
- *                 type: integer
- *               total:
- *                 type: number
- *               estado:
- *                 type: string
- *               fecha:
- *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Pedido creado con éxito
- * *     500:
- *         description: Error al crear el pedido
- */
 
 app.post('/pedidos', async (req, res) => {
   const { usuario_id, total, estado, fecha } = req.body;
@@ -115,34 +71,6 @@ app.post('/pedidos', async (req, res) => {
   }
 });
 
-
-// GET /productos/alergenos: muestra productos con sus alérgenos.
-/**
- * @swagger
- * /productos/alergenos:
- *   get:
- *     summary: Obtener productos con sus alérgenos
- *     tags:
- *       - Productos
- *     responses:
- *       200:
- *         description: Lista de productos con sus alérgenos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   producto_id:
- *                     type: integer
- *                   producto_nombre:
- *                     type: string
- *                   alergenos:
- *                     type: string
- *       500:
- *         description: Error al obtener productos
- */
 
 app.get('/productos/alergenos', async (req, res) => {
   try {
@@ -165,38 +93,6 @@ app.get('/productos/alergenos', async (req, res) => {
 });
 
 
-// POST /reservas: crea una nueva reserva
-/**
- * @swagger
- * /reservas:
- *   post:
- *     summary: Crear una nueva reserva
- *     tags: [Reservas]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               usuario_id:
- *                 type: integer
- *               mesa_id:
- *                 type: integer
- *               fecha_hora:
- *                 type: string
- *                 format: date-time
- *               num_comensales:
- *                 type: integer
- *               estado:
- *                 type: string
- *     responses:
- *       201:
- *         description: Reserva creada con éxito
- *       500:
- *         description: Error al crear la reserva
- */
-
 app.post('/reservas', async (req, res) => {
   const { usuario_id, mesa_id, fecha_hora, num_comensales, estado } = req.body;
   try {
@@ -215,22 +111,6 @@ app.post('/reservas', async (req, res) => {
 });
 
 
-// GET /admin/pedidos: lista todos los pedidos (admin)
-/**
- * @swagger
- * /admin/pedidos:
- *   get:
- *     summary: Obtener todos los pedidos (solo admin)
- *     tags: [Pedidos]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de pedidos
- *       500:
- *         description: Error al obtener los pedidos
- */
-
 app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM pedidos ORDER BY fecha DESC');
@@ -245,22 +125,6 @@ app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
 });
 
 
-// GET /admin/reservas: lista todas las reservas (admin)
-/**
- * @swagger
- * /admin/reservas:
- *   get:
- *     summary: Obtener todas las reservas (solo admin)
- *     tags: [Reservas]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de reservas
- *       500:
- *         description: Error al obtener las reservas
- */
-
 app.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM reservas ORDER BY fecha_hora DESC');
@@ -274,29 +138,6 @@ app.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
   }
 });
 
-
-// GET /productos/:id: Producto por id con alérgenos
-/**
- * @swagger
- * /productos/{id}:
- *   get:
- *     summary: Obtener un producto por ID (incluye alérgenos)
- *     tags: [Productos]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del producto
- *     responses:
- *       200:
- *         description: Detalles del producto
- *       404:
- *         description: Producto no encontrado
- *       500:
- *         description: Error al obtener el producto
- */
 
 app.get('/productos/:id', async (req, res) => {
   const { id } = req.params;
@@ -326,51 +167,6 @@ app.get('/productos/:id', async (req, res) => {
 });
 
 
-// POST /usuarios: Crear usuario
-/**
- * @swagger
- * /usuarios:
- *   post:
- *     summary: Crear un nuevo usuario
- *     tags:
- *       - Usuarios
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - nombre
- *               - apellidos
- *               - email
- *               - telefono
- *               - direccion
- *               - contraseña
- *             properties:
- *               nombre:
- *                 type: string
- *               apellidos:
- *                 type: string
- *               email:
- *                 type: string
- *               telefono:
- *                 type: string
- *               direccion:
- *                 type: string
- *               contraseña:
- *                 type: string
- *               rol:
- *                 type: string
- *     responses:
- *       201:
- *         description: Usuario creado con éxito
- *       400:
- *         description: Faltan campos requeridos
- *       500:
- *         description: Error al crear usuario
- */
-
 app.post('/usuarios', async (req, res) => {
   const { nombre, apellidos, email, telefono, direccion, contraseña, rol } = req.body;
   
@@ -399,27 +195,6 @@ app.post('/usuarios', async (req, res) => {
 });
 
 
-// GET /usuarios/:id/pedidos: Pedidos de un usuario
-/**
- * @swagger
- * /usuarios/{id}/pedidos:
- *   get:
- *     summary: Obtener pedidos de un usuario
- *     tags: [Usuarios]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID del usuario
- *     responses:
- *       200:
- *         description: Lista de pedidos
- *       500:
- *         description: Error al obtener los pedidos
- */
-
 app.get('/usuarios/:id/pedidos', async (req, res) => {
   const { id } = req.params;
   try {
@@ -434,30 +209,6 @@ app.get('/usuarios/:id/pedidos', async (req, res) => {
   }
 });
 
-
-// GET /reservas: Listar reservas futuras o filtrar por fecha
-/**
- * @swagger
- * /reservas:
- *   get:
- *     summary: Obtener reservas futuras o filtrar por fecha
- *     tags:
- *       - Reservas
- *     parameters:
- *       - in: query
- *         name: fecha
- *         schema:
- *           type: string
- *           format: date
- *         description: Fecha específica para filtrar reservas (YYYY-MM-DD)
- *     responses:
- *       200:
- *         description: Lista de reservas
- *       404:
- *         description: Reserva no encontrada
- *       500:
- *         description: Error al obtener las reservas
- */
 
 app.get('/reservas', async (req, res) => {
   const { fecha } = req.query;
@@ -490,42 +241,6 @@ app.get('/reservas', async (req, res) => {
 });
 
 
-// PUT /reservas/:id: Modificar estado o fecha de reserva
-/**
- * @swagger
- * /reservas/{id}:
- *   put:
- *     summary: Modificar estado o fecha de una reserva
- *     tags:
- *       - Reservas
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la reserva a modificar
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               fecha:
- *                 type: string
- *                 format: date-time
- *               estado:
- *                 type: string
- *     responses:
- *       200:
- *         description: Reserva actualizada
- *       404:
- *         description: Reserva no encontrada
- *       500:
- *         description: Error al modificar reserva
- */
-
 app.put('/reservas/:id', async (req, res) => {
   const { id } = req.params;
   const { fecha, estado } = req.body;
@@ -553,20 +268,6 @@ app.put('/reservas/:id', async (req, res) => {
 });
 
 
-// GET /alergenos: Listar alérgenos
-/**
- * @swagger
- * /alergenos:
- *   get:
- *     summary: Listar todos los alérgenos
- *     tags: [Productos]
- *     responses:
- *       200:
- *         description: Lista de alérgenos
- *      500:
- *        description: Error al obtener alérgenos
- */
-
 app.get('/alergenos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM alergenos');
@@ -577,29 +278,6 @@ app.get('/alergenos', async (req, res) => {
   }
 });
 
-
-// GET /productos/:id/alergenos: Alérgenos de producto
-/**
- * @swagger
- * /productos/{id}/alergenos:
- *   get:
- *     summary: Obtener alérgenos de un producto
- *     tags: [Productos]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del producto
- *     responses:
- *       200:
- *         description: Lista de alérgenos del producto
- *       404: 
- *        description: Producto no encontrado o sin alérgenos
- *       500:
- *        description: Error al obtener alérgenos del producto
- */
 
 app.get('/productos/:id/alergenos', async (req, res) => {
   const { id } = req.params;
@@ -627,27 +305,6 @@ app.get('/productos/:id/alergenos', async (req, res) => {
 });
 
 
-// GET /valoraciones/:producto_id: Valoraciones de producto
-/**
- * @swagger
- * /valoraciones/{producto_id}:
- *   get:
- *     summary: Obtener valoraciones de un producto
- *     tags: [Productos]
- *     parameters:
- *       - in: path
- *         name: producto_id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del producto
- *     responses:
- *      200:
- *         description: Lista de valoraciones
- *      500:
- *         description: Error al obtener valoraciones
- */
-
 app.get('/valoraciones/:producto_id', async (req, res) => {
   const { producto_id } = req.params;
   try {
@@ -665,39 +322,6 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
   }
 });
 
-
-// Registro
-/**
- * @swagger
- * /auth/register:
- *   post:
- *     summary: Registrar nuevo usuario
- *     tags: [Autenticación]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               nombre:
- *                 type: string
- *               apellidos:
- *                 type: string
- *               email:
- *                 type: string
- *               contraseña:
- *                 type: string
- *     responses:
- *       201:
- *         description: Registrado con éxito
- *       400:
- *         description: Faltan campos requeridos
- *       401:
- *         description: Ya existe un usuario con ese email
- *       500:
- *         description: Error en registro
- */
 
 app.post('/auth/register', async (req, res) => {
   const { nombre, apellidos, email, contraseña } = req.body;
@@ -729,33 +353,6 @@ app.post('/auth/register', async (req, res) => {
 });
 
 
-// Login
-/**
- * @swagger
- * /auth/login:
- *   post:
- *     summary: Iniciar sesión
- *     tags: [Autenticación]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               contraseña:
- *                 type: string
- *     responses:
- *       200:
- *         description: Inicio de sesión exitoso
- *       401:
- *         description: Contraseña no válida o usuario no encontrado
- *       500:
- *         description: Error en el servidor
- */
-
 app.post('/auth/login', async (req, res) => {
   console.log('Intentando login:', req.body);
 
@@ -782,7 +379,6 @@ app.post('/auth/login', async (req, res) => {
         return res.status(401).json({ message: 'Contraseña no válida o usuario no encontrado' });
       }
 
-      // Generar token JWT
       const token = jwt.sign(
         { userId: user.id, 
           email: user.email, 
@@ -791,7 +387,6 @@ app.post('/auth/login', async (req, res) => {
         { expiresIn: '1h' }
       );
       
-      // Enviar respuesta
       res.json({ 
         message: "Inicio de sesión exitoso", 
         token,
@@ -809,31 +404,6 @@ app.post('/auth/login', async (req, res) => {
 });
 
 
-// DELETE /usuarios/:id: elimina un usuario por ID (sólo administradores)
-/**
- * @swagger
- * /usuarios/{id}:
- *   delete:
- *     summary: Eliminar un usuario por ID (solo administradores)
- *     tags: [Usuarios]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del usuario a eliminar
- *     responses:
- *       200:
- *         description: Usuario eliminado
- *       404:
- *         description: Usuario no encontrado
- *       500:
- *         description: Error al eliminar usuario
- */
-
 app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
   const { id } = req.params;
   try {
@@ -849,26 +419,8 @@ app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => 
 });
 
 
-// DELETE /eliminar-cuenta: para que el propio usuario borre su cuenta
-/**
- * @swagger
- * /eliminar-cuenta:
- *   delete:
- *     summary: Eliminar tu propia cuenta
- *     tags: [Usuarios]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Tu cuenta ha sido eliminada
- *       404:
- *         description: Usuario no encontrado
- *       500:
- *         description: Error al eliminar tu cuenta
- */
-
 app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
-  const userId = req.user.userId; // del token
+  const userId = req.user.userId;
 
   try {
     const result = await pool.query(
