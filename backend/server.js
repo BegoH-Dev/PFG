@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express'); 
 const bodyParser = require('body-parser'); 
 const cors = require('cors');
@@ -11,11 +12,11 @@ app.use(cors({ origin: 'http://localhost:3000' })); // Permite el frontend
 
 // Conexión a PostgreSQL 
 const pool = new Pool({
-  user: 'postgres', 
-  host: 'localhost', 
-  database: 'restaurante_db', 
-  password: 'postgres', 
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: Number(process.env.DB_PORT),
 });
 
 // Usa la ruta corregida
