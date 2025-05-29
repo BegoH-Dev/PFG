@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     } = req.body;
 
     // Validación básica
-    if (!aceptaTerminos) {
+    if (!acepta_terminos) {
       return res.status(400).json({ error: 'Debes aceptar los términos y condiciones' });
     }
 

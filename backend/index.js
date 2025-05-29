@@ -8,6 +8,7 @@ const swaggerSpec = require('./swagger');
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -26,7 +27,7 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 
 // ENDPOINTS
@@ -851,7 +852,6 @@ app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
   }
 });
 
-
 // Middleware para verificar si es admin
 function verificarAdmin(req, res, next) {
   if (req.user.rol !== 'admin') {
@@ -859,7 +859,6 @@ function verificarAdmin(req, res, next) {
   }
   next();
 }
-
 
 // Middleware "verificarToken" que valida el token en rutas protegidas.
 function verificarToken(req, res, next) {
@@ -879,12 +878,10 @@ function verificarToken(req, res, next) {
   });
 }
 
-
 // Ruta protegida "/perfil" que solo se accede con token válido.
 app.get('/perfil', verificarToken, (req, res) => {
   res.json({ mensaje: 'Ruta protegida', user: req.user });
 });
-
 
 // Iniciar el servidor
 app.listen(port, () => {
