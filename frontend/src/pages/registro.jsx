@@ -19,13 +19,29 @@ const Registro = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.aceptaTerminos) {
       alert('Debes aceptar los términos y condiciones');
       return;
     }
-    console.log('Datos del formulario:', formData);
+      try {
+      const response = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+        if (response.ok) {
+          alert(data.message);
+        } else {
+          alert(data.error || 'Error al registrar el usuario');
+        }
+      } catch (error) {
+      console.error('Error:', error);
+      alert('Error al conectar con el servidor');
+      }
   };
 
   const handleIniciarSesion = () => {
