@@ -145,6 +145,7 @@
 
     .nav-link:hover {
       color: var(--gold) !important;
+      cursor: pointer;
     }
 
     .btn-primary-custom {
@@ -402,16 +403,9 @@
       margin-bottom: 50px;
     }
 
- 
-
-
-
     .card-body {
       padding: 20px;
     }
-
-
-
 
     .footer-title {
       color: var(--gold);

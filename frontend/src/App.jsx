@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Carta from './pages/Carta';
+import Novedades from './pages/Novedades';
 import OrderForm from './pages/OrderForm';
 import ReservationForm from './pages/ReservationForm';
 import Registro from './pages/Registro';
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/carta" element={<Carta />} />
+          <Route path="/novedades" element={<Novedades />} />
           <Route path="/order" element={<OrderForm />} />
           <Route path="/reserve" element={<ReservationForm />} />
           <Route path="/Registro" element={<Registro />} />
