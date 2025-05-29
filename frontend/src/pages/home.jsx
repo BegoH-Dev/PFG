@@ -134,18 +134,13 @@ const Home = () => {
             <div className="d-flex flex-column flex-lg-row gap-2">
               {isLoggedIn ? (
                 <div className="d-flex align-items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    fill="currentColor"
-                    className="bi bi-person-circle"
-                    viewBox="0 0 16 16"
+                  <span className="me-2 text-light">{username}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-person-circle" viewBox="0 0 16 16"
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       localStorage.removeItem('isLoggedIn');
                       localStorage.removeItem('username');
-                      window.location.reload(); // Recargar para actualizar el estado
+                      window.location.reload();
                     }}
                   >
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
