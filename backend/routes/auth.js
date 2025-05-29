@@ -3,10 +3,10 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const { Pool } = require('pg');
 const pool = new Pool({ 
-    user: 'admin',
+    user: 'postgres',
     host: 'localhost',
     database: 'restaurante_db',
-    password: 'admin',
+    password: 'postgres',
     port: 5432,
 });
 

@@ -4,11 +4,11 @@ const Registro = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     apellidos: '',
-    nombreUsuario: '',
+    nombre_usuario: '',
     email: '',
-    fechaNacimiento: '',
+    fecha_nacimiento: '',
     contraseña: '',
-    aceptaTerminos: false
+    acepta_terminos: false
   });
 
   const handleInputChange = (e) => {
@@ -21,7 +21,7 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.aceptaTerminos) {
+    if (!formData.acepta_terminos) {
       alert('Debes aceptar los términos y condiciones');
       return;
     }
@@ -159,8 +159,8 @@ const Registro = () => {
             </label>
             <input
               type="text"
-              name="nombreUsuario"
-              value={formData.nombreUsuario}
+              name="nombre_usuario"
+              value={formData.nombre_usuario}
               onChange={handleInputChange}
               required
               style={{
@@ -213,8 +213,8 @@ const Registro = () => {
             </label>
             <input
               type="date"
-              name="fechaNacimiento"
-              value={formData.fechaNacimiento}
+              name="fecha_nacimiento"
+              value={formData.fecha_nacimiento}
               onChange={handleInputChange}
               required
               style={{
@@ -264,8 +264,8 @@ const Registro = () => {
           }}>
             <input
               type="checkbox"
-              name="aceptaTerminos"
-              checked={formData.aceptaTerminos}
+              name="acepta_terminos"
+              checked={formData.acepta_terminos}
               onChange={handleInputChange}
               style={{
                 marginTop: '3px',
