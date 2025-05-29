@@ -57,4 +57,53 @@ router.post('/register', async (req, res) => {
   }
 });
 
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+router.post('/login', async (req, res) => {
+  const { nombre_usuario, contraseña } = req.body;
+
+  if (!nombre_usuario || !contraseña) {
+    return res.status(400).json({ error: 'Nombre de usuario y contraseña requeridos' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM usuarios WHERE nombre_usuario = $1',
+      [nombre_usuario]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Usuario no encontrado' });
+    }
+
+    const user = result.rows[0];
+    const passwordMatch = await bcrypt.compare(contraseña, user.contraseña);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'Contraseña incorrecta' });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, rol: user.rol },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      message: 'Inicio de sesión exitoso',
+      token,
+      user: {
+        id: user.id,
+        nombre_usuario: user.nombre_usuario,
+        rol: user.rol
+      }
+    });
+
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 module.exports = router;

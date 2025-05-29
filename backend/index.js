@@ -4,8 +4,8 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
+/*const swaggerUi = require('swagger-ui-express'); //Documentación Swagger
+const swaggerSpec = require('./swagger'); //Documentación Swagger */
 const PORT = 5000;
 
 const app = express();
@@ -17,8 +17,9 @@ app.use((req, res, next) => {
   next();
 });
 
+/*
 // Documentación Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));  */
 
 const pool = new Pool({
   user: process.env.DB_USER,
