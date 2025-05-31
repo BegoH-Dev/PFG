@@ -145,7 +145,7 @@ const Home = () => {
                 </a>
               </li>  
               <li className="nav-item">
-                <a className="nav-link" href="#carta" onClick={() => scrollToSection('carta')}>
+                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/carta'); }}>
                   Carta
                 </a>
               </li>

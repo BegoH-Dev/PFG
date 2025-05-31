@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Carta from './pages/Carta';
 import Novedades from './pages/Novedades';
+import Pedidos from './pages/Pedidos';
 import OrderForm from './pages/OrderForm';
 import ReservationForm from './pages/ReservationForm';
 import Registro from './pages/Registro';
@@ -19,6 +20,7 @@ function App() {
           <Route path="/order" element={<OrderForm />} />
           <Route path="/reserve" element={<ReservationForm />} />
           <Route path="/Registro" element={<Registro />} />
+          <Route path="/Pedidos" element={<Pedidos />} />
           <Route path="/InicioSesion" element={<InicioSesion />} />
         </Routes>
       </main>

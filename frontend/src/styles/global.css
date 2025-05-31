@@ -27,8 +27,6 @@
   max-width: 25%; 
   padding: 0 15px;
 }
-    
-
 
 .col-lg-4 { flex: 0 0 33.333333%; max-width: 33.333333%; padding: 0 15px; }
     .col-lg-8 { flex: 0 0 66.666667%; max-width: 66.666667%; padding: 0 15px; }
@@ -550,4 +548,45 @@
 
 .logout-item:hover {
   background-color: #fff
+}
+
+/* CARTA */
+.menu-category {
+  transition: all 0.3s ease;
+}
+
+.category-header {
+  cursor: pointer;
+}
+
+.dish-header {
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  color: white;
+}
+
+.modal-image {
+  border-radius: 8px;
 }
