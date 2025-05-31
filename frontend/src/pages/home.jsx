@@ -92,13 +92,13 @@ const Home = () => {
       id: 1,
       titulo: "Entrega rápida",
       descripcion: "El hambre no espera, y nosotros tampoco: preparamos y entregamos tu pedido rápido y con el mismo cuidado que en el restaurante.",
-      imagen: "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=400&h=250&fit=crop"
+      imagen: "/images/entrega-rapida.jpeg"
     },
     {
       id: 2,
       titulo: "Menú variado",
-      descripcion: "Cada opción en nuestro menú está diseñada para sorprenderte y hacerte volver por más. ¡Descubre algo nuevo cada día!.",
-      imagen: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=250&fit=crop"
+      descripcion: "Cada opción en nuestro menú está diseñada para sorprenderte y hacerte volver por más. ¡Descubre algo nuevo cada día!",
+      imagen: "/images/menu-variado.jpeg"
     },
     {
       id: 3,
@@ -268,28 +268,28 @@ const Home = () => {
           <div className="row g-4">
             {[
               {
-                title: 'Tartar de atún rojo con aguacate',
-                image: '/images/tartar-de-atun-rojo-con-aguacate.jpeg',
-                rating: 4.5,
-                orders: 120,
-              },
-              {
-                title: 'Ensalada césar con pollo y lascas de parmesano',
-                image: '/images/ensalada-cesar-con-pollo-y-lascas-de-parmesano.jpeg',
-                rating: 4.7,
-                orders: 95,
-              },
-              {
-                title: 'Combo sushi del chef (16 piezas variadas)',
-                image: '/images/combo-sushi-del-chef-16-piezas-variadas.jpeg',
+                title: 'Ensalada de quinoa con hummus y vinagreta cítrica',
+                image: '/images/9.jpeg',
                 rating: 4.8,
-                orders: 110,
+                orders: 89,
               },
               {
-                title: 'Espaguetis con mariscos al ajillo',
-                image: '/images/espaguetis-con-mariscos-al-ajillo.jpeg',
+                title: 'Uramaki tempurizado de langostino y mayonesa picante',
+                image: '/images/11.jpeg',
                 rating: 4.9,
-                orders: 150,
+                orders: 156,
+              },
+              {
+                title: 'Pechuga de pollo rellena de espinacas y queso',
+                image: '/images/17.jpeg',
+                rating: 4.7,
+                orders: 203,
+              },
+              {
+                title: 'Zamburiñas gratinadas al horno',
+                image: '/images/23.jpeg',
+                rating: 4.6,
+                orders: 142,
               },
             ].map((card, index) => (
               <div key={index} className="col-lg-3 col-md-6">
