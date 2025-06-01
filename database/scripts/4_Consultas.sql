@@ -83,7 +83,7 @@ FROM mesas m
 WHERE m.id NOT IN (
     SELECT mesa_id
     FROM reservas
-    WHERE fecha_hora = '2025-06-10 20:00:00'  -- reemplaza por la fecha/hora deseada
+    WHERE fecha_hora = '2025-06-10 20:00:00'  -- reemplazar por la fecha/hora deseada
       AND estado != 'cancelada'
 );
 
