@@ -326,12 +326,10 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
 app.post('/auth/register', async (req, res) => {
   const { nombre, apellidos, nombre_usuario, email, contraseña, acepta_terminos, fecha_nacimiento } = req.body;
 
-  // Validaciones de campos requeridos
   if (!nombre || !apellidos || !email || !contraseña) {
     return res.status(400).json({ message: "Faltan campos requeridos" });
   }
 
-  // Validación de términos y fecha de nacimiento
   if (!acepta_terminos) {
     return res.status(400).json({ error: 'Debes aceptar los términos y condiciones' });
   }
@@ -340,7 +338,6 @@ app.post('/auth/register', async (req, res) => {
     return res.status(400).json({ error: 'La fecha de nacimiento es obligatoria' });
   }
 
-  // Validación de usuario ya existente
   const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
   if (existe.rows.length > 0) {
     return res.status(401).json({ message: 'Ya existe un usuario con ese email' });

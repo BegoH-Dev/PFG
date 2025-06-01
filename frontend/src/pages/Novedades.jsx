@@ -245,7 +245,7 @@ const Novedades = () => {
           {/* Primera fila - 2 tarjetas */}
           <div className="row g-4 mb-4">
             {novedades.slice(0, 4).map((novedad) => (
-              <div key={novedad.id} className="col-lg-3 col-md-6">
+              <div key={novedad.id} className="col-lg-3 col-md-6 mx-auto">
               <div 
                 className="featured-card h-100" 
                 onClick={() => {
@@ -279,7 +279,7 @@ const Novedades = () => {
           {/* Segunda fila - 2 tarjetas */}
           <div className="row g-4 mb-4">
             {novedades.slice(4, 8).map((novedad) => (
-              <div key={novedad.id} className="col-lg-3 col-md-6">
+              <div key={novedad.id} className="col-lg-3 col-md-6 mx-auto">
                               <div 
                 className="featured-card h-100" 
                 onClick={() => {
@@ -313,7 +313,7 @@ const Novedades = () => {
           {/* Tercera fila - 1 tarjeta centrada */}
           <div className="row g-4 mb-5 justify-content-center">
             {novedades.slice(8, 10).map((novedad) => (
-              <div key={novedad.id} className="col-lg-3 col-md-6">
+              <div key={novedad.id} className="col-lg-3 col-md-6 mx-auto">
                 <div className="featured-card h-100" onClick={() => { setSelectedDish(novedad); setShowModal(true); }} style={{ cursor: 'pointer' }}>                  
                 <div className="card-image" style={{ backgroundImage: `url(${novedad.imagen})`, height: '200px', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
                   <div className="card-content p-3">
