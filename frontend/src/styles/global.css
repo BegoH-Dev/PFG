@@ -28,8 +28,18 @@
   padding: 0 15px;
 }
 
-.col-lg-4 { flex: 0 0 33.333333%; max-width: 33.333333%; padding: 0 15px; }
-    .col-lg-8 { flex: 0 0 66.666667%; max-width: 66.666667%; padding: 0 15px; }
+.col-lg-4 { 
+  flex: 0 0 33.333333%; 
+  max-width: 33.333333%; 
+  padding: 0 15px; 
+}
+    
+.col-lg-8 { 
+  flex: 0 0 66.666667%; 
+  max-width: 66.666667%; 
+  padding: 0 15px; 
+}
+
     .col-md-6 { flex: 0 0 50%; max-width: 50%; padding: 0 15px; }
     .col-sm-12 { flex: 0 0 100%; max-width: 100%; padding: 0 15px; }
     
@@ -38,7 +48,7 @@
     }
     @media (max-width: 767px) {
       .col-md-6 { flex: 0 0 100%; max-width: 100%; }
-    }
+}
 
 
 /* BARRA DE NAVEGACIÓN */
@@ -65,9 +75,6 @@
     .btn-lg { padding: 0.5rem 1rem; font-size: 1.25rem; border-radius: 0.3rem; }
     .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; }
     
-    .card { position: relative; display: flex; flex-direction: column; min-width: 0; word-wrap: break-word; background-color: #fff; background-clip: border-box; border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; }
-    .card-body { flex: 1 1 auto; padding: 1rem; }
-    .card-text:last-child { margin-bottom: 0; }
     
     .d-flex { display: flex !important; }
     .flex-column { flex-direction: column !important; }
@@ -179,7 +186,8 @@
       transform: translateY(-2px);
     }
 
-    /* Estilos para el slider de hero */
+
+/* Estilos para el slider de hero */
     .hero-slider {
       position: relative;
       width: 100%;
@@ -323,10 +331,22 @@
     }
 
 .featured-card p {
-      color: #666;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
+  color: #000;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.card { 
+  position: relative; 
+  display: flex; 
+  flex-direction: column; 
+  min-width: 0; 
+  word-wrap: break-word; 
+  background-color: #fff; 
+  background-clip: border-box; 
+  border: 1px solid rgba(0,0,0,.125); 
+  border-radius: 0.25rem; 
+}
 
 .card-image {
   height: 150px;
@@ -337,6 +357,7 @@
 .card-content {
   padding: 16px;
   text-align: center;
+  color: black;
 }
 
 .card-content h3 {
@@ -346,6 +367,11 @@
 .card-content p {
   margin: 4px 0;
 }
+
+.card-text:last-child { 
+  margin-bottom: 0; 
+}
+
 
 /* ESTILOS DE SECCIÓN DE MENSAJES DE HOME */
 .mensajes-section {
@@ -363,7 +389,7 @@
 }
 
 .card-title, .card-text {
-  color: #fff;
+  color: #000;
   margin-bottom: 0.5rem;
 }
 
@@ -403,6 +429,7 @@
 
     .card-body {
       padding: 20px;
+      flex: 1 1 auto; 
     }
 
     .footer-title {
@@ -550,6 +577,7 @@
   background-color: #fff
 }
 
+
 /* CARTA */
 .menu-category {
   transition: all 0.3s ease;
@@ -562,6 +590,7 @@
 .dish-header {
   cursor: pointer;
 }
+
 
 /* MODAL */
 .modal-overlay {

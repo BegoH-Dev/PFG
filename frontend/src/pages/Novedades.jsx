@@ -295,12 +295,12 @@ const Novedades = () => {
                     backgroundPosition: 'center'
                   }}></div>
                   <div className="card-content p-3">
-                    <h5 className="text-light mb-2" style={{ fontSize: '1rem', fontWeight: '600' }}>
+                    <h5 className="text-black mb-2" style={{ fontSize: '1rem', fontWeight: '600' }}>
                       {novedad.nombre}
                     </h5>
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="text-warning">⭐ {novedad.puntuacion}</span>
-                      <span className="text-light" style={{ fontSize: '0.9rem' }}>
+                      <span className="text-black" style={{ fontSize: '0.9rem' }}>
                         Pedidos: {novedad.pedidos}
                       </span>
                     </div>

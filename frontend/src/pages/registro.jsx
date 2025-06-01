@@ -27,7 +27,7 @@ const Registro = () => {
       return;
     }
       try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/register`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -36,12 +36,21 @@ const Registro = () => {
       const data = await response.json();
         if (response.ok) {
           alert(data.message);
+          setFormData({
+            nombre: '',
+            apellidos: '',
+            nombre_usuario: '',
+            email: '',
+            fecha_nacimiento: '',
+            contraseña: '',
+            acepta_terminos: false
+          });
         } else {
-          alert(data.error || 'Error al registrar el usuario');
+          alert(data.error || data.message || 'Error al registrar el usuario');
         }
       } catch (error) {
-      console.error('Error:', error);
-      alert('Error al conectar con el servidor');
+        console.error('Error:', error);
+        alert('Error al conectar con el servidor');
       }
   };
 

@@ -324,30 +324,42 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
 
 
 app.post('/auth/register', async (req, res) => {
-  const { nombre, apellidos, email, contraseña } = req.body;
+  const { nombre, apellidos, nombre_usuario, email, contraseña, acepta_terminos, fecha_nacimiento } = req.body;
 
+  // Validaciones de campos requeridos
   if (!nombre || !apellidos || !email || !contraseña) {
     return res.status(400).json({ message: "Faltan campos requeridos" });
   }
 
+  // Validación de términos y fecha de nacimiento
+  if (!acepta_terminos) {
+    return res.status(400).json({ error: 'Debes aceptar los términos y condiciones' });
+  }
+
+  if (!fecha_nacimiento) {
+    return res.status(400).json({ error: 'La fecha de nacimiento es obligatoria' });
+  }
+
+  // Validación de usuario ya existente
   const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
-    if (existe.rows.length > 0) {
-      return res.status(401).json({ message: 'Ya existe un usuario con ese email' });
-    }
+  if (existe.rows.length > 0) {
+    return res.status(401).json({ message: 'Ya existe un usuario con ese email' });
+  }
 
   try {
     const hashedPassword = await bcrypt.hash(contraseña, 10);
     const result = await pool.query(
-      'INSERT INTO usuarios (nombre, apellidos, email, contraseña, rol) VALUES ($1, $2, $3, $4) RETURNING *',
-      [nombre, apellidos, email, hashedPassword, 'cliente']
+      `INSERT INTO usuarios (nombre, apellidos, nombre_usuario, email, contraseña, rol, acepta_terminos, fecha_nacimiento) 
+      VALUES ($1, $2, $3, $4, $5, 'cliente', $6, $7) RETURNING *`,
+      [nombre, apellidos, nombre_usuario, email, hashedPassword, acepta_terminos, fecha_nacimiento]
     );
     const { id } = result.rows[0];
     res.status(201).json({ 
       message: "Registrado con éxito", 
       user: { id, email } 
     });
-    } catch (err) {
-      console.error('Error en registro:', err.message);
+  } catch (err) {
+    console.error('Error en registro:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
