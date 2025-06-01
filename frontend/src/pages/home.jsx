@@ -82,9 +82,7 @@ const Home = () => {
 
   const handleDropdownItemClick = (action) => {
     setShowDropdown(false);
-    // Aquí puedes agregar la navegación según la acción
     console.log(`Navegando a: ${action}`);
-    // Ejemplo: navigate(`/${action}`);
   };
 
   const mensajes = [
@@ -115,11 +113,7 @@ const Home = () => {
       <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
         <div className="container">
           <a className="navbar-brand" href="#home">
-            <img 
-              src="/images/Logo_Book_Bite.png" 
-              alt="Logo" 
-              style={{ height: '100px' }}
-            />
+            <img src="/images/Logo_Book_Bite.png" alt="Logo" style={{ height: '100px' }}/>
           </a>
           
           <button
@@ -132,8 +126,7 @@ const Home = () => {
               } else {
                 navbarNav.classList.add('show');
               }
-            }}
-          >
+            }}>
             <span className="navbar-toggler-icon"></span>
           </button>
           
@@ -143,7 +136,17 @@ const Home = () => {
                 <a className="nav-link" href="#home" onClick={() => scrollToSection('home')}>
                   Inicio
                 </a>
-              </li>  
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/reservas'); }}>
+                  Reservas
+                </a>
+              </li> 
+              <li className="nav-item">
+                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/pedidos'); }}>
+                  Pedidos
+                </a>
+              </li>   
               <li className="nav-item">
                 <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/carta'); }}>
                   Carta
