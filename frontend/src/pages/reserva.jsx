@@ -171,7 +171,7 @@ const Reserva = () => {
 
        {/* CONTENIDO PRINCIPAL */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-        <h1 style={{ textAlign: 'center', margin: '2rem', color: '#333' }}>Pedido a domicilio</h1>
+        <h1 style={{ textAlign: 'center', margin: '2rem', color: '#333' }}>Reserva de mesa</h1>
 
         {/* INDICADOR DE PASOS */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
@@ -194,25 +194,8 @@ const Reserva = () => {
             <div style={{ width: '50px', height: '2px', backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd' }}></div>
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd',
-                color: activeStep >= 2 ? '#000' : '#666',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
-              }}>2</div>
-              <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 2 ? '#D4AF37' : '#666' }}>Datos de entrega</span>
-            </div>
-            
-            <div style={{ width: '50px', height: '2px', backgroundColor: activeStep >= 3 ? '#D4AF37' : '#ddd' }}></div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 3 ? '#D4AF37' : '#ddd', color: activeStep >= 3 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-              }}>3</div>
+              }}>2</div>
               <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 3 ? '#D4AF37' : '#666' }}>Confirmación</span>
             </div>
           </div>
