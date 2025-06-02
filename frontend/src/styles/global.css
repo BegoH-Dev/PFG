@@ -732,6 +732,92 @@ ul {
   background-color: #fff
 }
 
+/* RESERVA */
+.guest-selector {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+          
+.calendar-widget {
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
+        
+.calendar-grid {
+  width: 100%;
+}
+        
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 0.5rem;
+}
+        
+.calendar-weekday {
+  text-align: center;
+  font-weight: bold;
+  padding: 0.5rem;
+  color: var(--gold);
+}
+        
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+        
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+        
+.calendar-day.selectable:hover {
+  background-color: var(--gold);
+  color: white;
+}
+        
+.calendar-day.selected {
+  background-color: var(--gold);
+  color: white;
+  font-weight: bold;
+}
+        
+.calendar-day.today {
+  background-color: #e3f2fd;
+  font-weight: bold;
+}
+        
+.calendar-day.past-date {
+  color: #ccc;
+  cursor: not-allowed;
+}
+        
+.calendar-day.other-month {
+  color: #999;
+}
+        
+.time-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+        
+.time-slot {
+  width: 100%;
+  text-align: center;
+}
+        
+.reservation-summary {
+  border-left: 4px solid var(--gold);
+}
 
 /* CARTA */
 .menu-category {

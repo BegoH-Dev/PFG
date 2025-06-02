@@ -572,7 +572,8 @@ const isFormValid = () =>
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       {/* NAVBAR */}
       <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
-      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
+      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} 
+      navigate={navigate}/>
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         <h1 style={{ textAlign: 'center', margin: '2rem', color: '#333' }}>Pedido a domicilio</h1>
