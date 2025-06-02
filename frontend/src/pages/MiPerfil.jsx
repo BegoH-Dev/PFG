@@ -10,12 +10,7 @@ const MiPerfil = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
-    const [usuario, setUsuario] = useState({
-        nombre: '',
-        email: '',
-        telefono: '',
-        direccion: ''
-    });
+    const [usuario, setUsuario] = useState({ nombre: '', email: '', telefono: '', direccion: '' });
     const [pedidosHistorial, setPedidosHistorial] = useState([]);
     const [reservasHistorial, setReservasHistorial] = useState([]);
     const [activeTab, setActiveTab] = useState('perfil');
@@ -138,8 +133,9 @@ const MiPerfil = () => {
 
     return (
        <>      
-        {/* Navbar */}
-        <Navbar isLoggedIn={isLoggedIn} username={username} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick}/>
+      {/* Navbar */}
+      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
+      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
 
         <div className="container mt-5 pt-5">
         <div className="row">

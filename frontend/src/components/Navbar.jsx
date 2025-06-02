@@ -69,7 +69,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
               </button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/reservas')}>
+              <button className="nav-link btn btn-link" onClick={() => navigate('/reserva')}>
                 Reservas
               </button>
             </li>

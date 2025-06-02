@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Paso1Carro from '../components/Paso1Carro';
+import Paso2DatosEnvio from '../components/Paso2DatosEnvio';
+import Paso3Confirmacion from '../components/Paso3Confirmacion';
 
 const Pedidos = () => {
   const location = useLocation();
@@ -21,7 +24,7 @@ const Pedidos = () => {
   const dropdownRef = useRef(null);
 
   // Productos disponibles
-const [productos, setProductos] = useState({      
+const [productos] = useState({      
   '🍽️ ENTRANTES': [{
         id: 1,
         name: 'Jamón ibérico de bellota con pan de cristal y tomate',
@@ -508,7 +511,9 @@ useEffect(() => {
       email: userData.email || ''
     }));
   }
-}, [userData]);
+}, [
+  userData, deliveryData.firstName, deliveryData.lastName, deliveryData.address, deliveryData.phone, deliveryData.email
+]);
 
 useEffect(() => {
   const storedUserData = localStorage.getItem('userData');
@@ -565,14 +570,14 @@ const isFormValid = () =>
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      {/* Navbar */}
+      {/* NAVBAR */}
       <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
       setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
-      {/* Main Content */}
+      {/* CONTENIDO PRINCIPAL */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         <h1 style={{ textAlign: 'center', margin: '2rem', color: '#333' }}>Pedido a domicilio</h1>
 
-        {/* Steps Indicator */}
+        {/* INDICADOR DE PASOS */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -617,533 +622,30 @@ const isFormValid = () =>
           </div>
         </div>
 
-        {/* Step 1: Cart */}
+        {/* PASO 1: CARRO */}
         {activeStep === 1 && (
-          <div style={{ 
-            backgroundColor: '#fff', 
-            borderRadius: '12px', 
-            padding: '2rem', 
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            border: '1px solid #e0e0e0'
-          }}>
-            <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Lista de pedidos</h3>
-            
-            {/* Display selected dish from navigation */}
-            {selectedDish && (
-              <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
-                <h4 style={{ margin: 0 }}>{selectedDish.nombre}</h4>
-                <p style={{ margin: 0, color: '#555' }}>{selectedDish.descripcion}</p>
-                <p style={{ margin: 0, color: '#888' }}>{selectedDish.allergenText}</p>
-                    <img src={selectedDish.image} alt={selectedDish.nombre} style={{ maxWidth: '100%', height: 'auto', marginTop: '0.5rem' }} />
-              </div>
-            )}
-
-            {/* Add Product Section */}
-            <div style={{ marginBottom: '2rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'end', flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Producto</label>
-                  <select 
-                    value={selectedProduct}
-                    onChange={(e) => setSelectedProduct(e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '0.75rem', 
-                      border: '1px solid #ddd', 
-                      borderRadius: '4px',
-                      fontSize: '1rem'
-                    }}
-                  >
-                    <option value="">Seleccionar producto...</option>
-                      {productosArray.map(producto => (
-                        <option key={producto.id} value={producto.id}>
-                          {producto.name} - {parseFloat(producto.price.replace(',', '.')).toFixed(2)} €
-                        </option>
-                        ))}
-                  </select>
-                </div>
-                <button onClick={addToCart} disabled={!selectedProduct} style={botonEstilo}>
-                  Añadir producto
-                </button>
-              </div>
-            </div>
-
-            {/* Cart Items */}
-            {cartItems.length > 0 ? (
-              <div style={{ marginBottom: '2rem' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f8f9fa' }}>
-                      <th style={{ padding: '1rem', textAlign: 'left', border: '1px solid #ddd' }}>Producto</th>
-                      <th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #ddd' }}>Cantidad</th>
-                      <th style={{ padding: '1rem', textAlign: 'right', border: '1px solid #ddd' }}>Suma</th>
-                      <th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #ddd' }}>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cartItems.map(item => {
-                      const priceNum = parseFloat(item.price.replace(',', '.')) || 0;
-                      const totalPrice = (priceNum * item.quantity).toFixed(2);
-                      return (
-                        <tr key={item.id}>
-                          <td style={{ padding: '1rem', border: '1px solid #ddd' }}>
-                            <div>
-                              <strong>{item.name}</strong>
-                              <p style={{ fontSize: '0.9rem', color: '#555' }}>{item.description}</p>
-                              <p style={{ fontSize: '0.8rem', color: '#888' }}>{item.allergenText}</p>
-                            </div>
-                          </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #ddd' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                              <button
-                                onClick={() => updateQuantity(item.id, -1)}
-                                disabled={item.quantity <= 1}
-                                style={{
-                                  padding: '0.25rem 0.75rem',
-                                  borderRadius: '4px',
-                                  border: 'none',
-                                  cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
-                                  backgroundColor: '#D4AF37',
-                                  color: '#000',
-                                }}
-                                aria-label={`Disminuir cantidad de ${item.name}`}
-                              >
-                                -
-                              </button>
-                              <span>{item.quantity}</span>
-                              <button
-                                onClick={() => updateQuantity(item.id, 1)}
-                                style={{
-                                  padding: '0.25rem 0.75rem',
-                                  borderRadius: '4px',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  backgroundColor: '#D4AF37',
-                                  color: '#000',
-                                }}
-                                aria-label={`Aumentar cantidad de ${item.name}`}
-                              >
-                                +
-                              </button>
-                            </div>
-                          </td>
-                          <td style={{ padding: '1rem', textAlign: 'right', border: '1px solid #ddd' }}>
-                            {totalPrice} €
-                          </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #ddd' }}>
-                            <button
-                              onClick={() => removeFromCart(item.id)}
-                              style={{
-                                padding: '0.25rem 0.75rem',
-                                borderRadius: '4px',
-                                border: 'none',
-                                cursor: 'pointer',
-                                backgroundColor: '#D4AF37',
-                                color: '#000',
-                              }}
-                              aria-label={`Eliminar ${item.name} del carrito`}
-                            >
-                              Eliminar
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '2px solid #D4AF37' }}>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Total</span>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#D4AF37' }}>{getTotalPrice().toFixed(2)}€</span>
-                </div>
-                
-                <div style={{ textAlign: 'right', marginTop: '1.5rem' }}>
-                  <button 
-                    onClick={nextStep}
-                    disabled={cartItems.length === 0}
-                    style={{ 
-                      backgroundColor: '#D4AF37', 
-                      color: '#000', 
-                      border: 'none', 
-                      padding: '0.75rem 2rem', 
-                      borderRadius: '4px', 
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Continuar
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#666' }}>
-                <p>Tu carrito está vacío. ¡Añade algunos productos para continuar!</p>
-              </div>
-            )}
-          </div>
+          <Paso1Carro cartItems={cartItems} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct}
+            productosArray={productosArray} addToCart={addToCart} updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart} getTotalPrice={getTotalPrice} selectedDish={selectedDish}
+            botonEstilo={botonEstilo} nextStep={nextStep}
+          />
         )}
 
-        {/* Step 2: Delivery Data */}
+        {/* PASO 2: DATOS DE ENVÍO */}
         {activeStep === 2 && (
-          <div style={{ 
-            backgroundColor: '#fff',
-            borderRadius: '12px',
-            padding: '2rem',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            border: '1px solid #e0e0e0',
-            display: 'flex',
-            gap: '2rem'
-          }}>
+          <Paso2DatosEnvio deliveryData={deliveryData} handleDeliveryChange={handleDeliveryChange}
+            isFormValid={isFormValid} isLoggedIn={isLoggedIn} clearDeliveryData={clearDeliveryData}
+            prevStep={prevStep} nextStep={nextStep} isPaymentValid={isPaymentValid}
+          />
+        )}
 
-          {/* Sección Datos de Entrega */}
-            <div style={{ flex: 1, minWidth: '300px' }}>
-            <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Datos de entrega</h3>
-            
-            <div style={{ display: 'grid', gap: '1.5rem', maxWidth: '600px' }}>
-              <div>
-                <label>Nombre *</label>
-                <input
-                  type="text"
-                  value={deliveryData.firstName}
-                  onChange={(e) => handleDeliveryChange('firstName', e.target.value)}
-                  placeholder="Ej: Juan"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div>
-                <label>Apellidos *</label>
-                <input
-                  type="text"
-                  value={deliveryData.lastName}
-                  onChange={(e) => handleDeliveryChange('lastName', e.target.value)}
-                  placeholder="Ej: Pérez Gómez"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}/>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-                  Dirección de entrega *
-                </label>
-                <input
-                  type="text"
-                  value={deliveryData.address}
-                  onChange={(e) => handleDeliveryChange('address', e.target.value)}
-                  placeholder="Ej: Calle Mayor 123, 2º B"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-                  Teléfono de contacto *
-                </label>
-                <input
-                  type="tel"
-                  value={deliveryData.phone}
-                  onChange={(e) => handleDeliveryChange('phone', e.target.value)}
-                  placeholder="Ej: +34 123 456 789"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div>
-                <label>Correo electrónico *</label>
-                <input
-                  type="email"
-                  value={deliveryData.email}
-                  onChange={(e) => handleDeliveryChange('email', e.target.value)}
-                  placeholder="Ej: juan@email.com"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-                  Notas adicionales (opcional)
-                </label>
-                <textarea
-                  value={deliveryData.notes}
-                  onChange={(e) => handleDeliveryChange('notes', e.target.value)}
-                  placeholder="Ej: 2º piso, portero automático, sin cebolla..."
-                  rows={4}
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.75rem', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    fontSize: '1rem',
-                    resize: 'vertical'
-                  }}
-                />
-              </div>
-              {isLoggedIn && (
-                <button onClick={clearDeliveryData}>
-                  Cambiar datos
-                </button>
-              )}              
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
-              <button 
-                onClick={prevStep}
-                style={{ 
-                  backgroundColor: '#6c757d', 
-                  color: '#fff', 
-                  border: 'none', 
-                  padding: '0.75rem 2rem', 
-                  borderRadius: '4px', 
-                  cursor: 'pointer',
-                  fontSize: '1rem'
-                }}
-              >
-                Volver
-              </button>
-              <button 
-                onClick={nextStep}
-                disabled={!deliveryData.firstName || !deliveryData.lastName || !deliveryData.email || !deliveryData.address || !deliveryData.phone || !isPaymentValid() || !isFormValid()}
-                style={{ 
-                  backgroundColor: deliveryData.address && deliveryData.phone && isFormValid() ? '#D4AF37' : '#ccc', 
-                  color: deliveryData.address && deliveryData.phone && isFormValid() ? '#000' : '#666',
-                  border: 'none', 
-                  padding: '0.75rem 2rem', 
-                  borderRadius: '4px', 
-                  cursor: deliveryData.address && deliveryData.phone && isFormValid() ? 'pointer' : 'not-allowed',
-                  fontSize: '1rem',
-                  fontWeight: '500'
-                }}
-              >
-                Continuar
-              </button>
-            </div>
-          </div>
-        
-      {/* Línea divisoria */}
-      <div style={{ width: '1px', backgroundColor: '#ddd' }} />
-
-      {/* Sección Método de Pago (la añadimos luego) */}
-      <div style={{ flex: 1 }}>
-        <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Método de pago</h3>
-
-        <div style={{ display: 'grid', gap: '1rem', maxWidth: '600px' }}>
-          <div>
-            <label style={{ fontWeight: '500', marginBottom: '0.5rem', display: 'block' }}>
-              Selecciona un método *
-            </label>
-            <select
-              value={deliveryData.paymentMethod}
-              onChange={(e) => handleDeliveryChange('paymentMethod', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem'
-              }}
-            >
-              <option value="">Selecciona una opción</option>
-              <option value="cash">Efectivo</option>
-              <option value="card">Tarjeta</option>
-              <option value="paypal">PayPal</option>
-            </select>
-          </div>
-
-          {deliveryData.paymentMethod === 'card' && (
-            <>
-              <div>
-                <label>Titular de la tarjeta *</label>
-                <input
-                  type="text"
-                  value={deliveryData.cardName}
-                  onChange={(e) => handleDeliveryChange('cardName', e.target.value)}
-                  placeholder="Ej: Juan Pérez"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div>
-                <label>Número de tarjeta *</label>
-                <input
-                  type="text"
-                  value={deliveryData.cardNumber}
-                  onChange={(e) => handleDeliveryChange('cardNumber', e.target.value)}
-                  placeholder="Ej: 1234 5678 9012 3456"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '1rem'
-                  }}
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label>Fecha de vencimiento *</label>
-                  <input
-                    type="text"
-                    value={deliveryData.cardExpiry}
-                    onChange={(e) => handleDeliveryChange('cardExpiry', e.target.value)}
-                    placeholder="MM/AA"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px',
-                      fontSize: '1rem'
-                    }}/>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label>CVV *</label>
-                  <input
-                    type="text"
-                    value={deliveryData.cardCVV}
-                    onChange={(e) => handleDeliveryChange('cardCVV', e.target.value)}
-                    placeholder="123"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px',
-                      fontSize: '1rem'
-                    }}/>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+        {/* PASO 3: CONFIRMACIÓN */}
+        {activeStep === 3 && (
+        <Paso3Confirmacion cartItems={cartItems} deliveryData={deliveryData} getTotalPrice={getTotalPrice}
+          handleFinalizeOrder={handleFinalizeOrder} prevStep={prevStep}
+        />
+        )}
       </div>
-    </div>
-  )}
-
-  {/* PASO 3: CONFIRMACIÓN */}
-  {activeStep === 3 && (
-    <div style={{ 
-      backgroundColor: '#fff', 
-      borderRadius: '12px', 
-      padding: '2rem', 
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      border: '1px solid #e0e0e0'
-    }}>
-      <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Confirmación del pedido</h3>
-      
-      <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-        {/* Order Summary */}
-        <div style={{ flex: 1, minWidth: '300px' }}>
-          <h5 style={{ marginBottom: '1rem', color: '#D4AF37' }}>Resumen del pedido</h5>
-          {cartItems.map(item => (
-            <div key={item.id} style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              marginBottom: '0.5rem', 
-              padding: '0.5rem 0'
-            }}>
-              <span>{item.name} x{item.quantity}</span>
-              <span>{(parseFloat(item.price.toString().replace(',', '.')) * item.quantity).toFixed(2)}€</span>
-            </div>
-          ))}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            marginTop: '1rem', 
-            borderTop: '2px solid #D4AF37', 
-            paddingTop: '1rem'
-          }}>
-            <strong>Total</strong>
-            <strong style={{ color: '#D4AF37' }}>{getTotalPrice().toFixed(2)}€</strong>
-          </div>
-        </div>
-
-        {/* DETALLES DE ENVÍO */}
-        <div style={{ flex: 1, minWidth: '300px' }}>
-          <h5 style={{ marginBottom: '1rem', color: '#D4AF37' }}>Datos de entrega</h5>
-          <p><strong>Nombre:</strong> {deliveryData.firstName} {deliveryData.lastName}</p>
-          <p><strong>Email:</strong> {deliveryData.email}</p>
-          <p><strong>Teléfono:</strong> {deliveryData.phone}</p>
-          <p><strong>Dirección:</strong> {deliveryData.address}</p>
-          <p><strong>Teléfono:</strong> {deliveryData.phone}</p>
-          {deliveryData.notes && <p><strong>Notas:</strong> {deliveryData.notes}</p>}
-          <p><strong>Método de pago:</strong> {
-            deliveryData.paymentMethod === 'cash' ? 'Efectivo' :
-            deliveryData.paymentMethod === 'paypal' ? 'PayPal' :
-            'Tarjeta de crédito'
-          }</p>
-          {deliveryData.paymentMethod === 'card' && (
-            <>
-              <p><strong>Titular:</strong> {deliveryData.cardName}</p>
-              <p><strong>Número:</strong> **** **** **** {deliveryData.cardNumber?.slice(-4)}</p>
-              <p><strong>Expira:</strong> {deliveryData.cardExpiry}</p>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
-        <button 
-          onClick={prevStep}
-          style={{ 
-            backgroundColor: '#6c757d', 
-            color: '#fff', 
-            border: 'none', 
-            padding: '0.75rem 2rem', 
-            borderRadius: '4px', 
-            cursor: 'pointer',
-            fontSize: '1rem'
-          }}
-        >
-          Volver
-        </button>
-        <button 
-          onClick={handleFinalizeOrder}
-          style={{ 
-            backgroundColor: '#D4AF37', 
-            color: '#000', 
-            border: 'none', 
-            padding: '0.75rem 2rem', 
-            borderRadius: '4px', 
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Confirmar pedido
-        </button>
-      </div>
-    </div>
-  )}
-  </div>
-
     {/* FOOTER */}
     <Footer />
   </div>

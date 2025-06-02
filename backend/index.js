@@ -71,6 +71,19 @@ app.post('/pedidos', async (req, res) => {
   }
 });
 
+app.get('/pedidos/:usuario_id', async (req, res) => {
+  const { usuario_id } = req.params;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY fecha DESC',
+      [usuario_id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener pedidos:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get('/productos/alergenos', async (req, res) => {
   try {
