@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
+// Importación de páginas
 import Home from './pages/Home';
 import Carta from './pages/Carta';
 import Novedades from './pages/Novedades';
