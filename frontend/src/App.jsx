@@ -8,6 +8,8 @@ import OrderForm from './pages/OrderForm';
 import ReservationForm from './pages/ReservationForm';
 import Registro from './pages/Registro';
 import InicioSesion from './pages/InicioSesion';
+import MiPerfil from './pages/MiPerfil';
+import Reserva from './pages/Reserva';
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
           <Route path="/reserve" element={<ReservationForm />} />
           <Route path="/Registro" element={<Registro />} />
           <Route path="/Pedidos" element={<Pedidos />} />
+          <Route path="/Reserva" element={<Reserva />} />
           <Route path="/InicioSesion" element={<InicioSesion />} />
+          <Route path="/mi-perfil" element={<MiPerfil />} />
         </Routes>
       </main>
     </div>

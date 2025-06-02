@@ -7,6 +7,7 @@ const Carta = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [expandedDish, setExpandedDish] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -30,6 +31,14 @@ const Carta = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const scrollToSection = (sectionId) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -409,19 +418,29 @@ const Carta = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <a className="nav-link" onClick={() => navigate('/')}>
+                <button className="nav-link btn btn-link" onClick={() => navigate('/')}>
                   Inicio
-                </a>
-              </li>  
-              <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/carta'); }}>
-                  Carta
-                </a>
+                </button>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/novedades'); }}>
-                  Novedades
-                </a>
+                <button className="nav-link btn btn-link" onClick={() => navigate('/reservas')}>
+                Reservas
+                </button>
+              </li> 
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate('/pedidos')}>
+                Pedidos
+                </button>
+              </li>   
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate('/carta')}>
+                Carta
+                </button>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate('/novedades')}>
+                Novedades
+                </button>
               </li>
             </ul>
             
@@ -488,7 +507,7 @@ const Carta = () => {
       {/* Hero Section */}
       <section className="hero-section" style={{ 
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', 
-        paddingTop: '250px', 
+        paddingTop: '120px', 
         paddingBottom: '80px'
       }}>
         <div className="container" style={{ 
@@ -681,7 +700,11 @@ const Carta = () => {
             <div className="col-lg-2 col-md-6 mb-4">
               <h6 className="footer-title">Enlaces</h6>
               <ul className="list-unstyled">
-                <li><a href="#" className="footer-link">Inicio</a></li>
+                <li>
+                  <a href="#" className="footer-link">
+                    Inicio
+                  </a>
+                </li>
                 <li><a href="#" className="footer-link">Menú</a></li>
                 <li><a href="#" className="footer-link">Reservas</a></li>
                 <li><a href="#" className="footer-link">Pedidos</a></li>

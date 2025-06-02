@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import '../styles/global.css';
 
 const Home = () => {
@@ -39,7 +40,7 @@ const Home = () => {
       description: 'La mejor comida, con el sabor de siempre, directo a tu mesa.',
       image: '/images/pedido.png',
       buttonText: 'Haz tu pedido',
-      buttonAction: 'pedido',    
+      buttonAction: 'pedidos',    
     },
     {
       title: 'Ven a conocernos',
@@ -65,6 +66,7 @@ const Home = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  // Función para desplazarse a una sección específica
   const scrollToSection = (sectionId) => {
     setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
@@ -80,10 +82,25 @@ const Home = () => {
     window.location.reload();
   };
 
-  const handleDropdownItemClick = (action) => {
-    setShowDropdown(false);
-    console.log(`Navegando a: ${action}`);
-  };
+const handleDropdownItemClick = (action) => {
+  console.log('Dropdown clicked:', action);
+  setShowDropdown(false);
+  
+  switch (action) {
+    case 'perfil':
+      navigate('/mi-perfil');
+      break;
+    case 'mis-reservas':
+      navigate('/mis-reservas');
+      break;
+    case 'mis-pedidos':
+      navigate('/mis-pedidos');
+      break;
+    default:
+      console.log(`Navegando a: ${action}`);
+      break;
+  }
+};
 
   const mensajes = [
     {
@@ -110,114 +127,7 @@ const Home = () => {
   return (
     <>      
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-        <div className="container">
-          <a className="navbar-brand" href="#home">
-            <img src="/images/Logo_Book_Bite.png" alt="Logo" style={{ height: '100px' }}/>
-          </a>
-          
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={() => {
-              const navbarNav = document.getElementById('navbarNav');
-              if (navbarNav.classList.contains('show')) {
-                navbarNav.classList.remove('show');
-              } else {
-                navbarNav.classList.add('show');
-              }
-            }}>
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav me-auto">
-              <li className="nav-item">
-                <a className="nav-link" href="#home" onClick={() => scrollToSection('home')}>
-                  Inicio
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/reservas'); }}>
-                  Reservas
-                </a>
-              </li> 
-              <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/pedidos'); }}>
-                  Pedidos
-                </a>
-              </li>   
-              <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/carta'); }}>
-                  Carta
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/novedades'); }}>
-                  Novedades
-                </a>
-              </li>
-            </ul>
-            
-            <div className="d-flex flex-column flex-lg-row gap-2">
-              {isLoggedIn ? (
-                <div className="position-relative" ref={dropdownRef}>
-                   <div className="d-flex align-items-center user-profile-container" style={{ cursor: 'pointer' }} onClick={() => setShowDropdown(!showDropdown)}>
-                    <span className="me-2 text-light">{username}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-person-circle" viewBox="0 0 16 16" style={{ cursor: 'pointer' }}>
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                      <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 1.613A7 7 0 0 0 8 1z" />
-                    </svg>
-                </div>
-
-                {/* Dropdown Menu */}
-                  {showDropdown && (
-                    <div className="user-dropdown">
-                      <div className="dropdown-item" onClick={() => handleDropdownItemClick('perfil')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16">
-                          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-                        </svg>
-                        Mi perfil
-                      </div>
-                      <div className="dropdown-item" onClick={() => handleDropdownItemClick('mis-reservas')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-calendar-check" viewBox="0 0 16 16">
-                          <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                        </svg>
-                        Reservas
-                      </div>
-                      <div className="dropdown-item" onClick={() => handleDropdownItemClick('mis-pedidos')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bag-check" viewBox="0 0 16 16">
-                          <path fillRule="evenodd" d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                          <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
-                        </svg>
-                        Pedidos
-                      </div>
-                      <div className="dropdown-divider"></div>
-                      <div className="dropdown-item logout-item" onClick={handleLogout}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                          <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-                          <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                        </svg>
-                        Cerrar sesión
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <button className="btn btn-secondary-custom" onClick={() => navigate('/InicioSesion')}>
-                    Iniciar Sesión
-                  </button>
-                  <button className="btn btn-primary-custom" onClick={() => navigate('/registro')}>
-                    Registrarse
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Slider Section */}
       <section id="home" className="hero-slider">
@@ -231,12 +141,7 @@ const Home = () => {
             <div className="slide-content">
               <h1 className="slide-title">{slide.title}</h1>
               <p className="slide-description">{slide.description}</p>
-              <button 
-                className="btn btn-primary-custom btn-lg"
-                onClick={() => {
-                  console.log(`Acción: ${slide.buttonAction}`);
-                }}
-              >
+              <button className="btn btn-primary-custom btn-lg" onClick={() => navigate(`/${slide.buttonAction}`)}>
                 {slide.buttonText}
               </button>
             </div>

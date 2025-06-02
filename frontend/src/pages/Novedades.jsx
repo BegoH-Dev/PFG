@@ -154,9 +154,9 @@ const Novedades = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <a className="nav-link" onClick={() => navigate('/')}>
+                <button className="nav-link btn btn-link" onClick={() => navigate('/')}>
                   Inicio
-                </a>
+                </button>
               </li>  
               <li className="nav-item">
                 <a className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/carta'); }}>

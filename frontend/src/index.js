@@ -1,4 +1,7 @@
+// Importación de Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+// Importación de estilos globales
+import './styles/global.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
