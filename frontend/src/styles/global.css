@@ -481,67 +481,67 @@ ul {
       background-color: var(--gold);
     }
 
-    @media (max-width: 768px) {
-      .slide-title {
-        font-size: 2rem;
-      }
+@media (max-width: 768px) {
+  .slide-title {
+    font-size: 2rem;
+  }
       
-      .slide-description {
-        font-size: 1rem;
-      }
+  .slide-description {
+    font-size: 1rem;
+  }
       
-      .hero-slider {
-        height: 400px;
-      }
+  .hero-slider {
+    height: 400px;
+  }
       
-      .slider-button {
-        width: 40px;
-        height: 40px;
-        font-size: 14px;
-      }
+  .slider-button {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
       
-      .slider-button-left {
-        left: 10px;
-      }
+  .slider-button-left {
+    left: 10px;
+  }
       
-      .slider-button-right {
-        right: 10px;
-      }
+  .slider-button-right {
+    right: 10px;
+  }
       
-      .section-title {
-        font-size: 2rem;
-      }
+  .section-title {
+    font-size: 2rem;
+  }
       
-      .navbar-nav {
-        text-align: center;
-      }
+  .navbar-nav {
+    text-align: center;
+  }
       
-      .navbar-nav .nav-item {
-        margin: 5px 0;
-      }
-    }
+  .navbar-nav .nav-item {
+    margin: 5px 0;
+  }
+}
 
-    @media (max-width: 576px) {
-      .hero-slider {
-        height: 350px;
-        margin-top: 70px;
-      }
+@media (max-width: 576px) {
+  .hero-slider {
+    height: 350px;
+    margin-top: 70px;
+  }
       
-      .slide-title {
-        font-size: 1.5rem;
-      }
+  .slide-title {
+    font-size: 1.5rem;
+  }
       
-      .btn-primary-custom, .btn-secondary-custom {
-        padding: 8px 20px;
-        font-size: 0.9rem;
-      }
-    }
+  .btn-primary-custom, .btn-secondary-custom {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+}
 
-    @media (max-width: 991.98px) {
-      .navbar-expand-lg .navbar-toggler { display: block; }
-      .navbar-expand-lg .navbar-collapse { display: none; }
-      .navbar-expand-lg .navbar-collapse.show { display: block; }
-    }
+@media (max-width: 991.98px) {
+  .navbar-expand-lg .navbar-toggler { display: block; }
+  .navbar-expand-lg .navbar-collapse { display: none; }
+  .navbar-expand-lg .navbar-collapse.show { display: block; }
+}
     
 @media (min-width: 992px) {
   .navbar-expand-lg .navbar-toggler { 
@@ -561,8 +561,8 @@ ul {
 
 .section-title {
   text-align: center;
-  color: var(--dark);
-  font-size: 2.5rem;
+  color: rgb (20, 20, 20);
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 50px;
 }    

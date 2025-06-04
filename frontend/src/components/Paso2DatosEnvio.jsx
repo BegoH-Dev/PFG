@@ -136,7 +136,7 @@ const Paso2DatosEnvio = ({
           )}              
         </div>
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem', width: '100%' }}>
           <button 
             onClick={prevStep}
             style={{ 
@@ -150,22 +150,6 @@ const Paso2DatosEnvio = ({
             }}
           >
             Volver
-          </button>
-          <button 
-            onClick={nextStep}
-            disabled={!deliveryData.firstName || !deliveryData.lastName || !deliveryData.email || !deliveryData.address || !deliveryData.phone || !isPaymentValid() || !isFormValid()}
-            style={{ 
-              backgroundColor: deliveryData.address && deliveryData.phone && isFormValid() ? '#D4AF37' : '#ccc', 
-              color: deliveryData.address && deliveryData.phone && isFormValid() ? '#000' : '#666',
-              border: 'none', 
-              padding: '0.75rem 2rem', 
-              borderRadius: '4px', 
-              cursor: deliveryData.address && deliveryData.phone && isFormValid() ? 'pointer' : 'not-allowed',
-              fontSize: '1rem',
-              fontWeight: '500'
-            }}
-          >
-            Continuar
           </button>
         </div>
       </div>
@@ -236,6 +220,26 @@ const Paso2DatosEnvio = ({
             </>
           )}
         </div>
+      
+        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
+          <button 
+              onClick={nextStep}
+              disabled={!deliveryData.firstName || !deliveryData.lastName || !deliveryData.email || !deliveryData.address ||
+                 !deliveryData.phone || !isPaymentValid() || !isFormValid()}
+              style={{ 
+                backgroundColor: deliveryData.address && deliveryData.phone && isFormValid() ? '#D4AF37' : '#ccc', 
+                color: deliveryData.address && deliveryData.phone && isFormValid() ? '#000' : '#666',
+                border: 'none', 
+                padding: '0.75rem 2rem', 
+                borderRadius: '4px', 
+                cursor: deliveryData.address && deliveryData.phone && isFormValid() ? 'pointer' : 'not-allowed',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}
+            >
+              Continuar
+          </button>
+        </div>  
       </div>
     </div>
   );

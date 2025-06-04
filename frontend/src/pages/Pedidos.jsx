@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import Paso1Carro from '../components/Paso1Carro';
 import Paso2DatosEnvio from '../components/Paso2DatosEnvio';
 import Paso3Confirmacion from '../components/Paso3Confirmacion';
+import { useMemo } from 'react';
 
 const Pedidos = () => {
   const location = useLocation();
@@ -363,9 +364,7 @@ const [productos] = useState({
         image: '/images/40.jpeg'
       },
     ],
-});
-
-  const productosArray = Object.values(productos).flat();
+  });
 
   const botonEstilo = {
     padding: '0.25rem 0.75rem',
@@ -376,6 +375,7 @@ const [productos] = useState({
     color: '#000',
   };
 
+  // Cargar el estado de inicio de sesión y nombre de usuario desde localStorage
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUsername = localStorage.getItem('username') || '';
@@ -396,8 +396,14 @@ const [productos] = useState({
     };
   }, []);
   
+  // Convertir el objeto de productos en un array para facilitar su uso
+  const productosArray = useMemo(() => Object.values(productos).flat(), [productos]);
+
+  // Ref para evitar múltiples ejecuciones
+  const hasAddedDish = useRef(false);
+
   useEffect(() => {
-    if (selectedDish?.nombre) {
+    if (selectedDish?.nombre && !hasAddedDish.current) {
       const productToAdd = productosArray.find(p => p.name.toLowerCase() === selectedDish.nombre.toLowerCase());
     if (productToAdd) {
       const mergedProduct = {
@@ -419,20 +425,26 @@ const [productos] = useState({
             return [...prev, { ...mergedProduct, quantity: 1 }];
           }
       });
+
+          // Marcar como procesado y limpiar el estado
+      hasAddedDish.current = true;
+
+      // Limpiar el estado del plato seleccionado
+      navigate('/pedidos', { replace: true, state: {} });  
     } else {
       console.warn('Producto no encontrado en la carta:', selectedDish.nombre);
     }
   }
-}, [selectedDish, productosArray]);
+}, [selectedDish, productosArray, navigate]);
 
-  const addToCart = () => {
-    if (!selectedProduct) return;
+// Función para añadir un producto al carrito
+const addToCart = () => {
+  if (!selectedProduct) return;
     
-    const product = productosArray.find(p => p.id === parseInt(selectedProduct));
+  const product = productosArray.find(p => p.id === parseInt(selectedProduct));
     if (!product) return;
 
-    const existingItem = cartItems.find(item => item.id === product.id);
-    
+  const existingItem = cartItems.find(item => item.id === product.id);
     if (existingItem) {
       setCartItems(cartItems.map(item => 
         item.id === product.id 
@@ -443,21 +455,21 @@ const [productos] = useState({
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     } 
     setSelectedProduct('');
-  };
+};
 
-  const updateQuantity = (id, change) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === id) {
-        const newQuantity = item.quantity + change;
-        return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
-      }
-      return item;
-    }).filter(Boolean));
-  };
+const updateQuantity = (id, change) => {
+  setCartItems(cartItems.map(item => {
+    if (item.id === id) {
+      const newQuantity = item.quantity + change;
+      return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
+    }
+    return item;
+  }).filter(Boolean));
+};
 
-  const removeFromCart = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
+const removeFromCart = (id) => {
+  setCartItems(cartItems.filter(item => item.id !== id));
+};
 
 const getTotalPrice = () => {
   return cartItems.reduce((total, item) => {

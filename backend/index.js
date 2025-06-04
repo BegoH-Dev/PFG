@@ -71,6 +71,7 @@ app.post('/pedidos', async (req, res) => {
   }
 });
 
+
 app.get('/pedidos/:usuario_id', async (req, res) => {
   const { usuario_id } = req.params;
   try {
@@ -84,6 +85,7 @@ app.get('/pedidos/:usuario_id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get('/productos/alergenos', async (req, res) => {
   try {

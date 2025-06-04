@@ -124,12 +124,28 @@ const MiPerfil = () => {
     });
   };
 
-  const calcularTotalPedido = (productos) => {
-    if (!productos || !Array.isArray(productos)) return '0.00';
-    return productos.reduce((total, producto) => {
-      return total + (producto.precio * producto.cantidad);
-    }, 0).toFixed(2);
-  };
+// Función para formatear el método de pago
+const formatearMetodoPago = (metodoPago) => {
+  switch (metodoPago) {
+    case 'cash':
+      return 'Efectivo';
+    case 'paypal':
+      return 'PayPal';
+    case 'card':
+      return 'Tarjeta de crédito';
+    default:
+      return metodoPago || 'No especificado';
+  }
+};
+
+const calcularTotalPedido = (productos) => {
+  if (!productos || !Array.isArray(productos)) return '0.00';
+  return productos.reduce((total, producto) => {
+    const precio = parseFloat(producto.precio?.toString().replace(',', '.') || '0');
+    const cantidad = producto.cantidad || 1;
+    return total + (precio * cantidad);
+  }, 0).toFixed(2);
+};
 
     return (
        <>      
@@ -137,11 +153,12 @@ const MiPerfil = () => {
       <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
       setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
 
-        <div className="container mt-5 pt-5">
-        <div className="row">
+        <div className="container mt-5 py-5">
+          <div className="row">
+
             {/* Sidebar de navegación */}
             <div className="col-md-3">
-            <div className="card">
+              <div className="card">
                 <div className="card-body">
                 <div className="text-center mb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" className="bi bi-person-circle text-muted" viewBox="0 0 16 16">
@@ -222,6 +239,7 @@ const MiPerfil = () => {
             </div>
           )}
 
+          {/* SECCIÓN DE PEDIDOS */}
           {activeTab === 'pedidos' && (
             <div className="card">
               <div className="card-header">
@@ -255,48 +273,93 @@ const MiPerfil = () => {
                               </span>
                             </div>
                             
+                            {/* PRODUCTOS */}
                             {pedido.productos && pedido.productos.length > 0 && (
                               <div className="mb-3">
                                 <h6 className="mb-2">Productos:</h6>
-                                {pedido.productos.map((producto, idx) => (
-                                  <div key={idx} className="d-flex justify-content-between align-items-center py-1 border-bottom">
-                                    <div>
-                                      <span className="fw-medium">{producto.nombre}</span>
-                                      <small className="text-muted"> x{producto.cantidad}</small>
-                                    </div>
-                                    <span>{(producto.precio * producto.cantidad).toFixed(2)}€</span>
-                                  </div>
-                                ))}
+                                <div className="table-responsive">
+                                  <table className="table table-sm table-borderless">
+                                    <thead>
+                                      <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Subtotal</th>
+                                      </tr>
+                                    </thead>
+                                  <tbody>
+                                    {pedido.productos.map((producto, idx) => (
+                                      <tr key={idx}>
+                                        <td>{producto.nombre}</td>
+                                        <td>{producto.cantidad}</td>
+                                        <td>{producto.precio}€</td>
+                                        <td>{(producto.precio * producto.cantidad).toFixed(2)}€</td>
+                                      </tr>
+                                    ))}
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <td colSpan="3" className="text-end"><strong>Total:</strong></td>
+                                  <td><strong className="h5 mb-0">{pedido.total || calcularTotalPedido(pedido.productos)}€</strong></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Información adicional del pedido */}
+                      <div className="row g-2 mt-2">
+                        {/* Dirección */}                
+                        {pedido.direccion && (
+                            <div className="col-md-6">
+                              <small className="text-muted d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-geo-alt me-1" viewBox="0 0 16 16">
+                                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                </svg>
+                                <strong>Dirección:</strong>&nbsp;{pedido.direccion}
+                              </small>
+                            </div>
+                            )}
+
+                            {/* Método de pago */}
+                            {pedido.metodoPago && (
+                              <div className="col-md-6">
+                                <small className="text-muted d-flex align-items-center">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-credit-card me-2" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+                                    <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/>
+                                  </svg>
+                                  <strong>Pago:</strong>&nbsp;{formatearMetodoPago(pedido.metodoPago)}
+                                </small>
                               </div>
                             )}
-                            
-                            <div className="d-flex justify-content-between align-items-center">
-                              <div>
-                                {pedido.direccion && (
-                                  <small className="text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-geo-alt me-1" viewBox="0 0 16 16">
-                                      <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                                    </svg>
-                                    {pedido.direccion}
-                                  </small>
-                                )}
+
+                            {/* Notas adicionales */}
+                            {pedido.notas && pedido.notas.trim() !== '' && (
+                              <div className="col-12">
+                                <small className="text-muted d-flex align-items-start">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chat-text me-2 mt-1" viewBox="0 0 16 16">
+                                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"/>
+                                    <path d="M4 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8zm0 2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                                  </svg>
+                                  <div>
+                                    <strong>Notas:</strong>&nbsp;{pedido.notas}
+                                  </div>
+                                </small>
                               </div>
-                              <div className="text-end">
-                                <strong className="h5 mb-0">
-                                  {pedido.total || calcularTotalPedido(pedido.productos)}€
-                                </strong>
-                              </div>
-                            </div>
+                            )}
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
           {activeTab === 'reservas' && (
             <div className="card">

@@ -4,9 +4,44 @@ const Paso3Confirmacion = ({
   cartItems, 
   deliveryData, 
   getTotalPrice, 
-  handleFinalizeOrder,
   prevStep
 }) => {
+
+const handleFinalizeOrder = () => {
+  // Normalizar los productos para que tengan las propiedades correctas
+  const productosNormalizados = cartItems.map(item => ({
+      nombre: item.name || item.nombre,
+      precio: parseFloat(item.price?.toString().replace(',', '.')) || 0,
+      cantidad: item.quantity || item.cantidad || 1,
+      // Mantener propiedades originales por compatibilidad
+      ...item
+  }));
+  
+  const nuevoPedido = {
+      id: Date.now(),
+      fecha: new Date().toISOString(),
+      productos: productosNormalizados,
+      total: getTotalPrice().toFixed(2),
+      // Extraer la dirección directamente para compatibilidad
+      direccion: deliveryData.address,
+      notas: deliveryData.notes || '',
+      metodoPago: deliveryData.paymentMethod,
+      datosEntrega: deliveryData,
+      estado: 'confirmado'
+  };
+
+  console.log('Guardando pedido:', nuevoPedido); // Debug
+
+  const pedidosPrevios = JSON.parse(localStorage.getItem('historialPedidos') || '[]');
+  pedidosPrevios.push(nuevoPedido);
+  localStorage.setItem('historialPedidos', JSON.stringify(pedidosPrevios));
+
+  // Verificar que se guardó correctamente
+  console.log('Pedidos guardados:', JSON.parse(localStorage.getItem('historialPedidos')));
+  alert('Pedido confirmado correctamente');
+};
+
+  // Maneja la finalización del pedido
   return (
     <div style={{ 
       backgroundColor: '#fff', 
@@ -18,6 +53,7 @@ const Paso3Confirmacion = ({
       <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Confirmación del pedido</h3>
       
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+        
         {/* RESUMEN DE PEDIDO */}
         <div style={{ flex: 1, minWidth: '300px' }}>
           <h5 style={{ marginBottom: '1rem', color: '#D4AF37' }}>Resumen del pedido</h5>
@@ -25,8 +61,8 @@ const Paso3Confirmacion = ({
             <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', 
               padding: '0.5rem 0'
             }}>
-              <span>{item.name} x{item.quantity}</span>
-              <span>{(parseFloat(item.price.toString().replace(',', '.')) * item.quantity).toFixed(2)}€</span>
+              <span>{item.name || item.nombre} x{item.quantity || item.cantidad}</span>
+              <span>{(parseFloat(item.price?.toString().replace(',', '.') || '0') * (item.quantity || item.cantidad || 1)).toFixed(2)}€</span>
             </div>
           ))}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', borderTop: '2px solid #D4AF37', 
@@ -64,13 +100,8 @@ const Paso3Confirmacion = ({
         <button 
           onClick={prevStep}
           style={{ 
-            backgroundColor: '#6c757d', 
-            color: '#fff', 
-            border: 'none', 
-            padding: '0.75rem 2rem', 
-            borderRadius: '4px', 
-            cursor: 'pointer',
-            fontSize: '1rem'
+            backgroundColor: '#6c757d', color: '#fff', border: 'none', padding: '0.75rem 2rem', 
+            borderRadius: '4px', cursor: 'pointer', fontSize: '1rem'
           }}
         >
           Volver

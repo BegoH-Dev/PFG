@@ -138,12 +138,13 @@ const Novedades = () => {
       {/* Navbar */}
       <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
       setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
+      
       {/* Espaciado para el navbar fijo */}
-      <div style={{ paddingTop: '120px', backgroundColor: '#000', minHeight: '100vh' }}>
+      <div style={{ paddingTop: '90px', backgroundColor: '#000', minHeight: '100vh' }}>
         
         {/* Sección principal de Novedades */}
-        <section className="container py-5">
-          <h1 className="section-title mb-5 text-white text-center" style={{ color: 'var(--gold)', fontSize: '3rem', fontWeight: 'bold' }}>
+        <section className="container py-3">
+          <h1 className="section-title mb-5 text-white text-center">
             Novedades de la carta
           </h1>
           <p className="lead text-white mb-5">
@@ -242,19 +243,17 @@ const Novedades = () => {
 
           {/* Información de alérgenos */}
           <div className="alert alert-info mb-5 text-center d-flex flex-column align-items-center">
-            <h5 className="alert-heading">🏷️ Información de Alérgenos:</h5>
+            <h5 className="alert-heading">Información de Alérgenos:</h5>
             <p className="mb-2">
-              <strong style={{ fontSize: '1.5rem' }}>🌿</strong> Vegetariano | 
-              <strong style={{ fontSize: '1.5rem' }}>🌾</strong> Gluten | 
-              <strong style={{ fontSize: '1.5rem' }}>🥛</strong> Lácteos | 
-              <strong style={{ fontSize: '1.5rem' }}>🥚</strong> Huevo | 
-              <strong style={{ fontSize: '1.5rem' }}>🐟</strong> Pescado | 
-              <strong style={{ fontSize: '1.5rem' }}>🦐</strong> Marisco | 
-              <strong style={{ fontSize: '1.5rem' }}>🥜</strong> Frutos secos | 
-              <strong style={{ fontSize: '1.5rem' }}>🌶</strong> Picante
+              {alergenos.map((alergeno, index) => (
+                <React.Fragment key={index}>
+                  <strong style={{ fontSize: '1.5rem' }}>{alergeno.emoji}</strong> {alergeno.significado}
+                  {index < alergenos.length - 1 && ' | '}
+                </React.Fragment>
+              ))}
             </p>
             <p className="mb-0">
-              <small>ℹ️ Para cualquier intolerancia o requerimiento dietético, por favor consúltanos. Todos nuestros platos pueden ser adaptados siempre que sea posible.</small>
+              <small>Para cualquier intolerancia o requerimiento dietético, por favor consúltanos. Todos nuestros platos pueden ser adaptados siempre que sea posible.</small>
             </p>
           </div>
         </section>
@@ -301,11 +300,7 @@ const Novedades = () => {
               {/* Alérgenos */}
               <div className="d-flex flex-wrap justify-content-center gap-2 mt-3">
                 {selectedDish.alergenos.map((alergeno, index) => (
-                  <span 
-                    key={index} 
-                    className="text-light"
-                    style={{ fontSize: '1.2rem' }}
-                  >
+                  <span key={index} className="text-light" style={{ fontSize: '1.2rem' }}>
                     {alergeno.emoji} {alergeno.texto}
                   </span>
                 ))}
