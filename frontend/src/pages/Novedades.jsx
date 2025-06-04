@@ -74,7 +74,7 @@ const Novedades = () => {
         { emoji: '🦐', texto: 'MARISCO' },
         { emoji: '🌾', texto: 'GLUTEN' },
         { emoji: '🥚', texto: 'HUEVO' },
-        { emoji: '🌶', texto: 'PICANTE' }
+        { emoji: '🌶️', texto: 'PICANTE' }
       ]
     },
     {
