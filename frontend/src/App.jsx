@@ -7,12 +7,10 @@ import Home from './pages/Home';
 import Carta from './pages/Carta';
 import Novedades from './pages/Novedades';
 import Pedidos from './pages/Pedidos';
-import OrderForm from './pages/orderForm';
-import ReservationForm from './pages/reservationForm';
 import Registro from './pages/Registro';
 import InicioSesion from './pages/InicioSesion';
 import MiPerfil from './pages/MiPerfil';
-import Reserva from './pages/Reserva';
+import Reservas from './pages/Reservas';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,11 +37,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/carta" element={<Carta />} />
           <Route path="/novedades" element={<Novedades />} />
-          <Route path="/order" element={<OrderForm />} />
-          <Route path="/reserve" element={<ReservationForm />} />
           <Route path="/Registro" element={<Registro />} />
           <Route path="/Pedidos" element={<Pedidos />} />
-          <Route path="/Reserva" element={<Reserva />} />
+          <Route path="/Reservas" element={<Reservas />} />
           <Route
             path="/InicioSesion"
             element={

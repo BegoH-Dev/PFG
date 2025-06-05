@@ -581,17 +581,17 @@ ul {
   background-color: #fff;
 }
 
-    .featured-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
+.featured-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
 
-    .featured-card h3 {
-      color: var(--dark);
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
+.featured-card h3 {
+  color: var(--dark);
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
 
 .featured-card p {
   color: #000;
@@ -633,6 +633,21 @@ ul {
 
 .card-text:last-child { 
   margin-bottom: 0; 
+}
+
+
+/* BOTÓN "VER MÁS" */
+.btn-ver-mas {
+  background-color: rgb(230, 196, 114);
+  border: 2px solid #000;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.btn-ver-mas:hover {
+  background-color: #fff;
+  color: rgb(177, 85, 33);
+  border-color: 2px solid rgb(177, 85, 33);
 }
 
 

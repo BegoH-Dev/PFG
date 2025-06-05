@@ -380,22 +380,22 @@ const calcularTotalPedido = (productos) => {
                   </div>
                 ) : (
                   <div className="row g-3">
-                    {reservasHistorial.map((reserva, index) => (
+                    {reservasHistorial.map((reservas, index) => (
                       <div key={index} className="col-md-6">
                         <div className="card border">
                           <div className="card-body">
                             <div className="d-flex justify-content-between align-items-start mb-2">
-                              <h6 className="card-title mb-0">Reserva #{reserva.id || index + 1}</h6>
-                              <span className={`badge bg-${getEstadoColor(reserva.estado)}`}>
-                                {reserva.estado || 'Confirmada'}
+                              <h6 className="card-title mb-0">Reservas #{reservas.id || index + 1}</h6>
+                              <span className={`badge bg-${getEstadoColor(reservas.estado)}`}>
+                                {reservas.estado || 'Confirmada'}
                               </span>
                             </div>
-                            <p className="text-muted mb-2">{formatearFecha(reserva.fecha)}</p>
+                            <p className="text-muted mb-2">{formatearFecha(reservas.fecha)}</p>
                             <div className="small">
-                              <div><strong>Personas:</strong> {reserva.personas}</div>
-                              <div><strong>Mesa:</strong> {reserva.mesa || 'Asignación automática'}</div>
-                              {reserva.observaciones && (
-                                <div><strong>Observaciones:</strong> {reserva.observaciones}</div>
+                              <div><strong>Personas:</strong> {reservas.personas}</div>
+                              <div><strong>Mesa:</strong> {reservas.mesa || 'Asignación automática'}</div>
+                              {reservas.observaciones && (
+                                <div><strong>Observaciones:</strong> {reservas.observaciones}</div>
                               )}
                             </div>
                           </div>

@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/global.css';
 
-const Reserva = () => {
+const Reservas = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -417,8 +417,7 @@ const Reserva = () => {
                   <div className="alert alert-info mb-4">
                     <h6 className="alert-heading">Información importante:</h6>
                     <ul className="mb-0">
-                      <li>Te contactaremos por teléfono para confirmar tu reserva</li>
-                      <li>Las reservas se mantienen por 15 minutos después de la hora programada</li>
+                      <li>Te contactaremos por teléfono y email para confirmar tu reserva</li>
                       <li>Puedes cancelar o modificar tu reserva llamando al restaurante</li>
                     </ul>
                   </div>
@@ -445,4 +444,4 @@ const Reserva = () => {
   );
 };
 
-export default Reserva;
+export default Reservas;

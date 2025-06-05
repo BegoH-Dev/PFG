@@ -48,7 +48,7 @@ const Home = () => {
       description: 'Disfruta de un ambiente perfecto para cualquier ocasión.',
       image: '/images/reserva.png',
       buttonText: 'Haz tu reserva',
-      buttonAction: 'reserva',
+      buttonAction: 'reservas',
     },
     {
       title: 'Únete a la comunidad Sabor Gourmet',
@@ -212,6 +212,15 @@ const handleDropdownItemClick = (action) => {
                 </div>
               </div>
             ))}
+          </div>
+          {/* Botón "Ver más" */}
+          <div className="text-center mt-4">
+            <button 
+              className="btn btn-primary-custom btn-ver-mas" 
+              onClick={() => navigate('/novedades')}
+            >
+              Ver más
+            </button>
           </div>
         </div>
       </section>
