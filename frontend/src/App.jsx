@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-// Importación de páginas
+import Navbar from './components/Navbar';
+
 import Home from './pages/Home';
 import Carta from './pages/Carta';
 import Novedades from './pages/Novedades';
@@ -13,8 +15,25 @@ import MiPerfil from './pages/MiPerfil';
 import Reserva from './pages/Reserva';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+    const storedUsername = localStorage.getItem('username');
+
+    setIsLoggedIn(loginStatus);
+    setUsername(storedUsername || '');
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">      
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        username={username}
+        setIsLoggedIn={setIsLoggedIn}
+        setUsername={setUsername}
+      />      
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -25,7 +44,17 @@ function App() {
           <Route path="/Registro" element={<Registro />} />
           <Route path="/Pedidos" element={<Pedidos />} />
           <Route path="/Reserva" element={<Reserva />} />
-          <Route path="/InicioSesion" element={<InicioSesion />} />
+          <Route
+            path="/InicioSesion"
+            element={
+              <InicioSesion
+                onLogin={(user) => {
+                  setIsLoggedIn(true);
+                  setUsername(user.nombre_usuario);
+                }}
+              />
+            }
+          />          
           <Route path="/mi-perfil" element={<MiPerfil />} />
         </Routes>
       </main>

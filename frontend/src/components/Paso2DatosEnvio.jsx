@@ -1,4 +1,3 @@
-// src/components/Paso2DatosEnvio.jsx
 import React from 'react';
 
 const Paso2DatosEnvio = ({ 

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import '../styles/global.css';
+
 const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);

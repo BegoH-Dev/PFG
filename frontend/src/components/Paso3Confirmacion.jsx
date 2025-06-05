@@ -1,47 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Paso3Confirmacion = ({ 
   cartItems, 
-  deliveryData, 
+  deliveryData,
+  usuarioId, 
   getTotalPrice, 
-  prevStep
+  prevStep,
+  onOrderConfirmed 
 }) => {
+  const [fechaPedido, setFechaPedido] = useState(null);
 
-const handleFinalizeOrder = () => {
-  // Normalizar los productos para que tengan las propiedades correctas
-  const productosNormalizados = cartItems.map(item => ({
-      nombre: item.name || item.nombre,
-      precio: parseFloat(item.price?.toString().replace(',', '.')) || 0,
-      cantidad: item.quantity || item.cantidad || 1,
-      // Mantener propiedades originales por compatibilidad
-      ...item
-  }));
+  const handleFinalizeOrder = () => {
+    const productosNormalizados = cartItems.map(item => ({
+        id: item.id,
+        nombre: item.name || item.nombre,
+        precio: parseFloat(item.price?.toString().replace(',', '.')) || 0,
+        cantidad: item.quantity || item.cantidad || 1,
+    }));
   
+  const fechaActual = new Date();
+
   const nuevoPedido = {
-      id: Date.now(),
-      fecha: new Date().toISOString(),
-      productos: productosNormalizados,
-      total: getTotalPrice().toFixed(2),
-      // Extraer la dirección directamente para compatibilidad
-      direccion: deliveryData.address,
-      notas: deliveryData.notes || '',
-      metodoPago: deliveryData.paymentMethod,
-      datosEntrega: deliveryData,
-      estado: 'confirmado'
+    productos: productosNormalizados,
+    total: parseFloat(getTotalPrice().toFixed(2)),
+    estado: 'pendiente',
+    fecha: fechaActual.toISOString(),
+    direccion: deliveryData.address,
+    metodoPago: deliveryData.paymentMethod,
+    notas: deliveryData.notes || '',
+    datosEntrega: deliveryData,
   };
 
-  console.log('Guardando pedido:', nuevoPedido); // Debug
+  setFechaPedido(fechaActual);
 
   const pedidosPrevios = JSON.parse(localStorage.getItem('historialPedidos') || '[]');
   pedidosPrevios.push(nuevoPedido);
   localStorage.setItem('historialPedidos', JSON.stringify(pedidosPrevios));
 
-  // Verificar que se guardó correctamente
+  console.log('Usuario ID desde props:', usuarioId);
+  if (!usuarioId) {
+    alert('Error: usuario no identificado. Por favor inicia sesión.');
+    return;
+  }
+  fetch(`http://localhost:5000/usuarios/${usuarioId}/pedidos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(nuevoPedido)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Error al guardar el pedido');
+    return response.json();
+  })
+  .then(data => {
+    console.log('Pedido guardado:', data);
+    alert('Pedido confirmado correctamente');
+    if(onOrderConfirmed) onOrderConfirmed();
+  })
+  .catch(error => {
+    console.error('Error:', error.message);
+    alert('Error al guardar el pedido en el servidor: ' + error.message);
+  });
+
   console.log('Pedidos guardados:', JSON.parse(localStorage.getItem('historialPedidos')));
-  alert('Pedido confirmado correctamente');
 };
 
-  // Maneja la finalización del pedido
   return (
     <div style={{ 
       backgroundColor: '#fff', 
@@ -76,6 +98,7 @@ const handleFinalizeOrder = () => {
         {/* DETALLES DE ENVÍO */}
         <div style={{ flex: 1, minWidth: '300px' }}>
           <h5 style={{ marginBottom: '1rem', color: '#D4AF37' }}>Datos de entrega</h5>
+          <p><strong>Fecha del pedido:</strong> {fechaPedido ? fechaPedido.toLocaleString() : 'No disponible'}</p>
           <p><strong>Nombre:</strong> {deliveryData.firstName} {deliveryData.lastName}</p>
           <p><strong>Email:</strong> {deliveryData.email}</p>
           <p><strong>Teléfono:</strong> {deliveryData.phone}</p>

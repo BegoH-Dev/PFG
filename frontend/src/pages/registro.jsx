@@ -56,234 +56,104 @@ const Registro = () => {
 
   return (
     <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: 'white',
-      fontFamily: 'Arial, sans-serif'
+      backgroundColor: 'white', fontFamily: 'Arial, sans-serif', display: 'flex', flexDirection: 'column', 
+      justifyContent: 'flex-start', alignItems: 'center', padding: '20px 20px'
     }}>
       {/* Logo */}
-      <div style={{
-        textAlign: 'center',
-        paddingTop: '40px',
-        paddingBottom: '30px'
-      }}>
-        <img 
-          src="/images/Logo_Book_Bite.png" 
-          alt="Book & Bite Logo" 
-          style={{ 
-            height: '120px',
-            maxWidth: '100%'
-          }}
-        />
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <img src="/images/Logo_Book_Bite.png" alt="Book & Bite Logo" style={{ height: '120px', maxWidth: '100%' }}/>
       </div>
 
       {/* Formulario de Registro */}
-      <div style={{
-        maxWidth: '500px',
-        margin: '0 auto',
-        padding: '0 20px',
-        paddingBottom: '40px'
-      }}>
-        <h2 style={{
-          textAlign: 'center',
-          marginBottom: '30px',
-          color: '#333',
-          fontSize: '28px',
-          fontWeight: 'bold'
-        }}>
+      <div style={{ maxWidth: '500px', width:'100%', padding: '0 20px', paddingBottom: '40px' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#333', fontSize: '28px', fontWeight: 'bold' }}>
           Registra tu cuenta
         </h2>
 
-        <form onSubmit={handleSubmit} style={{
-          backgroundColor: '#f8f9fa',
-          padding: '40px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        <form onSubmit={handleSubmit} 
+          style={{ backgroundColor: '#f8f9fa', padding: '40px',
+          borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}>
           {/* Nombre */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Nombre *
             </label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+            <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} required
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box'
               }}
             />
           </div>
 
           {/* Apellidos */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Apellidos *
             </label>
-            <input
-              type="text"
-              name="apellidos"
-              value={formData.apellidos}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+            <input type="text" name="apellidos" value={formData.apellidos} onChange={handleInputChange} required
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box'
               }}
             />
           </div>
 
           {/* Nombre de usuario */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Nombre de usuario *
             </label>
-            <input
-              type="text"
-              name="nombre_usuario"
-              value={formData.nombre_usuario}
-              onChange={handleInputChange}
+            <input type="text" name="nombre_usuario" value={formData.nombre_usuario} onChange={handleInputChange}
               required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box'
               }}
             />
           </div>
 
           {/* Email */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Email *
             </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+            <input type="email" name="email" value={formData.email} onChange={handleInputChange} required
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box'
               }}
             />
           </div>
 
           {/* Fecha de nacimiento */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Fecha de nacimiento (dd/mm/aa) *
             </label>
-            <input
-              type="date"
-              name="fecha_nacimiento"
-              value={formData.fecha_nacimiento}
-              onChange={handleInputChange}
+            <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange}
               required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box'
               }}
             />
           </div>
 
           {/* Contraseña */}
           <div style={{ marginBottom: '25px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Contraseña *
             </label>
-            <input
-              type="password"
-              name="contraseña"
-              value={formData.contraseña}
-              onChange={handleInputChange}
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
+            <input type="password" name="contraseña" value={formData.contraseña} onChange={handleInputChange} required
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px',
+                fontSize: '16px', boxSizing: 'border-box' 
               }}
             />
           </div>
 
           {/* Términos y condiciones */}
-          <div style={{ 
-            marginBottom: '25px',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '10px'
-          }}>
-            <input
-              type="checkbox"
-              name="acepta_terminos"
-              checked={formData.acepta_terminos}
-              onChange={handleInputChange}
-              style={{
-                marginTop: '3px',
-                width: '16px',
-                height: '16px'
-              }}
+          <div style={{ marginBottom: '25px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+            <input type="checkbox" name="acepta_terminos" checked={formData.acepta_terminos} onChange={handleInputChange}
+              style={{ marginTop: '3px', width: '16px', height: '16px' }}
             />
-            <label style={{
-              color: '#333',
-              fontSize: '14px',
-              lineHeight: '1.4'
-            }}>
+            <label style={{ color: '#333', fontSize: '14px', lineHeight: '1.4' }}>
               Acepto términos y condiciones
             </label>
           </div>
@@ -291,17 +161,8 @@ const Registro = () => {
           {/* Botón Registrarse */}
           <button
             type="submit"
-            style={{
-              width: '100%',
-              padding: '14px',
-              backgroundColor: '#d4af37',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginBottom: '20px',
+            style={{ width: '100%', padding: '14px', backgroundColor: '#d4af37', color: 'white', border: 'none',
+              borderRadius: '6px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '20px',
               transition: 'background-color 0.3s ease'
             }}
             onMouseOver={(e) => e.target.style.backgroundColor = '#b8941f'}
@@ -316,14 +177,8 @@ const Registro = () => {
               ¿Tienes ya una cuenta?{' '}
               <Link
                 to="/InicioSesion"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#d4af37',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600'
+                style={{ background: 'none', border: 'none', color: '#d4af37', textDecoration: 'underline',
+                  cursor: 'pointer', fontSize: '14px', fontWeight: '600'
                 }}
                 onMouseOver={(e) => e.target.style.color = '#b8941f'}
                 onMouseOut={(e) => e.target.style.color = '#d4af37'}

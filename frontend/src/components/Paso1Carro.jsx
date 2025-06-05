@@ -1,4 +1,3 @@
-// src/components/Paso1Carro.jsx
 import React from 'react';
 
 const Paso1Carro = ({ 

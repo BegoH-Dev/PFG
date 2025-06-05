@@ -44,7 +44,14 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('username', formData.nombre_usuario);
+        localStorage.setItem('username', data.user.nombre_usuario);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+
+        onLogin && onLogin({ nombre_usuario: formData.nombre_usuario });
+
+        if (onLogin) onLogin(data.user);
+
         navigate('/');
       } else {
         alert(data.error || 'Error al iniciar sesión');
@@ -64,34 +71,18 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: 'white',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'white', fontFamily: 'Arial, sans-serif' }}>
       {/* Logo */}
-      <div style={{
-        textAlign: 'center',
-        paddingTop: '40px',
-        paddingBottom: '30px'
-      }}>
+      <div style={{ textAlign: 'center', paddingTop: '40px', paddingBottom: '30px' }}>
         <img 
           src="/images/Logo_Book_Bite.png" 
           alt="Book & Bite Logo" 
-          style={{ 
-            height: '120px',
-            maxWidth: '100%'
-          }}
+          style={{ height: '120px', maxWidth: '100%' }}
         />
       </div>
 
       {/* Formulario de Login */}
-      <div style={{
-        maxWidth: '450px',
-        margin: '0 auto',
-        padding: '0 20px',
-        paddingBottom: '40px'
-      }}>
+      <div style={{ maxWidth: '450px', margin: '0 auto', padding: '0 20px', paddingBottom: '40px' }}>
         <h2 style={{
           textAlign: 'center',
           marginBottom: '30px',
@@ -110,12 +101,7 @@ const Login = ({ onLogin }) => {
         }}>
           {/* Nombre de usuario */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Nombre de usuario *
             </label>
             <input
@@ -124,25 +110,13 @@ const Login = ({ onLogin }) => {
               value={formData.nombre_usuario}
               onChange={handleInputChange}
               required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '16px', boxSizing: 'border-box' }}
             />
           </div>
 
           {/* Contraseña */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333',
-              fontWeight: '600'
-            }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '600' }}>
               Contraseña *
             </label>
             <input

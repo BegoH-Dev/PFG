@@ -33,8 +33,10 @@ CREATE TABLE pedidos (
     total DECIMAL(10, 2) NOT NULL,
     estado VARCHAR(20) CHECK (estado IN ('pendiente', 'pagado', 'entregado', 'cancelado')) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	direccion_entrega TEXT, -- Así el usuario puede cambiar la dirección por pedido.
-	metodo_pago VARCHAR(50)
+	direccion_entrega TEXT,
+	metodo_pago VARCHAR(50),
+	notas TEXT,
+	datos_entrega JSONB;
 );
 
 /* TABLA "DETALLES_PEDIDO" */
@@ -45,6 +47,11 @@ CREATE TABLE detalles_pedido (
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(8, 2) NOT NULL
 );
+
+-- Índices para mejor rendimiento
+CREATE INDEX IF NOT EXISTS idx_pedidos_usuario_id ON pedidos(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_pedidos_fecha ON pedidos(fecha);
+CREATE INDEX IF NOT EXISTS idx_detalles_pedido_pedido_id ON detalles_pedido(pedido_id);
 
 /* TABLA "MESAS" */
 CREATE TABLE mesas (

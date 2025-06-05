@@ -38,8 +38,8 @@ if (!JWT_SECRET) {
 const port = process.env.PORT || 5000;
 
 
-// ENDPOINTS
-
+// *ENDPOINTS*
+// GET
 app.get('/productos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM productos');
@@ -54,32 +54,32 @@ app.get('/productos', async (req, res) => {
 });
 
 
-app.post('/pedidos', async (req, res) => {
-  const { usuario_id, total, estado, fecha } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO pedidos (usuario_id, total, estado, fecha) VALUES ($1, $2, $3, $4) RETURNING *',
-      [usuario_id, total, estado, fecha]
-    );
-    res.status(201).json({
-      mensaje: 'Pedido creado con éxito',
-      reserva: result.rows[0]
-    });
-  } catch (err) {
-    console.error('Error al crear el pedido:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 app.get('/pedidos/:usuario_id', async (req, res) => {
   const { usuario_id } = req.params;
   try {
-    const result = await pool.query(
-      'SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY fecha DESC',
-      [usuario_id]
-    );
-    res.json(result.rows);
+    const result = await pool.query(`
+      SELECT 
+        p.*,
+        json_agg(
+          json_build_object(
+            'producto_id', dp.producto_id,
+            'cantidad', dp.cantidad,
+            'precio_unitario', dp.precio_unitario,
+            'nombre', pr.nombre
+          )
+        ) as productos
+      FROM pedidos p
+      LEFT JOIN detalles_pedido dp ON p.id = dp.pedido_id
+      LEFT JOIN productos pr ON dp.producto_id = pr.id
+      WHERE p.usuario_id = $1
+      GROUP BY p.id
+      ORDER BY p.fecha DESC
+    `, [usuario_id]);
+
+    res.json({
+      mensaje: 'Pedidos del usuario',
+      pedidos: result.rows
+    });
   } catch (err) {
     console.error('Error al obtener pedidos:', err.message);
     res.status(500).json({ error: err.message });
@@ -103,24 +103,6 @@ app.get('/productos/alergenos', async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener productos:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-app.post('/reservas', async (req, res) => {
-  const { usuario_id, mesa_id, fecha_hora, num_comensales, estado } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [usuario_id, mesa_id, fecha_hora, num_comensales, estado]
-    );
-    res.status(201).json({
-      mensaje: 'Reserva creada con éxito',
-      reserva: result.rows[0]
-    });
-  } catch (err) {
-    console.error('Error al crear la reserva:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -182,34 +164,6 @@ app.get('/productos/:id', async (req, res) => {
 });
 
 
-app.post('/usuarios', async (req, res) => {
-  const { nombre, apellidos, email, telefono, direccion, contraseña, rol } = req.body;
-  
-  if (!nombre || !apellidos || !email || !contraseña) {
-    return res.status(400).json({ message: "Faltan campos requeridos" });
-  }
-  
-  try {
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
-
-    const result = await pool.query(
-      `INSERT INTO usuarios 
-      (nombre, apellidos, email, telefono, direccion, contraseña, rol) 
-      VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7, 'cliente')) RETURNING *`,
-      [nombre, apellidos, email, telefono, direccion, hashedPassword, rol]
-    );
-    const { id } = result.rows[0];
-    res.status(201).json({ 
-      message: 'Usuario creado con éxito', 
-      user: { id, email } 
-    });
-  } catch (err) {
-    console.error('Error al crear usuario:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 app.get('/usuarios/:id/pedidos', async (req, res) => {
   const { id } = req.params;
   try {
@@ -251,33 +205,6 @@ app.get('/reservas', async (req, res) => {
     });  
   } catch (err) {
     console.error('Error al obtener las reservas:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-app.put('/reservas/:id', async (req, res) => {
-  const { id } = req.params;
-  const { fecha, estado } = req.body;
-  try {
-    const result = await pool.query(
-      `UPDATE reservas 
-       SET fecha_hora = COALESCE($1, fecha_hora), estado = COALESCE($2, estado) 
-       WHERE id = $3 
-       RETURNING *`,
-      [fecha, estado, id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
-    }
-
-    res.json({
-      mensaje: 'Reserva actualizada',
-      reserva: result.rows[0]
-    });    
-  } catch (err) {
-    console.error('Error al modificar reserva:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -338,6 +265,187 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
 });
 
 
+// (Solo para administradores) 
+app.get('/usuarios', verificarToken, verificarAdmin, async (req, res) => { 
+  try { 
+    const result = await pool.query (      
+      `SELECT id, nombre, apellidos, email, telefono, direccion, rol, fecha_registro       
+      FROM usuarios       
+      ORDER BY fecha_registro DESC`   
+    );
+  } catch (err) { 
+    console.error('Error al obtener usuarios:', err.message); 
+    res.status(500).json({ 
+      error: 'Error interno del servidor' 
+    }); 
+  }
+});
+
+
+// POST
+app.post('/pedidos', async (req, res) => {
+  const { 
+    usuario_id, productos, total, direccion, notas, metodoPago, datosEntrega 
+  } = req.body;  
+  
+  if (!usuario_id || !productos || !total) {
+    return res.status(400).json({ 
+      error: 'Faltan campos requeridos: usuario_id, productos, total' 
+    });
+  }
+
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+
+    // Crear el pedido principal
+    const pedidoResult = await client.query(
+      `INSERT INTO pedidos 
+       (usuario_id, total, estado, direccion_entrega, metodo_pago, notas, datos_entrega) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7) 
+       RETURNING *`,
+      [
+        usuario_id, 
+        parseFloat(total), 
+        'pendiente', 
+        direccion, 
+        metodoPago, 
+        notas || null,
+        JSON.stringify(datosEntrega) // Guardar como JSON
+      ]
+    );
+
+    const pedidoId = pedidoResult.rows[0].id;
+
+    // Insertar los detalles del pedido
+    for (const producto of productos) {
+      await client.query(
+        `INSERT INTO detalles_pedido 
+         (pedido_id, producto_id, cantidad, precio_unitario) 
+         VALUES ($1, $2, $3, $4)`,
+        [
+          pedidoId,
+          producto.id || null, // Si no tienes ID del producto, podrías usar null
+          producto.cantidad || 1,
+          parseFloat(producto.precio?.toString().replace(',', '.') || '0')
+        ]
+      );
+    }
+
+    await client.query('COMMIT');
+
+    res.status(201).json({
+      mensaje: 'Pedido creado con éxito',
+      pedido: {
+        ...pedidoResult.rows[0],
+        productos: productos
+      }
+    });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error al crear el pedido:', err.message);
+    res.status(500).json({ error: 'Error al procesar el pedido: ' + err.message });
+  } finally {
+    client.release();
+  }
+});
+
+
+app.post('/reservas', async (req, res) => {
+  const { usuario_id, mesa_id, fecha_hora, num_comensales, estado } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [usuario_id, mesa_id, fecha_hora, num_comensales, estado]
+    );
+    res.status(201).json({
+      mensaje: 'Reserva creada con éxito',
+      reserva: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error al crear la reserva:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+app.post('/usuarios', async (req, res) => {
+  const { nombre, apellidos, email, telefono, direccion, contraseña, rol } = req.body;
+  
+  if (!nombre || !apellidos || !email || !contraseña) {
+    return res.status(400).json({ message: "Faltan campos requeridos" });
+  }
+  
+  try {
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
+
+    const result = await pool.query(
+      `INSERT INTO usuarios 
+      (nombre, apellidos, email, telefono, direccion, contraseña, rol) 
+      VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7, 'cliente')) RETURNING *`,
+      [nombre, apellidos, email, telefono, direccion, hashedPassword, rol]
+    );
+    const { id } = result.rows[0];
+    res.status(201).json({ 
+      message: 'Usuario creado con éxito', 
+      user: { id, email } 
+    });
+  } catch (err) {
+    console.error('Error al crear usuario:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+app.post('/usuarios/:id/pedidos', async (req, res) => {
+  console.log('Datos recibidos:', req.body);
+  const { id } = req.params;
+  const {
+    productos,
+    total,
+    estado,
+    direccion,
+    metodoPago,
+    notas,
+    datosEntrega
+  } = req.body;
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const pedidoResult = await client.query(
+      `INSERT INTO pedidos (usuario_id, total, estado, direccion_entrega, metodo_pago, notas, datos_entrega)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id`,
+      [id, total, estado, direccion, metodoPago, notas, datosEntrega]
+    );
+
+    const pedidoId = pedidoResult.rows[0].id;
+
+    for (const prod of productos) {
+      await client.query(
+        `INSERT INTO detalles_pedido (pedido_id, producto_id, cantidad, precio_unitario)
+         VALUES ($1, $2, $3, $4)`,
+        [pedidoId, prod.id, prod.cantidad, prod.precio]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({ mensaje: 'Pedido guardado correctamente', pedidoId });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error al guardar pedido:', err.message);
+    res.status(500).json({ error: 'No se pudo guardar el pedido' });
+  } finally {
+    client.release();
+  }
+});
+
+
+// REGISTRO
 app.post('/auth/register', async (req, res) => {
   const { nombre, apellidos, nombre_usuario, email, contraseña, acepta_terminos, fecha_nacimiento } = req.body;
 
@@ -360,15 +468,17 @@ app.post('/auth/register', async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(contraseña, 10);
+
     const result = await pool.query(
       `INSERT INTO usuarios (nombre, apellidos, nombre_usuario, email, contraseña, rol, acepta_terminos, fecha_nacimiento) 
-      VALUES ($1, $2, $3, $4, $5, 'cliente', $6, $7) RETURNING *`,
+      VALUES ($1, $2, $3, $4, $5, 'cliente', $6, $7) RETURNING id, email, nombre_usuario, rol`,
       [nombre, apellidos, nombre_usuario, email, hashedPassword, acepta_terminos, fecha_nacimiento]
     );
-    const { id } = result.rows[0];
+
+    const user = result.rows[0];
     res.status(201).json({ 
       message: "Registrado con éxito", 
-      user: { id, email } 
+      user 
     });
   } catch (err) {
     console.error('Error en registro:', err.message);
@@ -428,6 +538,35 @@ app.post('/auth/login', async (req, res) => {
 });
 
 
+// PUT
+app.put('/reservas/:id', async (req, res) => {
+  const { id } = req.params;
+  const { fecha, estado } = req.body;
+  try {
+    const result = await pool.query(
+      `UPDATE reservas 
+       SET fecha_hora = COALESCE($1, fecha_hora), estado = COALESCE($2, estado) 
+       WHERE id = $3 
+       RETURNING *`,
+      [fecha, estado, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
+    }
+
+    res.json({
+      mensaje: 'Reserva actualizada',
+      reserva: result.rows[0]
+    });    
+  } catch (err) {
+    console.error('Error al modificar reserva:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// DELETE
 app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
   const { id } = req.params;
   try {

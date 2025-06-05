@@ -105,7 +105,7 @@ const MiPerfil = () => {
         return 'warning';
       case 'cancelado':
         return 'danger';
-      case 'confirmado':
+      case 'pendiente':
         return 'info';
       default:
         return 'secondary';
