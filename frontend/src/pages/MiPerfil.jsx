@@ -169,6 +169,7 @@ const calcularTotalPedido = (productos) => {
                 </div>
                 
                 <div className="list-group list-group-flush">
+                    {/* Botón: Mi Perfil */}
                     <button 
                     className={`list-group-item list-group-item-action ${activeTab === 'perfil' ? 'active' : ''}`}
                     onClick={() => setActiveTab('perfil')}
@@ -178,6 +179,8 @@ const calcularTotalPedido = (productos) => {
                     </svg>
                     Mi Perfil
                     </button>
+
+                    {/* Botón: Mis Pedidos */}
                     <button 
                     className={`list-group-item list-group-item-action ${activeTab === 'pedidos' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pedidos')}
@@ -188,6 +191,8 @@ const calcularTotalPedido = (productos) => {
                     </svg>
                     Mis Pedidos ({pedidosHistorial.length})
                     </button>
+                    
+                    {/* Botón: Mis Reservas */}
                     <button 
                     className={`list-group-item list-group-item-action ${activeTab === 'reservas' ? 'active' : ''}`}
                     onClick={() => setActiveTab('reservas')}
@@ -197,6 +202,42 @@ const calcularTotalPedido = (productos) => {
                         <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
                     </svg>
                     Mis Reservas ({reservasHistorial.length})
+                    </button>
+                    
+                    {/* Botón: Mis Favoritos */}
+                    <button 
+                      className={`list-group-item list-group-item-action ${activeTab === 'favoritos' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('favoritos')}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart me-2" viewBox="0 0 16 16">
+                        <path d="m8 2.748-.717-.737C5.6.281 2.514 3.09 4.016 6.563c.6 1.388 1.894 2.84 3.984 4.385 2.09-1.545 3.383-2.997 3.984-4.385C13.486 3.09 10.4.28 8.717 2.01L8 2.748z"/>
+                        <path d="M8 15C-7.333 4.868 3.279-3.04 7.824 1.143 8 1.318 8.176 1.143 8.176 1.143 12.72-3.042 23.333 4.867 8 15z"/>
+                      </svg>
+                      Mis Favoritos
+                    </button>
+
+                    {/* Botón: Cambiar Contraseña */}
+                    <button 
+                      className={`list-group-item list-group-item-action ${activeTab === 'password' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('password')}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-key me-2" viewBox="0 0 16 16">
+                        <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z"/>
+                        <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                      </svg>
+                      Cambiar Contraseña
+                    </button>
+
+                    {/* Botón: Eliminar Cuenta */}
+                    <button 
+                      className={`list-group-item list-group-item-action ${activeTab === 'delete' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('delete')}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person-x me-2" viewBox="0 0 16 16">
+                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708Z"/>
+                      </svg>
+                      Eliminar Cuenta
                     </button>
                 </div>
                 </div>
