@@ -10,6 +10,9 @@ const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [subscriptionEmail, setSubscriptionEmail] = useState('');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -83,25 +86,85 @@ const Home = () => {
     window.location.reload();
   };
 
-const handleDropdownItemClick = (action) => {
-  console.log('Dropdown clicked:', action);
-  setShowDropdown(false);
-  
-  switch (action) {
-    case 'perfil':
-      navigate('/mi-perfil');
-      break;
-    case 'mis-reservas':
-      navigate('/mis-reservas');
-      break;
-    case 'mis-pedidos':
-      navigate('/mis-pedidos');
-      break;
-    default:
-      console.log(`Navegando a: ${action}`);
-      break;
-  }
-};
+  const handleDropdownItemClick = (action) => {
+    console.log('Dropdown clicked:', action);
+    setShowDropdown(false);
+    
+    switch (action) {
+      case 'perfil':
+        navigate('/mi-perfil');
+        break;
+      case 'mis-reservas':
+        navigate('/mis-reservas');
+        break;
+      case 'mis-pedidos':
+        navigate('/mis-pedidos');
+        break;
+      default:
+        console.log(`Navegando a: ${action}`);
+        break;
+    }
+  };
+
+  // Función para manejar la suscripción
+    const handleSubscription = async (e) => {
+      e.preventDefault();
+      
+      if (!subscriptionEmail) {
+        setSubscriptionStatus('Por favor, introduce tu email');
+        return;
+      }
+
+      if (!subscriptionEmail.includes('@')) {
+        setSubscriptionStatus('Por favor, introduce un email válido');
+        return;
+      }
+
+      setIsSubscribing(true);
+      setSubscriptionStatus('');
+
+      try {
+      const SERVICE_ID = 'service_kx4rh4b'; // Service ID
+      const TEMPLATE_ID = 'template_bubou3k'; // Template ID  
+      const PUBLIC_KEY = 'hXOVhDS7tdDuCAPoD'; // Public Key (User ID)
+
+      // Cargar EmailJS si no está disponible
+      if (!window.emailjs) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+        document.head.appendChild(script);
+        
+        // Esperar a que se cargue
+        await new Promise((resolve) => {
+          script.onload = resolve;
+        });
+        
+        // Inicializar EmailJS
+        window.emailjs.init(PUBLIC_KEY);
+      }
+
+      // Enviar email usando EmailJS
+      const result = await window.emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+        to_email: subscriptionEmail,
+        user_email: subscriptionEmail,
+        from_name: 'Book & Bite',
+        reply_to: subscriptionEmail,
+      });
+
+      if (result.status === 200) {
+        setSubscriptionStatus('¡Suscripción exitosa! Revisa tu email.');
+        setSubscriptionEmail('');
+        console.log('Email enviado exitosamente:', result);
+      } else {
+        throw new Error('Error al enviar email');
+      }
+    } catch (error) {
+      console.error('Error al enviar email:', error);
+      setSubscriptionStatus('Error al enviar el email. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   const mensajes = [
     {
@@ -240,6 +303,91 @@ const handleDropdownItemClick = (action) => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECCIÓN DE SUSCRIPCIÓN */}
+      <section className="subscription-section" style={{ backgroundColor: '#f8f9fa', padding: '60px 0' }}>
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-8 col-md-10">
+              <div className="text-center mb-4">
+                <h2 className="section-title" style={{ color: '#333', marginBottom: '20px' }}>
+                  Suscríbete a Nuestra Newsletter
+                </h2>
+                <p style={{ color: '#666', fontSize: '18px', marginBottom: '30px' }}>
+                  Únete a nuestra comunidad gastronómica y recibe las últimas novedades, 
+                  ofertas especiales y recetas exclusivas directamente en tu email.
+                </p>
+              </div>
+              
+              <form onSubmit={handleSubscription} className="subscription-form">
+                <div className="row justify-content-center">
+                  <div className="col-md-8">
+                    <div className="input-group mb-3">
+                      <span className="input-group-text" style={{ backgroundColor: '#fff', border: '2px solid #ddd' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-envelope" viewBox="0 0 16 16">
+                          <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                        </svg>
+                      </span>
+                      <input
+                        type="email"
+                        className="form-control"
+                        placeholder="Introduce tu email"
+                        value={subscriptionEmail}
+                        onChange={(e) => setSubscriptionEmail(e.target.value)}
+                        disabled={isSubscribing}
+                        style={{ 
+                          border: '2px solid #ddd', 
+                          borderLeft: 'none',
+                          fontSize: '16px',
+                          padding: '12px 15px'
+                        }}
+                      />
+                      <button
+                        type="submit"
+                        className="btn btn-primary-custom"
+                        disabled={isSubscribing}
+                        style={{ 
+                          border: '2px solid var(--gold)',
+                          borderLeft: 'none',
+                          padding: '12px 25px',
+                          fontSize: '16px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {isSubscribing ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Enviando...
+                          </>
+                        ) : (
+                          'Suscribirse'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {subscriptionStatus && (
+                  <div className="row justify-content-center">
+                    <div className="col-md-8">
+                      <div className={`alert ${subscriptionStatus.includes('exitosa') ? 'alert-success' : 'alert-warning'} text-center`}>
+                        {subscriptionStatus}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </form>
+              
+              <div className="text-center mt-4">
+                <p style={{ color: '#888', fontSize: '14px' }}>
+                  Al suscribirte, aceptas recibir emails promocionales. 
+                  Puedes darte de baja en cualquier momento.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
