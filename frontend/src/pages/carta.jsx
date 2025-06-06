@@ -9,7 +9,6 @@ const Carta = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [expandedDish, setExpandedDish] = useState(null);
-  const [activeSection, setActiveSection] = useState(null);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -33,14 +32,6 @@ const Carta = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const scrollToSection = (sectionId) => {
-    setActiveSection(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');

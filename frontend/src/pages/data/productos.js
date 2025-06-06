@@ -100,7 +100,7 @@ const productos = {
         id: 11,
         name: 'Uramaki tempurizado de langostino y mayonesa picante',
         price: '11,90',
-        allergens: '🦐🌾🥚🌶',
+        allergens: '🦐🌾🥚🌶️',
         allergenText: 'MARISCO - GLUTEN - HUEVO - PICANTE',
         description: 'Uramaki tempurizado relleno de langostino y pepino, acompañado de mayonesa picante y salsa teriyaki.',
         image: '/images/11.jpeg'
@@ -167,7 +167,7 @@ const productos = {
         id: 18,
         name: 'Costillas de cerdo a baja temperatura BBQ',
         price: '15,90',
-        allergens: '🌶',
+        allergens: '🌶️',
         allergenText: 'PICANTE',
         description: 'Costillas de cerdo cocidas a baja temperatura con salsa BBQ casera picante y guarnición de ensalada coleslaw.',
         image: '/images/18.jpeg'
@@ -207,7 +207,7 @@ const productos = {
         id: 22,
         name: 'Gambas al ajillo con guindilla',
         price: '14,90',
-        allergens: '🦐🌶',
+        allergens: '🦐🌶️',
         allergenText: 'MARISCO - PICANTE',
         description: 'Gambas frescas salteadas en aceite de oliva con ajo laminado y guindilla picante. Un clásico de la cocina española.',
         image: '/images/22.jpeg'
