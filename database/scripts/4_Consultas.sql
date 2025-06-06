@@ -87,11 +87,27 @@ WHERE m.id NOT IN (
       AND estado != 'cancelada'
 );
 
--- Ver suscriptores
-SELECT email, fecha_suscripcion
-FROM suscripciones
+/*SUSCRIPCIONES*/
+-- Ver todas las suscripciones
+SELECT id, email, fecha_suscripcion FROM suscripciones 
 ORDER BY fecha_suscripcion DESC;
 
+-- Contar suscripciones por día
+SELECT 
+  DATE(fecha_suscripcion) as fecha,
+  COUNT(*) as suscripciones_del_dia
+FROM suscripciones 
+GROUP BY DATE(fecha_suscripcion)
+ORDER BY fecha DESC;
+
+-- Buscar una suscripción específica
+SELECT * FROM suscripciones WHERE email = 'suscripcion-temporal@yopmail.com';
+
+-- Eliminar una suscripción
+DELETE FROM suscripciones WHERE email = 'suscripcion-temporal@yopmail.com';
+
+
+/*VALORACIONES*/
 -- Ver valoraciones de un producto
 SELECT u.nombre, v.puntuacion, v.comentario, v.fecha
 FROM valoraciones v

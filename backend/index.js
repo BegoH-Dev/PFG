@@ -1,9 +1,9 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -28,6 +28,9 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
 });
+
+// Hacer disponible la conexión para las rutas
+app.locals.db = pool;
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
@@ -282,6 +285,47 @@ app.get('/usuarios', verificarToken, verificarAdmin, async (req, res) => {
 });
 
 
+// OBTENER LAS SUSCRIPCIONES (PARA ADMIN)
+app.get('/api/suscripciones', async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const query = `
+      SELECT id, email, fecha_suscripcion 
+      FROM suscripciones 
+      ORDER BY fecha_suscripcion DESC 
+      LIMIT $1 OFFSET $2
+    `;
+    
+    const countQuery = 'SELECT COUNT(*) FROM suscripciones';
+    
+    const [subscriptions, totalCount] = await Promise.all([
+      pool.query(query, [limit, offset]),
+      pool.query(countQuery)
+    ]);
+
+    res.json({
+      success: true,
+      data: subscriptions.rows,
+      pagination: {
+        total: parseInt(totalCount.rows[0].count),
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(totalCount.rows[0].count / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error('Error al obtener suscripciones:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
+
+
 // POST
 app.post('/pedidos', async (req, res) => {
   const { 
@@ -445,6 +489,102 @@ app.post('/usuarios/:id/pedidos', async (req, res) => {
 });
 
 
+// SUSCRIPCIONES
+app.post('/api/suscripciones', async (req, res) => {
+  try {
+    console.log('Recibida petición de suscripción:', req.body);
+    
+    const { email } = req.body;
+
+    // Validaciones
+    if (!email) {
+      console.log('Error: Email no proporcionado');
+      return res.status(400).json({
+        success: false,
+        message: 'El email es requerido'
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      console.log('Error: Formato de email inválido:', email);
+      return res.status(400).json({
+        success: false,
+        message: 'Formato de email inválido'
+      });
+    }
+
+    // Verificar conexión a la base de datos
+    console.log('Verificando conexión a la base de datos...');
+    await pool.query('SELECT 1');
+
+    // Verificar si el email ya existe
+    console.log('Verificando si el email ya existe...');
+    const checkQuery = 'SELECT id FROM suscripciones WHERE email = $1';
+    const existingSubscription = await pool.query(checkQuery, [email]);
+
+    if (existingSubscription.rows.length > 0) {
+      console.log('Email ya existe:', email);
+      return res.status(409).json({
+        success: false,
+        message: 'Este email ya está suscrito'
+      });
+    }
+
+    // Insertar nueva suscripción
+    console.log('Insertando nueva suscripción...');
+    const insertQuery = `
+      INSERT INTO suscripciones (email, fecha_suscripcion) 
+      VALUES ($1, CURRENT_TIMESTAMP) 
+      RETURNING id, email, fecha_suscripcion
+    `;
+    
+    const result = await pool.query(insertQuery, [email]);
+    const newSubscription = result.rows[0];
+
+    console.log('Suscripción creada exitosamente:', newSubscription);
+
+    res.status(201).json({
+      success: true,
+      message: 'Suscripción exitosa',
+      data: {
+        id: newSubscription.id,
+        email: newSubscription.email,
+        fecha_suscripcion: newSubscription.fecha_suscripcion
+      }
+    });
+
+  } catch (error) {
+    console.error('Error detallado al crear suscripción:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    
+    if (error.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'Este email ya está suscrito'
+      });
+    }
+
+    // Error de conexión a la base de datos
+    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      return res.status(503).json({
+        success: false,
+        message: 'Problema de conexión con la base de datos'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+
 // REGISTRO
 app.post('/auth/register', async (req, res) => {
   const { nombre, apellidos, nombre_usuario, email, contraseña, acepta_terminos, fecha_nacimiento } = req.body;
@@ -487,6 +627,7 @@ app.post('/auth/register', async (req, res) => {
 });
 
 
+// INICIO SESIÓN
 app.post('/auth/login', async (req, res) => {
   console.log('Intentando login:', req.body);
 
@@ -601,6 +742,37 @@ app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// ELIMINAR SUSCRIPCIÓN
+app.delete('/api/suscripciones/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const deleteQuery = 'DELETE FROM suscripciones WHERE email = $1 RETURNING *';
+    const result = await pool.query(deleteQuery, [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email no encontrado'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Suscripción eliminada exitosamente'
+    });
+
+  } catch (error) {
+    console.error('Error al eliminar suscripción:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
+
 
 // Middleware para verificar si es admin
 function verificarAdmin(req, res, next) {

@@ -124,19 +124,69 @@ const Home = () => {
       setSubscriptionStatus('');
 
       try {
+      // PASO 1: Guardar en la base de datos
+      console.log('Iniciando suscripción para:', subscriptionEmail);
+      
+      const backendResponse = await fetch('http://localhost:5000/api/suscripciones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: subscriptionEmail
+        })
+      });
+
+      console.log('Respuesta del backend:', backendResponse.status);
+
+      // Verificar si la respuesta es válida
+      if (!backendResponse.ok) {
+        console.log('Error del backend:', backendData);
+
+        if (backendResponse.status === 409) {
+          setSubscriptionStatus('Este email ya está suscrito a nuestro newsletter.');
+          return;
+        }
+
+        if (backendResponse.status === 400) {
+          setSubscriptionStatus(backendData.message || 'Datos inválidos');
+          return;
+        }
+
+        if (backendResponse.status === 500) {
+          setSubscriptionStatus(backendData.message || 'Error del servidor. Por favor, inténtalo más tarde.');
+          return;
+        }
+
+        throw new Error(backendData.message || `Error del servidor: ${backendResponse.status}`);
+      }
+
+      let backendData = {};
+      try {
+        backendData = await backendResponse.json();
+      } catch (err) {
+        console.warn('No se pudo parsear JSON del backend', err);
+      }
+
+      console.log('Datos del backend:', backendData);
+
+      // PASO 2: Enviar email de confirmación con EmailJS
       const SERVICE_ID = 'service_kx4rh4b'; // Service ID
       const TEMPLATE_ID = 'template_bubou3k'; // Template ID  
       const PUBLIC_KEY = 'hXOVhDS7tdDuCAPoD'; // Public Key (User ID)
 
       // Cargar EmailJS si no está disponible
       if (!window.emailjs) {
+        console.log('Cargando EmailJS...');
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
         document.head.appendChild(script);
         
         // Esperar a que se cargue
-        await new Promise((resolve) => {
+        await new Promise((resolve, reject) => {
           script.onload = resolve;
+          script.onerror = reject;
+          setTimeout(reject, 10000); // Timeout después de 10 segundos
         });
         
         // Inicializar EmailJS
@@ -144,23 +194,38 @@ const Home = () => {
       }
 
       // Enviar email usando EmailJS
-      const result = await window.emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      console.log('Enviando email...');
+      const emailResult  = await window.emailjs.send(SERVICE_ID, TEMPLATE_ID, {
         to_email: subscriptionEmail,
         user_email: subscriptionEmail,
         from_name: 'Book & Bite',
         reply_to: subscriptionEmail,
       });
 
-      if (result.status === 200) {
+      console.log('Resultado del email:', emailResult);
+
+      if (emailResult.status === 200) {
         setSubscriptionStatus('¡Suscripción exitosa! Revisa tu email.');
         setSubscriptionEmail('');
-        console.log('Email enviado exitosamente:', result);
+        console.log('Suscripción completada exitosamente'); 
       } else {
-        throw new Error('Error al enviar email');
+        setSubscriptionStatus('Suscripción guardada, pero hubo un problema enviando el email de confirmación.');
+        setSubscriptionEmail('');
       }
     } catch (error) {
-      console.error('Error al enviar email:', error);
-      setSubscriptionStatus('Error al enviar el email. Por favor, inténtalo de nuevo.');
+      console.error('Error completo en la suscripción:', error);
+      
+      // Manejo específico de errores
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setSubscriptionStatus('No se pudo conectar con el servidor. Verifica tu conexión.');
+      } else if (error.message.includes('suscrito')) {
+        setSubscriptionStatus(error.message);
+      } else if (error.message.includes('EmailJS')) {
+        setSubscriptionStatus('Suscripción guardada, pero hubo un problema con el email de confirmación.');
+        setSubscriptionEmail('');
+      } else {
+        setSubscriptionStatus('Error al procesar la suscripción. Por favor, inténtalo de nuevo.');
+      }
     } finally {
       setIsSubscribing(false);
     }
