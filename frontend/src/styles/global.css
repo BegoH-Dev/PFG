@@ -326,10 +326,10 @@ ul {
   transition: color 0.3s ease;
 }
 
-    .nav-link:hover {
-      color: var(--gold) !important;
-      cursor: pointer;
-    }
+.nav-link:hover {
+  color: var(--gold) !important;
+  cursor: pointer;
+}
 
     .btn-primary-custom {
       background-color: var(--brown);

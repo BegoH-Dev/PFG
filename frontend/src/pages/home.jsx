@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 import '../styles/global.css';
 
 const Home = () => {
-  const [activeSection, setActiveSection] = useState('home');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -128,6 +127,13 @@ const Home = () => {
         })
       });
 
+      let backendData = {};
+      try {
+        backendData = await backendResponse.json();
+      } catch (err) {
+        console.warn('No se pudo parsear JSON del backend', err);
+      }
+
       console.log('Respuesta del backend:', backendResponse.status);
 
       // Verificar si la respuesta es válida
@@ -150,13 +156,6 @@ const Home = () => {
         }
 
         throw new Error(backendData.message || `Error del servidor: ${backendResponse.status}`);
-      }
-
-      let backendData = {};
-      try {
-        backendData = await backendResponse.json();
-      } catch (err) {
-        console.warn('No se pudo parsear JSON del backend', err);
       }
 
       console.log('Datos del backend:', backendData);
@@ -334,10 +333,7 @@ const Home = () => {
           </div>
           {/* Botón "Ver más" */}
           <div className="text-center mt-4">
-            <button 
-              className="btn btn-primary-custom btn-ver-mas" 
-              onClick={() => navigate('/novedades')}
-            >
+            <button className="btn btn-primary-custom btn-ver-mas" onClick={() => navigate('/novedades')} >
               Ver más
             </button>
           </div>
@@ -400,7 +396,7 @@ const Home = () => {
                         type="submit"
                         className="btn btn-primary-custom"
                         disabled={isSubscribing}
-                        style={{ border: '2px solid var(--gold)', borderLeft: 'none', padding: '12px 25px', fontSize: '16px', fontWeight: 'bold' }} >
+                        style={{ backgroundColor: '#b15521', border: '2px solid #e6c472', borderLeft: 'none', padding: '12px 25px', fontSize: '16px', fontWeight: 'bold' }} >
                         {isSubscribing ? (
                           <>
                             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/global.css';
 
 const MiPerfil = () => {
-    const [activeSection, setActiveSection] = useState('home');
     const [username, setUsername] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
-    const dropdownRef = useRef(null);
     const [usuario, setUsuario] = useState({ nombre: '', email: '', telefono: '', direccion: '' });
     const [pedidosHistorial, setPedidosHistorial] = useState([]);
     const [reservasHistorial, setReservasHistorial] = useState([]);
