@@ -338,25 +338,13 @@ const Home = () => {
                         value={subscriptionEmail}
                         onChange={(e) => setSubscriptionEmail(e.target.value)}
                         disabled={isSubscribing}
-                        style={{ 
-                          border: '2px solid #ddd', 
-                          borderLeft: 'none',
-                          fontSize: '16px',
-                          padding: '12px 15px'
-                        }}
+                        style={{ border: '2px solid #ddd', borderLeft: 'none', fontSize: '16px', padding: '12px 15px' }}
                       />
                       <button
                         type="submit"
                         className="btn btn-primary-custom"
                         disabled={isSubscribing}
-                        style={{ 
-                          border: '2px solid var(--gold)',
-                          borderLeft: 'none',
-                          padding: '12px 25px',
-                          fontSize: '16px',
-                          fontWeight: 'bold'
-                        }}
-                      >
+                        style={{ border: '2px solid var(--gold)', borderLeft: 'none', padding: '12px 25px', fontSize: '16px', fontWeight: 'bold' }} >
                         {isSubscribing ? (
                           <>
                             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
