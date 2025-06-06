@@ -97,6 +97,13 @@ CREATE TABLE suscripciones (
   fecha_suscripcion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Índice para mejorar performance en búsquedas por email
+CREATE INDEX idx_suscripciones_email ON suscripciones(email);
+
+-- Índice para ordenar por fecha
+CREATE INDEX idx_suscripciones_fecha ON suscripciones(fecha_suscripcion DESC);
+
+
 /* TABLA "VALORACIONES" */
 CREATE TABLE valoraciones (
   id SERIAL PRIMARY KEY,
