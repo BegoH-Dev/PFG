@@ -706,6 +706,38 @@ app.put('/reservas/:id', async (req, res) => {
   }
 });
 
+// Actualizar datos de usuario
+app.put('/api/users/update', verificarToken, async (req, res) => {
+  const userId = req.user.userId;
+  const { nombre, email, telefono, direccion } = req.body;
+
+  if (!nombre || !email) {
+    return res.status(400).json({ error: 'Nombre y email son obligatorios' });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE usuarios 
+       SET nombre = $1, email = $2, telefono = $3, direccion = $4
+       WHERE id = $5
+       RETURNING id, nombre, email, telefono, direccion`,
+      [nombre, email, telefono, direccion, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json({ 
+      message: 'Datos actualizados correctamente',
+      usuario: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error al actualizar usuario:', err.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 // DELETE
 app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {

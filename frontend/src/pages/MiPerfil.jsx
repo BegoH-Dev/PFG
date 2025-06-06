@@ -13,6 +13,10 @@ const MiPerfil = () => {
     const [usuario, setUsuario] = useState({ nombre: '', email: '', telefono: '', direccion: '' });
     const [pedidosHistorial, setPedidosHistorial] = useState([]);
     const [reservasHistorial, setReservasHistorial] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState(usuario);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [updateError, setUpdateError] = useState('');
     const [activeTab, setActiveTab] = useState('perfil');
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -36,22 +40,60 @@ const MiPerfil = () => {
         if (action === 'reservas') setActiveTab('reservas');
     }
 
-    // Función para desplazarse a una sección específica
-    const scrollToSection = (sectionId) => {
-        setActiveSection(sectionId);
-        const element = document.getElementById(sectionId);
-        if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
+  // Función para manejar cambios en los campos del formulario
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+// Función para guardar los cambios
+  const handleSaveChanges = async () => {
+    try {
+      // Validación básica
+      if (!formData.nombre || !formData.email) {
+        setUpdateError('Nombre y email son obligatorios');
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+
+      // Actualizar en la base de datos
+      const response = await fetch('http://localhost:5000/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar los datos');
+      }
+
+      // Actualizar estado local y localStorage
+      setUsuario(formData);
+      localStorage.setItem('username', formData.nombre);
+      localStorage.setItem('userEmail', formData.email);
+      localStorage.setItem('userPhone', formData.telefono);
+      localStorage.setItem('userAddress', formData.direccion);
+
+      setUpdateSuccess(true);
+      setUpdateError('');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setUpdateError('No se pudieron guardar los cambios. Inténtalo de nuevo.');
+    }
+  };
 
     // Función segura para parsear JSON desde localStorage
     const safeJSONParse = (key) => {
-    try {
-        return JSON.parse(localStorage.getItem(key) || '[]');
-    } catch {
-        return [];
-    }
+      try {
+          return JSON.parse(localStorage.getItem(key) || '[]');
+      } catch {
+          return [];
+      }
     };
 
     useEffect(() => {
@@ -90,10 +132,6 @@ const MiPerfil = () => {
 
             setIsLoading(false);
         }, [navigate]);
-
-        const handleEditProfile = () => {
-            console.log('Editar perfil');
-        };
 
   const getEstadoColor = (estado) => {
     switch (estado?.toLowerCase()) {
@@ -250,7 +288,13 @@ const calcularTotalPedido = (productos) => {
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
                 <h4 className="mb-0">Información Personal</h4>
-                <button className="btn btn-outline-primary btn-sm" onClick={handleEditProfile}>
+                <button className="btn btn-outline-primary btn-sm" 
+                  onClick={() => {
+                    setIsEditing(true);
+                    setFormData(usuario);
+                    setUpdateSuccess(false);
+                    setUpdateError('');
+                  }}>                  
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil me-1" viewBox="0 0 16 16">
                     <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L5.707 14.707a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                   </svg>
@@ -258,27 +302,87 @@ const calcularTotalPedido = (productos) => {
                 </button>
               </div>
               <div className="card-body">
+                {isEditing ? (
                 <div className="row g-3">
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Nombre</label>
-                    <p className="form-control-plaintext">{usuario.nombre || 'No especificado'}</p>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Email</label>
-                    <p className="form-control-plaintext">{usuario.email || 'No especificado'}</p>
+                    <input
+                      type="email"
+                      className="form-control"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Teléfono</label>
-                    <p className="form-control-plaintext">{usuario.telefono || 'No especificado'}</p>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleInputChange}
+                    />                  
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Dirección</label>
-                    <p className="form-control-plaintext">{usuario.direccion || 'No especificado'}</p>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="direccion"
+                      value={formData.direccion}
+                      onChange={handleInputChange}
+                    />                  
+                  </div>
+                  <div className="col-12 mt-3">
+                    {updateError && <div className="alert alert-danger">{updateError}</div>}
+                    {updateSuccess && <div className="alert alert-success">Datos actualizados correctamente</div>}
+                  <div className="d-flex gap-2">
+                    <button className="btn btn-primary" onClick={handleSaveChanges}>
+                      Guardar cambios
+                    </button>
+                    <button 
+                      className="btn btn-outline-secondary" 
+                      onClick={() => setIsEditing(false)}
+                    >
+                      Cancelar
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Nombre</label>
+                  <p className="form-control-plaintext">{usuario.nombre || 'No especificado'}</p>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Email</label>
+                  <p className="form-control-plaintext">{usuario.email || 'No especificado'}</p>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Teléfono</label>
+                  <p className="form-control-plaintext">{usuario.telefono || 'No especificado'}</p>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Dirección</label>
+                  <p className="form-control-plaintext">{usuario.direccion || 'No especificado'}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
           {/* SECCIÓN DE PEDIDOS */}
           {activeTab === 'pedidos' && (
