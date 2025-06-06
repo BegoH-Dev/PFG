@@ -242,7 +242,7 @@ const Carta = () => {
       {
         name: 'Gambas al ajillo con guindilla',
         price: '14,90€',
-        allergens: '🦐🌶',
+        allergens: '🦐🌶️',
         allergenText: 'MARISCO - PICANTE',
         description: 'Gambas frescas salteadas en aceite de oliva con ajo laminado y guindilla picante. Un clásico de la cocina española.',
         image: '/images/22.jpeg'
@@ -384,7 +384,8 @@ const Carta = () => {
     <>
       {/* Navbar */}
       <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
-      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>      
+      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} 
+      navigate={navigate}/>      
       {/* Hero Section */}
       <section className="hero-section" style={{ 
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', 
@@ -421,7 +422,7 @@ const Carta = () => {
               <strong style={{ fontSize: '1.5rem' }}>🐟</strong> Pescado | 
               <strong style={{ fontSize: '1.5rem' }}>🦐</strong> Marisco | 
               <strong style={{ fontSize: '1.5rem' }}>🥜</strong> Frutos secos | 
-              <strong style={{ fontSize: '1.5rem' }}>🌶</strong> Picante
+              <strong style={{ fontSize: '1.5rem' }}>🌶️</strong> Picante
             </p>
             <p className="mb-0">
               <small>ℹ️ Para cualquier intolerancia o requerimiento dietético, por favor consúltanos. 
