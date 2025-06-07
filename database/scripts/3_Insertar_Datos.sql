@@ -1,10 +1,10 @@
 /* INSERTAR DATOS */
 
-/* INSERTAR "ALERGENOS" */
+-- "ALERGENOS"
 INSERT INTO alergenos (nombre) VALUES
 ('Vegetariano'), ('Gluten'), ('Lácteos'), ('Huevo'), ('Pescado'), ('Marisco'), ('Frutos secos'), ('Picante');
 
-/* INSERTAR "PRODUCTOS" PARA LA CARTA*/
+-- "PRODUCTOS" PARA LA CARTA
 INSERT INTO productos (nombre, precio, tipo) VALUES
 ('Jamón ibérico de bellota con pan de cristal y tomate', 16.90, 'Entrantes'),
 ('Croquetas caseras de cocido (6 uds.)', 9.50, 'Entrantes'),
@@ -42,7 +42,8 @@ INSERT INTO productos (nombre, precio, tipo) VALUES
 ('Café solo / con leche / cortado', 1.80, 'Cafés e infusiones'),
 ('Infusiones (menta, té verde, manzanilla)', 2.00, 'Cafés e infusiones');
 
-/* INSERTAR LOS ALÉRGENOS PARA CADA PRODUCTO */
+
+-- ALÉRGENOS PARA CADA PRODUCTO
 INSERT INTO producto_alergenos (producto_id, alergeno_id)
 VALUES 
 (1, 2), (2, 2), (2, 3), (2, 4), (3, 1),
@@ -56,13 +57,19 @@ VALUES
 (25, 2), (25, 3), (25, 4), (26, 2), (26, 3), (26, 4),(27, 1),
 (34, 3);
 
-/* INSERTAR DATOS DE LAS MESAS => PRUEBA PARA POSTMAN */
+
+-- DATOS DE LAS MESAS => PRUEBA PARA POSTMAN
 INSERT INTO mesas (numero, capacidad, disponible) VALUES
 (1, 4, TRUE),
 (2, 6, TRUE),
 (3, 2, TRUE),
 (4, 8, TRUE),
-(5, 4, TRUE);
+(5, 4, TRUE),
+(6, 8, TRUE),
+(7, 4, FALSE),
+(8, 6, TRUE),
+(9, 4, TRUE),
+(10, 2, FALSE);
 
 /* INSERTAR DATOS EN PEDIDOS => PRUEBA PARA POSTMAN */
 INSERT INTO pedidos (usuario_id, total, estado, direccion_entrega, metodo_pago) VALUES
