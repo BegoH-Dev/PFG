@@ -301,28 +301,37 @@ const Pedidos = () => {
         <h1 style={{ textAlign: 'center', margin: '2rem', color: '#333' }}>Pedido a domicilio</h1>
 
         {/* INDICADOR DE PASOS */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 1 ? '#D4AF37' : '#ddd', color: activeStep >= 1 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-              }}>1</div>
-              <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 1 ? '#D4AF37' : '#666' }}>Carta</span>
+        <div className="step-indicator">
+          <div className="step-indicator-container">
+            <div className="step-item">
+              <div className={`step-circle ${activeStep >= 1 ? 'active' : 'inactive'}`}>
+                1
+              </div>
+              <span className={`step-label ${activeStep === 1 ? 'active' : 'inactive'}`}>
+                Carta
+              </span>
             </div>
             
-            <div style={{ width: '50px', height: '2px', backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd' }}></div>
+            <div className={`step-connector ${activeStep >= 2 ? 'active' : 'inactive'}`}></div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd', color: activeStep >= 2 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-              }}>2</div>
-              <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 2 ? '#D4AF37' : '#666' }}>Datos de entrega</span>
+            <div className="step-item">
+              <div className={`step-circle ${activeStep >= 2 ? 'active' : 'inactive'}`}>
+                2
+              </div>
+              <span className={`step-label ${activeStep === 2 ? 'active' : 'inactive'}`}>
+                Datos de entrega
+              </span>
             </div>
             
-            <div style={{ width: '50px', height: '2px', backgroundColor: activeStep >= 3 ? '#D4AF37' : '#ddd' }}></div>
+            <div className={`step-connector ${activeStep >= 3 ? 'active' : 'inactive'}`}></div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 3 ? '#D4AF37' : '#ddd', color: activeStep >= 3 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-              }}>3</div>
-              <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 3 ? '#D4AF37' : '#666' }}>Confirmación</span>
+            <div className="step-item">
+              <div className={`step-circle ${activeStep >= 3 ? 'active' : 'inactive'}`}>
+                3
+              </div>
+              <span className={`step-label ${activeStep === 3 ? 'active' : 'inactive'}`}>
+                Confirmación
+              </span>
             </div>
           </div>
         </div>
