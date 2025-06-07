@@ -1,12 +1,20 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+
+// Importar la conexión a la base de datos
+const pool = require('./src/config/db');
+
+// Middlewares personalizados
+const { verificarToken, verificarAdmin } = require('./src/middlewares/auth');
+
+// IMPORTAR LAS RUTAS
+const reservasRoutes = require('./src/routes/reservas');
 
 const app = express();
 
@@ -15,18 +23,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
+app.use('/api/reservas', reservasRoutes);
+
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.url}`);
   next();
-});
-
-// Conexión a PostgreSQL
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT),
 });
 
 // Hacer disponible la conexión para las rutas
@@ -55,7 +56,6 @@ app.get('/productos', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.get('/pedidos/:usuario_id', async (req, res) => {
   const { usuario_id } = req.params;
@@ -89,7 +89,6 @@ app.get('/pedidos/:usuario_id', async (req, res) => {
   }
 });
 
-
 app.get('/productos/alergenos', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -110,7 +109,6 @@ app.get('/productos/alergenos', async (req, res) => {
   }
 });
 
-
 app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM pedidos ORDER BY fecha DESC');
@@ -123,21 +121,6 @@ app.get('/admin/pedidos', verificarToken, verificarAdmin, async (req, res) => {
     res.status(500).send('Error al obtener los pedidos');
   }
 });
-
-
-app.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM reservas ORDER BY fecha_hora DESC');
-    res.json({
-      mensaje: 'Lista de reservas',
-      productos: result.rows
-    });  
-  } catch (err) {
-    console.error('Error en /admin/reservas:', err);
-    res.status(500).send('Error al obtener las reservas');
-  }
-});
-
 
 app.get('/productos/:id', async (req, res) => {
   const { id } = req.params;
@@ -166,7 +149,6 @@ app.get('/productos/:id', async (req, res) => {
   }
 });
 
-
 app.get('/usuarios/:id/pedidos', async (req, res) => {
   const { id } = req.params;
   try {
@@ -181,38 +163,6 @@ app.get('/usuarios/:id/pedidos', async (req, res) => {
   }
 });
 
-
-app.get('/reservas', async (req, res) => {
-  const { fecha } = req.query;
-
-  let query;
-  let params = [];
-
-  if (fecha) {
-    query = `SELECT * FROM reservas WHERE DATE(fecha_hora) = $1 ORDER BY fecha_hora`;
-    params = [fecha];
-  } else {
-    query = `SELECT * FROM reservas WHERE fecha_hora >= CURRENT_DATE ORDER BY fecha_hora`;
-  }
-
-  try {
-    const result = await pool.query(query, params);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
-    }
-
-    res.json({
-      mensaje: 'Lista de reservas',
-      productos: result.rows
-    });  
-  } catch (err) {
-    console.error('Error al obtener las reservas:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 app.get('/alergenos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM alergenos');
@@ -222,7 +172,6 @@ app.get('/alergenos', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.get('/productos/:id/alergenos', async (req, res) => {
   const { id } = req.params;
@@ -249,7 +198,6 @@ app.get('/productos/:id/alergenos', async (req, res) => {
   }
 });
 
-
 app.get('/valoraciones/:producto_id', async (req, res) => {
   const { producto_id } = req.params;
   try {
@@ -267,7 +215,6 @@ app.get('/valoraciones/:producto_id', async (req, res) => {
   }
 });
 
-
 // (Solo para administradores) 
 app.get('/usuarios', verificarToken, verificarAdmin, async (req, res) => { 
   try { 
@@ -284,8 +231,7 @@ app.get('/usuarios', verificarToken, verificarAdmin, async (req, res) => {
   }
 });
 
-
-// OBTENER LAS SUSCRIPCIONES (PARA ADMIN)
+// (Solo para administradores) 
 app.get('/api/suscripciones', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -324,7 +270,6 @@ app.get('/api/suscripciones', async (req, res) => {
     });
   }
 });
-
 
 // POST
 app.post('/pedidos', async (req, res) => {
@@ -396,25 +341,6 @@ app.post('/pedidos', async (req, res) => {
   }
 });
 
-
-app.post('/reservas', async (req, res) => {
-  const { usuario_id, mesa_id, fecha_hora, num_comensales, estado } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO reservas (usuario_id, mesa_id, fecha_hora, num_comensales, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [usuario_id, mesa_id, fecha_hora, num_comensales, estado]
-    );
-    res.status(201).json({
-      mensaje: 'Reserva creada con éxito',
-      reserva: result.rows[0]
-    });
-  } catch (err) {
-    console.error('Error al crear la reserva:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 app.post('/usuarios', async (req, res) => {
   const { nombre, apellidos, email, telefono, direccion, contraseña, rol } = req.body;
   
@@ -441,7 +367,6 @@ app.post('/usuarios', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.post('/usuarios/:id/pedidos', async (req, res) => {
   console.log('Datos recibidos:', req.body);
@@ -488,8 +413,6 @@ app.post('/usuarios/:id/pedidos', async (req, res) => {
   }
 });
 
-
-// SUSCRIPCIONES
 app.post('/api/suscripciones', async (req, res) => {
   try {
     console.log('Recibida petición de suscripción:', req.body);
@@ -584,8 +507,6 @@ app.post('/api/suscripciones', async (req, res) => {
   }
 });
 
-
-// REGISTRO
 app.post('/auth/register', async (req, res) => {
   const { nombre, apellidos, nombre_usuario, email, contraseña, acepta_terminos, fecha_nacimiento } = req.body;
 
@@ -626,8 +547,6 @@ app.post('/auth/register', async (req, res) => {
   }
 });
 
-
-// INICIO SESIÓN
 app.post('/auth/login', async (req, res) => {
   console.log('Intentando login:', req.body);
 
@@ -678,35 +597,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-
 // PUT
-app.put('/reservas/:id', async (req, res) => {
-  const { id } = req.params;
-  const { fecha, estado } = req.body;
-  try {
-    const result = await pool.query(
-      `UPDATE reservas 
-       SET fecha_hora = COALESCE($1, fecha_hora), estado = COALESCE($2, estado) 
-       WHERE id = $3 
-       RETURNING *`,
-      [fecha, estado, id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Reserva no encontrada' });
-    }
-
-    res.json({
-      mensaje: 'Reserva actualizada',
-      reserva: result.rows[0]
-    });    
-  } catch (err) {
-    console.error('Error al modificar reserva:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Actualizar datos de usuario
 app.put('/api/users/update', verificarToken, async (req, res) => {
   const userId = req.user.userId;
   const { nombre, email, telefono, direccion } = req.body;
@@ -738,7 +629,6 @@ app.put('/api/users/update', verificarToken, async (req, res) => {
   }
 });
 
-
 // DELETE
 app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
   const { id } = req.params;
@@ -753,7 +643,6 @@ app.delete('/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => 
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
   const userId = req.user.userId;
@@ -775,8 +664,6 @@ app.delete('/eliminar-cuenta', verificarToken, async (req, res) => {
   }
 });
 
-
-// ELIMINAR SUSCRIPCIÓN
 app.delete('/api/suscripciones/:email', async (req, res) => {
   try {
     const { email } = req.params;
@@ -804,33 +691,6 @@ app.delete('/api/suscripciones/:email', async (req, res) => {
     });
   }
 });
-
-
-// Middleware para verificar si es admin
-function verificarAdmin(req, res, next) {
-  if (req.user.rol !== 'admin') {
-    return res.status(403).json({ mensaje: 'Acceso restringido a administradores' });
-  }
-  next();
-}
-
-// Middleware "verificarToken" que valida el token en rutas protegidas.
-function verificarToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ mensaje: 'Requiere token' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ mensaje: 'Token inválido o expirado' });
-    }
-    req.user = user;
-    next();
-  });
-}
 
 // Ruta protegida "/perfil" que solo se accede con token válido.
 app.get('/perfil', verificarToken, (req, res) => {

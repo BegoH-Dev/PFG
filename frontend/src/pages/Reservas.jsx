@@ -14,21 +14,23 @@ const Reservas = () => {
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [availableTables] = useState(true);
   const [activeStep, setActiveStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const nextStep = () => {
     if (currentStep < 2) {
-      setCurrentStep(activeStep + 1);
+      setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(activeStep - 1);
+      setCurrentStep(currentStep - 1);
     }
   };
 
   const [reservationData, setReservationData] = useState({
-    name: '', lastname: '', phone: '', email: '', guests: 1, date: '', time: '', notes: ''
+    nombre: '', apellidos: '', telefono: '', email_envio: '', num_comensales: 1, fecha_hora: '', comentarios: ''
   });
   
   const navigate = useNavigate();
@@ -38,7 +40,8 @@ const Reservas = () => {
   const availableTimes = [
     '14:30',
     '15:30',
-    '21:00'
+    '21:00',
+    '22:00'
   ];
 
   // Generar calendario del mes actual
@@ -116,7 +119,7 @@ const Reservas = () => {
       setSelectedDate(date.fullDate);
       setReservationData(prev => ({
         ...prev,
-        date: date.fullDate
+        fecha_hora: date.fullDate
       }));
     }
   };
@@ -125,7 +128,7 @@ const Reservas = () => {
     setSelectedTime(time);
     setReservationData(prev => ({
       ...prev,
-      time: time
+      hora: time
     }));
   };
 
@@ -133,7 +136,7 @@ const Reservas = () => {
     setSelectedGuests(guests);
     setReservationData(prev => ({
       ...prev,
-      guests: guests
+      num_comensales: guests
     }));
   };
 
@@ -144,10 +147,82 @@ const Reservas = () => {
     }));
   };
 
-  const handleSubmitReservation = () => {
-    console.log('Reserva enviada:', reservationData);
-    alert('¡Reserva confirmada con éxito! Te contactaremos pronto para confirmar los detalles.');
-    setActiveStep(1);
+const handleSubmitReservation = async () => {
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      // Preparar los datos para enviar
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      console.log('Usuario ID que envío:', userData ? userData.id : null);
+
+      const usuario_id = userData ? userData.id : null;
+      const fecha_hora = new Date(`${selectedDate}T${selectedTime}`).toISOString();
+      if (!usuario_id) {
+        setSubmitError('Debes iniciar sesión para hacer una reserva');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const reservaPayload = {
+        usuario_id: userData ? userData.id : null,
+        fecha_hora,
+        num_comensales: selectedGuests,
+        estado: 'pendiente',
+        email_envio: reservationData.email_envio,
+        comentarios: reservationData.comentarios
+      };
+
+      // Hacer la petición POST al backend
+      const response = await fetch('http://localhost:5000/api/reservas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservaPayload)
+      });
+      console.log('Status:', response.status);
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error del servidor: ${text}`);
+      }
+      const result = await response.json();
+      console.log("RESPUESTA DEL BACKEND:", result);
+
+      if (response.ok && result.success) {
+        // Reserva creada exitosamente
+        alert(`¡Reserva confirmada con éxito! 
+        
+        Detalles:
+        - Mesa: ${result.data.reserva.mesa_numero}
+        - Fecha y hora: ${formatDate(fecha_hora)}
+        - Comensales: ${selectedGuests}
+        - Estado: ${result.data.reserva.estado}
+
+        Te contactaremos pronto para confirmar los detalles.`);
+        
+        // Resetear el formulario
+        setReservationData({
+          nombre: '', apellidos: '', telefono: '', email_envio: '', num_comensales: 1, fecha_hora: '', comentarios: ''
+        });
+        setSelectedDate('');
+        setSelectedTime('');
+        setSelectedGuests(1);
+        setCurrentStep(1);
+        setActiveStep(1);
+
+      } else {
+        // Error del servidor
+        setSubmitError(result.message || 'Error al crear la reserva');
+      }
+
+    } catch (error) {
+      console.error('Error al enviar reserva:', error);
+      setSubmitError('Error de conexión. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -177,16 +252,7 @@ const Reservas = () => {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: activeStep >= 1 ? '#D4AF37' : '#ddd',
-                color: activeStep >= 1 ? '#000' : '#666',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 1 ? '#D4AF37' : '#ddd', color: activeStep >= 1 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
               }}>1</div>
               <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 1 ? '#D4AF37' : '#666' }}>Carta</span>
             </div>
@@ -206,7 +272,7 @@ const Reservas = () => {
           <div className="row justify-content-center">
             <div className="col-lg-10">
               <div className="card">
-                <div className="card-header" style={{ backgroundColor: 'var(--gold)', color: 'white' }}>
+                <div className="card-header" style={{ backgroundColor: '#e6c472', color: 'white' }}>
                   <h5 className="mb-0">Haz tu reserva</h5>
                 </div>
                 <div className="card-body">
@@ -221,8 +287,8 @@ const Reservas = () => {
                               type="text"
                               className="form-control"
                               id="name"
-                              value={reservationData.name}
-                              onChange={(e) => handleInputChange('name', e.target.value)}
+                              value={reservationData.nombre}
+                              onChange={(e) => handleInputChange('nombre', e.target.value)}
                               required
                             />
                           </div>
@@ -232,8 +298,8 @@ const Reservas = () => {
                               type="text"
                               className="form-control"
                               id="lastname"
-                              value={reservationData.lastname}
-                              onChange={(e) => handleInputChange('lastname', e.target.value)}
+                              value={reservationData.apellidos}
+                              onChange={(e) => handleInputChange('apellidos', e.target.value)}
                               required
                             />
                           </div>
@@ -246,8 +312,8 @@ const Reservas = () => {
                               type="tel"
                               className="form-control"
                               id="phone"
-                              value={reservationData.phone}
-                              onChange={(e) => handleInputChange('phone', e.target.value)}
+                              value={reservationData.telefono}
+                              onChange={(e) => handleInputChange('telefono', e.target.value)}
                               required
                             />
                           </div>
@@ -257,8 +323,8 @@ const Reservas = () => {
                               type="email"
                               className="form-control"
                               id="email"
-                              value={reservationData.email}
-                              onChange={(e) => handleInputChange('email', e.target.value)}
+                              value={reservationData.email_envio}
+                              onChange={(e) => handleInputChange('email_envio', e.target.value)}
                               required
                             />
                           </div>
@@ -293,8 +359,8 @@ const Reservas = () => {
                             className="form-control"
                             id="notes"
                             rows="3"
-                            value={reservationData.notes}
-                            onChange={(e) => handleInputChange('notes', e.target.value)}
+                            value={reservationData.comentarios}
+                            onChange={(e) => handleInputChange('comentarios', e.target.value)}
                             placeholder="Solicitudes especiales, alergias, celebraciones..."
                           ></textarea>
                         </div>
@@ -372,7 +438,9 @@ const Reservas = () => {
                     <button
                       className="btn btn-primary-custom btn-lg"
                       onClick={nextStep}
-                      disabled={!reservationData.name || !reservationData.lastname || !reservationData.phone || !reservationData.email || !selectedDate || !selectedTime}
+                      disabled={
+                        !reservationData.nombre || !reservationData.apellidos || !reservationData.telefono || !reservationData.email_envio || !selectedDate || !selectedTime
+                      }
                     >
                       Continuar
                     </button>
@@ -388,37 +456,42 @@ const Reservas = () => {
           <div className="row justify-content-center">
             <div className="col-lg-8">
               <div className="card">
-                <div className="card-header" style={{ backgroundColor: 'var(--gold)', color: 'white' }}>
+                <div className="card-header" style={{ backgroundColor: '#e6c472', color: 'white' }}>
                   <h5 className="mb-0">Confirmar reserva</h5>
                 </div>
                 <div className="card-body">
+                  {/* Mostrar errores si los hay */}
+                  {submitError && (
+                    <div className="alert alert-danger mb-4">
+                      <strong>Error:</strong> {submitError}
+                    </div>
+                  )}
                   {/* RESUMEN DE RESERVA */}
                   <div className="mb-4">
                     <h6>Datos de la reserva:</h6>
                     <div className="reservation-summary p-3 bg-light rounded">
                       <div className="row">
                         <div className="col-md-6">
-                          <p className="mb-2"><strong>Nombre:</strong> {reservationData.name} {reservationData.lastname}</p>
-                          <p className="mb-2"><strong>Teléfono:</strong> {reservationData.phone}</p>
-                          <p className="mb-2"><strong>Email:</strong> {reservationData.email}</p>
+                          <p className="mb-2"><strong>Nombre:</strong> {reservationData.nombre} {reservationData.apellidos}</p>
+                          <p className="mb-2"><strong>Teléfono:</strong> {reservationData.telefono}</p>
+                          <p className="mb-2"><strong>Email:</strong> {reservationData.email_envio}</p>
                         </div>
                         <div className="col-md-6">
-                          <p className="mb-2"><strong>Comensales:</strong> {reservationData.guests}</p>
+                          <p className="mb-2"><strong>Comensales:</strong> {selectedGuests}</p>
                           <p className="mb-2"><strong>Fecha y hora:</strong> {formatDate(selectedDate)} {selectedTime}</p>
-                          {reservationData.notes && (
-                            <p className="mb-2"><strong>Observaciones:</strong> {reservationData.notes}</p>
+                          {reservationData.comentarios && (
+                            <p className="mb-2"><strong>Observaciones:</strong> {reservationData.comentarios}</p>
                           )}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Important Information */}
+                  {/* INFORMACIÓN IMPORTANTE */}
                   <div className="alert alert-info mb-4">
                     <h6 className="alert-heading">Información importante:</h6>
                     <ul className="mb-0">
                       <li>Te contactaremos por teléfono y email para confirmar tu reserva</li>
-                      <li>Puedes cancelar o modificar tu reserva llamando al restaurante</li>
                     </ul>
                   </div>
 
@@ -429,8 +502,16 @@ const Reservas = () => {
                     <button
                       className="btn btn-primary-custom btn-lg"
                       onClick={handleSubmitReservation}
+                      disabled={isSubmitting}
                     >
-                      Confirmar reserva
+                      {isSubmitting ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Procesando...
+                        </>
+                      ) : (
+                        'Confirmar reserva'
+                      )}
                     </button>
                   </div>
                 </div>
