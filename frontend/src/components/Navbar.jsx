@@ -5,6 +5,7 @@ import '../styles/global.css';
 
 const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -45,6 +46,28 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
     }
   };
 
+  // Función para cerrar el navbar móvil
+  const closeNavbar = () => {
+    const navbarNav = document.getElementById('navbarNav');
+    if (navbarNav && navbarNav.classList.contains('show')) {
+      navbarNav.classList.remove('show');
+    }
+    setIsNavbarOpen(false);
+  };
+
+  // Función para manejar navegación con cierre automático
+  const handleNavigation = (path) => {
+    navigate(path);
+    closeNavbar();
+  };
+
+  // Función para toggle del navbar móvil
+  const toggleNavbar = () => {
+    const navbarNav = document.getElementById('navbarNav');
+    navbarNav.classList.toggle('show');
+    setIsNavbarOpen(!isNavbarOpen);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
       <div className="container">
@@ -55,10 +78,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
         <button
           className="navbar-toggler"
           type="button"
-          onClick={() => {
-            const navbarNav = document.getElementById('navbarNav');
-            navbarNav.classList.toggle('show');
-          }}
+          onClick={toggleNavbar}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -66,27 +86,27 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/')}>
+              <button className="nav-link btn btn-link" onClick={() => handleNavigation('/')}>
                 Inicio
               </button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/reservas')}>
+              <button className="nav-link btn btn-link" onClick={() => handleNavigation('/reservas')}>
                 Reservas
               </button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/pedidos')}>
+              <button className="nav-link btn btn-link" onClick={() => handleNavigation('/pedidos')}>
                 Pedidos
               </button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/carta')}>
+              <button className="nav-link btn btn-link" onClick={() => handleNavigation('/carta')}>
                 Carta
               </button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => navigate('/novedades')}>
+              <button className="nav-link btn btn-link" onClick={() => handleNavigation('/novedades')}>
                 Novedades
               </button>
             </li>
@@ -101,20 +121,9 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
                   onClick={() => setShowDropdown(!showDropdown)}
                 >
                   <span className="me-2 text-light">{username}</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    fill="currentColor"
-                    className="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                    style={{ cursor: 'pointer' }}
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-person-circle" viewBox="0 0 16 16" style={{ cursor: 'pointer' }}>
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                    <path
-                      fillRule="evenodd"
-                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 1.613A7 7 0 0 0 8 1z"
-                    />
+                    <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 1.613A7 7 0 0 0 8 1z"/>
                   </svg>
                 </div>
 
@@ -138,10 +147,10 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
               </div>
             ) : (
               <>
-                <button className="btn btn-secondary-custom" onClick={() => navigate('/InicioSesion')}>
+                <button className="btn btn-secondary-custom" onClick={() => handleNavigation('/InicioSesion')}>
                   Iniciar Sesión
                 </button>
-                <button className="btn btn-primary-custom" onClick={() => navigate('/registro')}>
+                <button className="btn btn-primary-custom" onClick={() => handleNavigation('/registro')}>
                   Registrarse
                 </button>
               </>

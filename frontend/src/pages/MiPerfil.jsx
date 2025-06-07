@@ -184,11 +184,20 @@ const calcularTotalPedido = (productos) => {
 };
 
     return (
-       <>      
-      {/* Navbar */}
-      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown} 
-      setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setShowDropdown={setShowDropdown} 
-      onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
+    <>     
+      {isLoading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p className="mt-3">Cargando tu información...</p>
+        </div>
+      ) : (
+      <>
+        {/* Navbar */}
+        <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown} 
+        setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setShowDropdown={setShowDropdown} 
+        onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
 
         <div className="container mt-5 py-5">
           <div className="row">
@@ -556,6 +565,8 @@ const calcularTotalPedido = (productos) => {
     </div>
         {/* FOOTER */}
         <Footer />
+        </>
+      )}
     </>
   );
 };
