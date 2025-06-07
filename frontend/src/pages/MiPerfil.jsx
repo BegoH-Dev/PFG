@@ -186,8 +186,9 @@ const calcularTotalPedido = (productos) => {
     return (
        <>      
       {/* Navbar */}
-      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
-      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
+      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown} 
+      setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setShowDropdown={setShowDropdown} 
+      onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
 
         <div className="container mt-5 py-5">
           <div className="row">

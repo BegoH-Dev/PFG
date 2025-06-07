@@ -246,8 +246,10 @@ const Home = () => {
   return (
     <>      
       {/* Navbar */}
-      <Navbar isLoggedIn={isLoggedIn} username={username} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick}/>
-
+      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown} 
+      setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setShowDropdown={setShowDropdown} 
+      onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
+      
       {/* Hero Slider Section */}
       <section id="home" className="hero-slider">
         {slides.map((slide, index) => (

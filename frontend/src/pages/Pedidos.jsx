@@ -297,15 +297,9 @@ const handleOrderConfirmed = () => {
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       {/* NAVBAR */}
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        username={username}
-        showDropdown={showDropdown}
-        setShowDropdown={setShowDropdown}
-        onLogout={handleLogout}
-        onDropdownItemClick={handleDropdownItemClick}
-        navigate={navigate}
-      />
+      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown} 
+      setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setShowDropdown={setShowDropdown} 
+      onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} navigate={navigate}/>
       
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
