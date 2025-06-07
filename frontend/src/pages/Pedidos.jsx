@@ -21,19 +21,15 @@ const Pedidos = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [deliveryData, setDeliveryData] = useState({
-    firstName: '', lastName: '', address: '', phone: '', email: '', notes: '', paymentMethod: '', cardName: '', cardNumber: '', cardExpiry: '', cardCVV: ''
+    firstName: '', lastName: '', address: '', phone: '', email: '', notes: '', 
+    paymentMethod: '', cardName: '', cardNumber: '', cardExpiry: '', cardCVV: ''
   });
   const [userData, setUserData] = useState(null);
 
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const botonEstilo = {
-      padding: '0.25rem 0.75rem',
-      borderRadius: '4px',
-      border: 'none',
-      cursor: 'pointer',
-      backgroundColor: '#D4AF37',
-      color: '#000',
+    padding: '0.25rem 0.75rem', borderRadius: '4px', border: 'none', cursor: 'pointer', backgroundColor: '#D4AF37', color: '#000',
   };
 
   // Ref para evitar múltiples ejecuciones
@@ -287,12 +283,11 @@ const Pedidos = () => {
     });
   };
 
-// Pasa la función para que Paso3Confirmacion al confirmar llame a esto
-const handleOrderConfirmed = () => {
-  limpiarCarrito();
-  irPasoInicial();
-};
-
+  // Pasa la función para que Paso3Confirmacion al confirmar llame a esto
+  const handleOrderConfirmed = () => {
+    limpiarCarrito();
+    irPasoInicial();
+  };
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
@@ -309,16 +304,7 @@ const handleOrderConfirmed = () => {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: activeStep >= 1 ? '#D4AF37' : '#ddd',
-                color: activeStep >= 1 ? '#000' : '#666',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 1 ? '#D4AF37' : '#ddd', color: activeStep >= 1 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
               }}>1</div>
               <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 1 ? '#D4AF37' : '#666' }}>Carta</span>
             </div>
@@ -326,16 +312,7 @@ const handleOrderConfirmed = () => {
             <div style={{ width: '50px', height: '2px', backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd' }}></div>
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd',
-                color: activeStep >= 2 ? '#000' : '#666',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: activeStep >= 2 ? '#D4AF37' : '#ddd', color: activeStep >= 2 ? '#000' : '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
               }}>2</div>
               <span style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: activeStep === 2 ? '#D4AF37' : '#666' }}>Datos de entrega</span>
             </div>
@@ -352,42 +329,21 @@ const handleOrderConfirmed = () => {
 
         {/* PASO 1: CARRO */}
         {step === 1 && (
-          <Paso1Carro
-            cartItems={cartItems}
-            setCartItems={setCartItems}
-            selectedProduct={selectedProduct}
-            setSelectedProduct={setSelectedProduct}
-            productosArray={productosArray}
-            addToCart={addToCart}
-            updateQuantity={updateQuantity}
-            removeFromCart={removeFromCart}
-            getTotalPrice={getTotalPrice}
-            selectedDish={selectedDish}
-            botonEstilo={botonEstilo}
-            nextStep={nextStep}
+          <Paso1Carro cartItems={cartItems} setCartItems={setCartItems} selectedProduct={selectedProduct}
+            setSelectedProduct={setSelectedProduct} productosArray={productosArray} addToCart={addToCart}
+            updateQuantity={updateQuantity} removeFromCart={removeFromCart} getTotalPrice={getTotalPrice}
+            selectedDish={selectedDish} botonEstilo={botonEstilo} nextStep={nextStep}
           />
         )}
         {step === 2 && (
-          <Paso2DatosEnvio
-            deliveryData={deliveryData}
-            setDeliveryData={setDeliveryData}
-            handleDeliveryChange={handleDeliveryChange}
-            isLoggedIn={isLoggedIn}
-            clearDeliveryData={clearDeliveryData}
-            prevStep={prevStep}
-            nextStep={nextStep}
-            isPaymentValid={isPaymentValid}
-            isFormValid={isFormValid}
+          <Paso2DatosEnvio deliveryData={deliveryData} setDeliveryData={setDeliveryData}
+            handleDeliveryChange={handleDeliveryChange} isLoggedIn={isLoggedIn} clearDeliveryData={clearDeliveryData}
+            prevStep={prevStep} nextStep={nextStep} isPaymentValid={isPaymentValid} isFormValid={isFormValid}
           />
         )}
         {step === 3 && (
-          <Paso3Confirmacion
-            cartItems={cartItems}
-            deliveryData={deliveryData}
-            usuarioId={userData?.id}
-            getTotalPrice={getTotalPrice}
-            prevStep={prevStep}
-            onOrderConfirmed={handleOrderConfirmed}
+          <Paso3Confirmacion cartItems={cartItems} deliveryData={deliveryData} usuarioId={userData?.id}
+            getTotalPrice={getTotalPrice} prevStep={prevStep} onOrderConfirmed={handleOrderConfirmed}
             onFinalizeOrder={handleFinalizeOrder}
           />
         )}
