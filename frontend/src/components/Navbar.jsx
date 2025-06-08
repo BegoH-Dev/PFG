@@ -3,12 +3,17 @@ import { useNavigate } from 'react-router-dom';
 
 import '../styles/global.css';
 
+// Componente Navbar principal para el restaurante Book & Bite
+// Props: isLoggedIn, username (estado de autenticación), setIsLoggedIn, setUsername (funciones para actualizar estado)
 const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  
   const dropdownRef = useRef(null);
+  
   const navigate = useNavigate();
 
+  // Effect para cerrar el dropdown cuando se hace clic fuera de él
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -17,20 +22,26 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Función para manejar el cierre de sesión
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
+    
     setIsLoggedIn(false);
     setUsername('');
+    
     setShowDropdown(false);
     navigate('/');
   };
 
+  // Función para manejar clics en elementos del dropdown del usuario
   const handleDropdownItemClick = (action) => {
-    setShowDropdown(false);
+    setShowDropdown(false); // Cerrar dropdown
+    
     switch (action) {
       case 'perfil':
         navigate('/mi-perfil');
@@ -46,7 +57,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
     }
   };
 
-  // Función para cerrar el navbar móvil
+  // Función para cerrar el navbar móvil manualmente
   const closeNavbar = () => {
     const navbarNav = document.getElementById('navbarNav');
     if (navbarNav && navbarNav.classList.contains('show')) {
@@ -55,13 +66,13 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
     setIsNavbarOpen(false);
   };
 
-  // Función para manejar navegación con cierre automático
+  // Función para manejar navegación con cierre automático del navbar móvil
   const handleNavigation = (path) => {
     navigate(path);
     closeNavbar();
   };
 
-  // Función para toggle del navbar móvil
+  // Función para alternar la visibilidad del navbar móvil
   const toggleNavbar = () => {
     const navbarNav = document.getElementById('navbarNav');
     navbarNav.classList.toggle('show');
@@ -69,12 +80,15 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
   };
 
   return (
+    // Navbar principal con Bootstrap, fijo en la parte superior
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
       <div className="container">
+        {/* Logo del restaurante - enlace al inicio */}
         <a className="navbar-brand" href="#home">
           <img src="/images/Logo_Book_Bite.png" alt="Logo" style={{ height: '100px' }} />
         </a>
 
+        {/* Botón hamburguesa para dispositivos móviles */}
         <button
           className="navbar-toggler"
           type="button"
@@ -83,6 +97,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
+        {/* Contenido colapsable del navbar */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
@@ -112,6 +127,7 @@ const Navbar = ({ isLoggedIn, username, setIsLoggedIn, setUsername }) => {
             </li>
           </ul>
 
+          {/* Sección de autenticación - botones o perfil de usuario */}
           <div className="d-flex flex-column flex-lg-row gap-2">
             {isLoggedIn ? (
               <div className="position-relative" ref={dropdownRef}>

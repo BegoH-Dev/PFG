@@ -4,14 +4,20 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Carta = () => {
+  // Estados para gestionar la autenticación del usuario
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
+  
+  // Estados para controlar la interfaz de usuario
   const [showDropdown, setShowDropdown] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [expandedDish, setExpandedDish] = useState(null);
+  
+  // Hooks de navegación y referencias
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
+  // Efecto para cargar el estado de autenticación desde localStorage al montar el componente
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUsername = localStorage.getItem('username') || '';
@@ -19,7 +25,7 @@ const Carta = () => {
     setUsername(storedUsername);
   }, []);
 
-  // Cerrar dropdown al hacer clic fuera
+  // Efecto para cerrar el dropdown cuando se hace clic fuera de él
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,6 +39,7 @@ const Carta = () => {
     };
   }, []);
 
+  // Función para manejar el cierre de sesión
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
@@ -40,21 +47,24 @@ const Carta = () => {
     window.location.reload();
   };
 
+  // Función para manejar clics en elementos del dropdown
   const handleDropdownItemClick = (action) => {
     setShowDropdown(false);
     console.log(`Navegando a: ${action}`);
   };
 
+  // Función para expandir/contraer categorías del menú
   const toggleCategory = (categoryIndex) => {
     setExpandedCategory(expandedCategory === categoryIndex ? null : categoryIndex);
-    setExpandedDish(null); // Cerrar cualquier plato expandido
+    setExpandedDish(null);
   };
 
+  // Función para expandir/contraer detalles de platos individuales
   const toggleDish = (dishIndex) => {
     setExpandedDish(expandedDish === dishIndex ? null : dishIndex);
   };
 
-  // Datos de la carta
+  // Datos completos de la carta del restaurante organizados por categorías
   const menuData = {
     '🍽️ ENTRANTES': [
       {
@@ -362,6 +372,7 @@ const Carta = () => {
     ]
   };
 
+  // Función helper para obtener el icono correspondiente a cada categoría
   const getCategoryIcon = (category) => {
     const icons = {
       'ENTRANTES': '🍽️',
@@ -382,11 +393,18 @@ const Carta = () => {
 
   return (
     <>
-      {/* Navbar */}
-      <Navbar isLoggedIn={isLoggedIn} username={username} showDropdown={showDropdown}
-      setShowDropdown={setShowDropdown} onLogout={handleLogout} onDropdownItemClick={handleDropdownItemClick} 
-      navigate={navigate}/>      
-      {/* Hero Section */}
+      {/* Componente de barra de navegación con props para el estado de autenticación */}
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
+        username={username} 
+        showDropdown={showDropdown}
+        setShowDropdown={setShowDropdown} 
+        onLogout={handleLogout} 
+        onDropdownItemClick={handleDropdownItemClick} 
+        navigate={navigate}
+      />      
+      
+      {/* Sección hero con fondo degradado y título principal */}
       <section className="hero-section" style={{ 
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', 
         paddingTop: '120px', 
@@ -408,10 +426,10 @@ const Carta = () => {
         </div>
       </section>
 
-      {/* Menu Section */}
+      {/* Sección principal del menú con fondo claro */}
       <section className="menu-section py-5" style={{ backgroundColor: '#f8f9fa' }}>
         <div className="container">
-          {/* Información de alérgenos */}
+          {/* Panel informativo sobre alérgenos con iconos explicativos */}
           <div className="alert alert-info mb-5 text-center d-flex flex-column align-items-center">
             <h5 className="alert-heading">🏷️ Información de Alérgenos:</h5>
             <p className="mb-2">
@@ -429,11 +447,13 @@ const Carta = () => {
               Todos nuestros platos pueden ser adaptados siempre que sea posible.</small>
             </p>
           </div>
-          {/* Categorías del menú */}
+          
+          {/* Renderizado de las categorías del menú */}
           <div className="row">
             <div className="col-12">
               {Object.keys(menuData).map((category, categoryIndex) => (
                 <div key={categoryIndex} className="menu-category mb-4">
+                  {/* Header de categoría clickeable para expandir/contraer */}
                   <div 
                     className="category-header p-3 mb-3"
                     style={{
@@ -450,18 +470,22 @@ const Carta = () => {
                         {getCategoryIcon(category)}
                         <h3 className="mb-0 fs-4">{category}</h3>
                       </div>                      
+                      {/* Indicador visual del estado expandido/contraído */}
                       <span className="fs-5">
                         {expandedCategory === categoryIndex ? '▼' : '▶'}
                       </span>
                     </div>
                   </div>
 
+                  {/* Contenido de la categoría que se muestra solo cuando está expandida */}
                   {expandedCategory === categoryIndex && (
                     <div className="category-dishes">
                       {menuData[category].map((dish, dishIndex) => {
+                        // Índice único global para cada plato (evita conflictos entre categorías)
                         const globalDishIndex = categoryIndex * 1000 + dishIndex;
                         return (
                           <div key={dishIndex} className="dish-item mb-3">
+                            {/* Header del plato con información básica */}
                             <div 
                               className="dish-header p-3"
                               style={{
@@ -479,6 +503,7 @@ const Carta = () => {
                                   <div className="d-flex align-items-center gap-3">
                                     <span className="fw-bold text-primary fs-5">{dish.price}</span>
                                     <p>
+                                      {/* Mostrar iconos de alérgenos si existen */}
                                       {dish.allergens && (
                                         <small style={{ fontSize: '1.2rem' }}>
                                           {dish.allergens}
@@ -487,12 +512,14 @@ const Carta = () => {
                                     </p>
                                   </div>
                                 </div>
+                                {/* Indicador de expansión del plato */}
                                 <span className="text-muted">
                                   {expandedDish === globalDishIndex ? '▲' : '▼'}
                                 </span>
                               </div>
                             </div>
 
+                            {/* Detalles expandidos del plato con descripción e imagen */}
                             {expandedDish === globalDishIndex && (
                               <div 
                                 className="dish-details mt-3 p-4"
@@ -504,6 +531,7 @@ const Carta = () => {
                                 }}
                               >
                                 <div className="row">
+                                  {/* Columna de texto con descripción y botones de acción */}
                                   <div className="col-md-8">
                                     <p className="text-muted mb-3">{dish.description}</p>
                                     <div className="d-flex flex-wrap gap-2">
@@ -515,6 +543,7 @@ const Carta = () => {
                                       </button>
                                     </div>
                                   </div>
+                                  {/* Columna de imagen del plato */}
                                   <div className="col-md-4">
                                     <img 
                                       src={dish.image} 
@@ -526,6 +555,7 @@ const Carta = () => {
                                         objectFit: 'cover',
                                         backgroundColor: '#e9ecef'
                                       }}
+                                      // Fallback para imágenes que no cargan
                                       onError={(e) => {
                                         e.target.style.display = 'flex';
                                         e.target.style.alignItems = 'center';
@@ -550,7 +580,7 @@ const Carta = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* Componente de pie de página */}
       <Footer />
     </>
   );

@@ -2,11 +2,13 @@ import React from 'react';
 import '../styles/global.css';
 import { Link } from 'react-router-dom';
 
+// Componente Footer para el restaurante Book & Bite
 const Footer = () => {
   return (
     <footer className="footer-custom">
         <div className="container">
           <div className="row">
+            {/* Primera columna: Información del restaurante y redes sociales */}
             <div className="col-lg-4 col-md-6 mb-4">
               <h5 className="footer-title">Book & Bite</h5>
               <p className="text-light">
@@ -32,6 +34,7 @@ const Footer = () => {
               </ul>
             </div>
             
+            {/* Segunda columna: Enlaces de navegación principal */}
             <div className="col-lg-2 col-md-6 mb-4">
               <h6 className="footer-title">Enlaces</h6>
               <ul className="list-unstyled">
@@ -42,6 +45,7 @@ const Footer = () => {
               </ul>
             </div>
             
+            {/* Tercera columna: Enlaces de servicios adicionales */}
             <div className="col-lg-3 col-md-6 mb-4">
               <h6 className="footer-title">Servicios</h6>
               <ul className="list-unstyled">
@@ -51,6 +55,7 @@ const Footer = () => {
               </ul>
             </div>
             
+            {/* Cuarta columna: Información de contacto */}
             <div className="col-lg-3 col-md-6 mb-4">
               <h6 className="footer-title">Contacto</h6>
               <p className="text-light mb-1">📍 c/ del Marqués 10</p>
@@ -60,8 +65,10 @@ const Footer = () => {
             </div>
           </div>
           
+          {/* Línea divisora con color dorado personalizado */}
           <hr className="my-4" style={{borderColor: 'var(--gold)'}} />
           
+          {/* Sección de copyright */}
           <div className="row">
             <div className="col-12 text-center">
               <p className="mb-0 text-light">

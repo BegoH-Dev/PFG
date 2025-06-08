@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Componente Paso2DatosEnvio - Segundo paso del proceso de checkout
+ * Maneja la recopilación de datos de entrega y método de pago
+ */
 const Paso2DatosEnvio = ({ 
   deliveryData, 
   handleDeliveryChange, 
@@ -11,6 +15,7 @@ const Paso2DatosEnvio = ({
   isPaymentValid
 }) => {
   return (
+    // Contenedor principal con diseño de tarjeta y layout flexbox
     <div style={{ 
       backgroundColor: '#fff',
       borderRadius: '12px',
@@ -21,11 +26,12 @@ const Paso2DatosEnvio = ({
       gap: '2rem'
     }}>
 
-      {/* SECCIÓN DATOS DE ENTREGA */}
+      {/* SECCIÓN IZQUIERDA: DATOS DE ENTREGA */}
       <div style={{ flex: 1, minWidth: '300px' }}>
         <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Datos de entrega</h3>
         
         <div style={{ display: 'grid', gap: '1.5rem', maxWidth: '600px' }}>
+          
           <div>
             <label>Nombre *</label>
             <input
@@ -42,6 +48,7 @@ const Paso2DatosEnvio = ({
               }}
             />
           </div>
+
           <div>
             <label>Apellidos *</label>
             <input
@@ -57,6 +64,7 @@ const Paso2DatosEnvio = ({
                 fontSize: '1rem'
               }}/>
           </div>
+
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
               Dirección de entrega *
@@ -75,6 +83,7 @@ const Paso2DatosEnvio = ({
               }}
             />
           </div>
+
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
               Teléfono de contacto *
@@ -93,6 +102,7 @@ const Paso2DatosEnvio = ({
               }}
             />
           </div>
+
           <div>
             <label>Correo electrónico *</label>
             <input
@@ -109,6 +119,7 @@ const Paso2DatosEnvio = ({
               }}
             />
           </div>
+
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
               Notas adicionales (opcional)
@@ -128,6 +139,7 @@ const Paso2DatosEnvio = ({
               }}
             />
           </div>
+
           {isLoggedIn && (
             <button onClick={clearDeliveryData}>
               Cambiar datos
@@ -153,14 +165,16 @@ const Paso2DatosEnvio = ({
         </div>
       </div>
     
-      {/* LÍNEA DIVISORIA */}
+      {/* LÍNEA DIVISORIA VERTICAL */}
       <div style={{ width: '1px', backgroundColor: '#ddd' }} />
 
-      {/* SECCIÓN MÉTODO DE PAGO */}
+      {/* SECCIÓN DERECHA: MÉTODO DE PAGO */}
       <div style={{ flex: 1 }}>
         <h3 style={{ marginBottom: '1.5rem', color: '#333' }}>Método de pago</h3>
 
         <div style={{ display: 'grid', gap: '1rem', maxWidth: '600px' }}>
+          
+          {/* Selector de método de pago */}
           <div>
             <label style={{ fontWeight: '500', marginBottom: '0.5rem', display: 'block' }}>
               Selecciona un método *
@@ -176,6 +190,7 @@ const Paso2DatosEnvio = ({
             </select>
           </div>
 
+          {/* CAMPOS ADICIONALES PARA PAGO CON TARJETA */}
           {deliveryData.paymentMethod === 'card' && (
             <>
               <div>
@@ -187,6 +202,7 @@ const Paso2DatosEnvio = ({
                   placeholder="Ej: Juan Pérez"
                   style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '1rem' }} />
               </div>
+
               <div>
                 <label>Número de tarjeta *</label>
                 <input
@@ -196,6 +212,7 @@ const Paso2DatosEnvio = ({
                   placeholder="Ej: 1234 5678 9012 3456"
                   style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '1rem' }} />
               </div>
+
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <div style={{ flex: 1 }}>
                   <label>Fecha de vencimiento *</label>
@@ -206,6 +223,7 @@ const Paso2DatosEnvio = ({
                     placeholder="MM/AA"
                     style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '1rem' }}/>
                 </div>
+                
                 <div style={{ flex: 1 }}>
                   <label>CVV *</label>
                   <input
@@ -220,12 +238,15 @@ const Paso2DatosEnvio = ({
           )}
         </div>
       
+        {/* BOTÓN CONTINUAR */}
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
           <button 
               onClick={nextStep}
+              // El botón se deshabilita si falta algún campo requerido o las validaciones fallan
               disabled={!deliveryData.firstName || !deliveryData.lastName || !deliveryData.email || !deliveryData.address ||
                  !deliveryData.phone || !isPaymentValid() || !isFormValid()}
               style={{ 
+                // Estilo dinámico basado en el estado de validación del formulario
                 backgroundColor: deliveryData.address && deliveryData.phone && isFormValid() ? '#D4AF37' : '#ccc', 
                 color: deliveryData.address && deliveryData.phone && isFormValid() ? '#000' : '#666',
                 border: 'none', 

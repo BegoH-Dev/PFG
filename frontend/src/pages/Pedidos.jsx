@@ -344,12 +344,14 @@ const Pedidos = () => {
             selectedDish={selectedDish} botonEstilo={botonEstilo} nextStep={nextStep}
           />
         )}
+        {/* PASO 2: Datos de envío */}
         {step === 2 && (
           <Paso2DatosEnvio deliveryData={deliveryData} setDeliveryData={setDeliveryData}
             handleDeliveryChange={handleDeliveryChange} isLoggedIn={isLoggedIn} clearDeliveryData={clearDeliveryData}
             prevStep={prevStep} nextStep={nextStep} isPaymentValid={isPaymentValid} isFormValid={isFormValid}
           />
         )}
+        {/* PASO 3: Confirmación */}
         {step === 3 && (
           <Paso3Confirmacion cartItems={cartItems} deliveryData={deliveryData} usuarioId={userData?.id}
             getTotalPrice={getTotalPrice} prevStep={prevStep} onOrderConfirmed={handleOrderConfirmed}
