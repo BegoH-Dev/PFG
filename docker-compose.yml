@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+  # Servicio del frontend - aplicación web del cliente
   frontend:
     build: ./frontend
     ports:
@@ -8,31 +9,33 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=true       
     depends_on:
-      - backend
+      - backend                         
 
+  # Servicio del backend - API del servidor
   backend:
-    build: ./backend
+    build: ./backend                    
     ports:
-      - '8000:8000'
+      - '8000:8000'                    
     volumes:
-      - ./backend:/app
+      - ./backend:/app                 
     environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/mydb
+      - DATABASE_URL=postgres://postgres:password@db:5432/mydb 
     depends_on:
-      - db
+      - db                             
 
+  # Servicio de base de datos PostgreSQL
   db:
-    image: postgres:14
-    restart: always
+    image: postgres:14                
+    restart: always                    
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: restaurante_db
+      POSTGRES_USER: postgres          
+      POSTGRES_PASSWORD: postgres      
+      POSTGRES_DB: restaurante_db     
     volumes:
-      - ./database:/docker-entrypoint-initdb.d
-      - db-data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d  
+      - db-data:/var/lib/postgresql/data         
 
 volumes:
-  db-data:
+  db-data:                             

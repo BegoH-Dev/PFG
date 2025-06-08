@@ -37,7 +37,7 @@ Dockerfile
 # Git : repositorio Git en sí mismo
 .git/
 
-# Volúmenes de PostgreSQL (datos persistentes) : ignora los archivos señalados ".sql"
+# Volúmenes de PostgreSQL (datos persistentes): ignora los archivos señalados ".sql"
 pgdata/
 database/scripts/AYUDA_Alter_table.sql
 
