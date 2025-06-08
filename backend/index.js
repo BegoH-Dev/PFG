@@ -315,7 +315,7 @@ app.post('/pedidos', async (req, res) => {
          VALUES ($1, $2, $3, $4)`,
         [
           pedidoId,
-          producto.id || null, // Si no tienes ID del producto, podrías usar null
+          producto.id || null,
           producto.cantidad || 1,
           parseFloat(producto.precio?.toString().replace(',', '.') || '0')
         ]

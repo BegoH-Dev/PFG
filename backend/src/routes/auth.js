@@ -1,9 +1,12 @@
+// Carga variables de entorno desde archivo .env
 require('dotenv').config();
+// Importa dependencias necesarias
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const { Pool } = require('pg');
 
+// Configura conexión a base de datos con variables de entorno
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -12,6 +15,7 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
+// Ruta POST para registro de nuevos usuarios
 router.post('/register', async (req, res) => {
   try {
     const {
@@ -24,15 +28,12 @@ router.post('/register', async (req, res) => {
       acepta_terminos
     } = req.body;
 
-    // Validación básica
     if (!acepta_terminos) {
       return res.status(400).json({ error: 'Debes aceptar los términos y condiciones' });
     }
 
-    // Hashea la contraseña
     const hashedPassword = await bcrypt.hash(contraseña, 10);
 
-    // Inserta en la base de datos
     const query = `
       INSERT INTO usuarios 
       (nombre, apellidos, nombre_usuario, email, fecha_nacimiento, contraseña, acepta_terminos)
@@ -57,10 +58,12 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Importa JWT para autenticación
 const jwt = require('jsonwebtoken');
-
+// Obtiene clave secreta para firmar tokens
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Ruta POST para inicio de sesión
 router.post('/login', async (req, res) => {
   const { nombre_usuario, contraseña } = req.body;
 
@@ -106,4 +109,5 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Exporta el router para usar en la aplicación principal
 module.exports = router;

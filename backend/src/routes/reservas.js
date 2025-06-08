@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+// Importa el pool de conexiones a la base de datos
 const pool = require('../config/db');
 
+// Importa middlewares de autenticación y autorización
 const { verificarAdmin, verificarToken } = require('../middlewares/auth');
 
 // POST - CREAR NUEVA RESERVA
@@ -42,7 +44,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET - OBTENER RESERVAS
+// GET - OBTENER RESERVAS (SOLO ADMINISTRADORES)
 router.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM reservas ORDER BY fecha_hora DESC');
@@ -56,6 +58,7 @@ router.get('/admin/reservas', verificarToken, verificarAdmin, async (req, res) =
   }
 });
 
+// GET - OBTENER RESERVAS (PÚBLICO/FILTRADO)
 router.get('/', async (req, res) => {
   const { fecha } = req.query;
 
@@ -130,5 +133,5 @@ router.put('/:id/estado', async (req, res) => {
   }
 });
 
+// Exporta el router para usar en la aplicación principal
 module.exports = router;
-

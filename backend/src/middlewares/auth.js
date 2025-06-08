@@ -1,7 +1,9 @@
+// Importa librería para manejar JSON Web Tokens
 const jwt = require('jsonwebtoken');
+// Obtiene la clave secreta para firmar/verificar tokens desde variables de entorno
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware para verificar si es admin
+// Middleware para verificar si el usuario autenticado tiene rol de administrador
 function verificarAdmin(req, res, next) {
   if (req.user.rol !== 'admin') {
     return res.status(403).json({ mensaje: 'Acceso restringido a administradores' });
@@ -9,7 +11,7 @@ function verificarAdmin(req, res, next) {
   next();
 }
 
-// Middleware "verificarToken" que valida el token en rutas protegidas.
+// Middleware para validar JWT en rutas protegidas
 function verificarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -27,4 +29,5 @@ function verificarToken(req, res, next) {
   });
 }
 
+// Exporta ambos middlewares para usar en las rutas
 module.exports = { verificarAdmin, verificarToken };
