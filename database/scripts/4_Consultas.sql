@@ -1,4 +1,26 @@
 /* CONSULTAS */
+/* VER TABLAS */
+select * from producto_alergenos;
+select * from detalles_pedido;
+select * from pedidos;
+select * from reservas;
+select * from valoraciones;
+select * from suscripciones;
+select * from alergenos;
+select * from mesas;
+select * from usuarios;
+select * from productos;
+
+SELECT * FROM usuarios WHERE nombre_usuario = 'juanp';
+
+SELECT * FROM mesas WHERE capacidad >= 2 AND disponible = TRUE ORDER BY capacidad LIMIT 1;
+
+SELECT id, nombre_usuario FROM usuarios WHERE id = 35;
+SELECT * FROM usuarios WHERE id = 35;
+
+/* COMPROBAR SI UN USUARIO ESTÁ REGISTRADO */
+SELECT * FROM usuarios WHERE email = 'juan@example.com';
+SELECT id, email, contraseña FROM usuarios WHERE email = 'juan@example.com';
 
 -- Consulta para ver productos con o sin alérgenos:
 SELECT p.id AS producto_id,
