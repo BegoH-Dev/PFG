@@ -46,53 +46,59 @@ const Reservas = () => {
 
   // Generar calendario del mes actual
   const generateCalendar = (year, month) => {
-  const calendar = [];
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const totalDays = lastDay.getDate();
-  const today = new Date();
+    const calendar = [];
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    // eslint-disable-next-line no-unused-vars
+    const totalDays = lastDay.getDate();
 
-  // Ajustar para que el calendario tenga 6 semanas (42 días)
-  const startDate = new Date(firstDay);
-  startDate.setDate(firstDay.getDate() - firstDay.getDay());
+    // Ajustar para que el calendario tenga 6 semanas (42 días)
+    const firstDayOfWeek = firstDay.getDay();
+    const daysToSubtract = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    const startDate = new Date(firstDay);
+    startDate.setDate(firstDay.getDate() - daysToSubtract);
 
-  for (let i = 0; i < 42; i++) {
-    const currentDay = new Date(startDate);
-    currentDay.setDate(startDate.getDate() + i);
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
 
-    const isCurrentMonth = currentDay.getMonth() === month;
-    const isPast = currentDay < today;
-    const isToday = currentDay.toDateString() === today.toDateString();
+    for (let i = 0; i < 42; i++) {
+      const currentDay = new Date(startDate);
+      currentDay.setDate(startDate.getDate() + i);
+      currentDay.setHours(0, 0, 0, 0);
 
-    calendar.push({
-      date: currentDay.getDate(),
-      isCurrentMonth,
-      isPast,
-      isToday,
-      fullDate: currentDay.toISOString().split('T')[0], // "YYYY-MM-DD"
-      dayOfWeek: currentDay.getDay() // 0 = domingo, 1 = lunes, etc.
-    });
-  }
+      const isCurrentMonth = currentDay.getMonth() === month;
+      const isPast = currentDay < todayMidnight;
+      const isToday = currentDay.getTime() === todayMidnight.getTime();
 
-  // Agrupar en semanas (arrays de 7 días)
-  const weeks = [];
-  for (let i = 0; i < 42; i += 7) {
-    weeks.push(calendar.slice(i, i + 7));
-  }
+      calendar.push({
+        date: currentDay.getDate(),
+        isCurrentMonth,
+        isPast,
+        isToday,
+        fullDate: currentDay.toISOString().split('T')[0],
+        dayOfWeek: currentDay.getDay()
+      });
+    }
 
-  return weeks;
-};
+    // Agrupar en semanas (arrays de 7 días)
+    const weeks = [];
+    for (let i = 0; i < 42; i += 7) {
+      weeks.push(calendar.slice(i, i + 7));
+    }
 
-const fetchAvailableTables = async (date, time) => {
-  try {
-    const response = await fetch(`http://localhost:5000/api/tables/available?date=${date}&time=${time}`);
-    const data = await response.json();
-    setAvailableTables(data.tables || []);
-  } catch (error) {
-    console.error('Error al obtener mesas disponibles:', error);
-    setAvailableTables([]);
-  }
-};
+    return weeks;
+  };
+
+  const fetchAvailableTables = async (date, time) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/tables/available?date=${date}&time=${time}`);
+      const data = await response.json();
+      setAvailableTables(data.tables || []);
+    } catch (error) {
+      console.error('Error al obtener mesas disponibles:', error);
+      setAvailableTables([]);
+    }
+  };
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
@@ -134,11 +140,11 @@ const fetchAvailableTables = async (date, time) => {
 
   const handleDateSelect = (date) => {
     if (!date.isCurrentMonth || date.isPast) return;
-      setSelectedDate(date.fullDate);
-      setReservationData(prev => ({
-        ...prev,
-        fecha_hora: date.fullDate
-      }));
+    setSelectedDate(date.fullDate);
+    setReservationData(prev => ({
+      ...prev,
+      fecha_hora: date.fullDate
+    }));
   };
 
   const handleTimeSelect = (time) => {
@@ -164,25 +170,27 @@ const fetchAvailableTables = async (date, time) => {
     }));
   };
 
-const handleSubmitReservation = async () => {
+  const handleSubmitReservation = async () => {
     setIsSubmitting(true);
     setSubmitError('');
 
-    try {
-      // Preparar los datos para enviar
+try {
       const userData = JSON.parse(localStorage.getItem('userData'));
       console.log('Usuario ID que envío:', userData ? userData.id : null);
 
       const usuario_id = userData ? userData.id : null;
-      const fecha_hora = new Date(`${selectedDate}T${selectedTime}`).toISOString();
+
       if (!usuario_id) {
         setSubmitError('Debes iniciar sesión para hacer una reserva');
         setIsSubmitting(false);
         return;
       }
 
+      // Crear fecha y hora en local para evitar desfases
+      const fecha_hora = `${selectedDate}T${selectedTime}`;
+
       const reservaPayload = {
-        usuario_id: userData ? userData.id : null,
+        usuario_id,
         fecha_hora,
         num_comensales: selectedGuests,
         estado: 'pendiente',
@@ -204,22 +212,21 @@ const handleSubmitReservation = async () => {
         const text = await response.text();
         throw new Error(`Error del servidor: ${text}`);
       }
+
       const result = await response.json();
       console.log("RESPUESTA DEL BACKEND:", result);
 
       if (response.ok && result.success) {
-        // Reserva creada exitosamente
         alert(`¡Reserva confirmada con éxito! 
         
-        Detalles:
+      Detalles:
         - Mesa: ${result.data.reserva.mesa_numero}
         - Fecha y hora: ${formatDate(fecha_hora)}
         - Comensales: ${selectedGuests}
         - Estado: ${result.data.reserva.estado}
 
         Te contactaremos pronto para confirmar los detalles.`);
-        
-        // Guardar la reserva en el historial local
+
         const historialReservas = JSON.parse(localStorage.getItem('historialReservas') || '[]');
         historialReservas.push({
           id: result.data.reserva._id,
@@ -266,7 +273,7 @@ const handleSubmitReservation = async () => {
 
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0 = enero
+  const month = today.getMonth();
   const calendar = generateCalendar(year, month);
 
   return (
