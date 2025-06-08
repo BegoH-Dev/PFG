@@ -12,7 +12,7 @@ const Reservas = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedGuests, setSelectedGuests] = useState(1);
-  const [availableTables] = useState(true);
+  const [availableTables,setAvailableTables] = useState(true);
   const [activeStep, setActiveStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -45,42 +45,60 @@ const Reservas = () => {
   ];
 
   // Generar calendario del mes actual
-  const generateCalendar = () => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    
-    const calendar = [];
-    let week = [];
-    
-    for (let i = 0; i < 42; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
-      
-      const isCurrentMonth = date.getMonth() === currentMonth;
-      const isToday = date.toDateString() === today.toDateString();
-      const isPast = date < today && !isToday;
-      
-      week.push({
-        date: date.getDate(),
-        fullDate: date.toISOString().split('T')[0],
-        isCurrentMonth,
-        isToday,
-        isPast,
-        isSelectable: isCurrentMonth && !isPast
-      });
-      
-      if (week.length === 7) {
-        calendar.push(week);
-        week = [];
-      }
+  const generateCalendar = (year, month) => {
+  const calendar = [];
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const totalDays = lastDay.getDate();
+  const today = new Date();
+
+  // Ajustar para que el calendario tenga 6 semanas (42 días)
+  const startDate = new Date(firstDay);
+  startDate.setDate(firstDay.getDate() - firstDay.getDay());
+
+  for (let i = 0; i < 42; i++) {
+    const currentDay = new Date(startDate);
+    currentDay.setDate(startDate.getDate() + i);
+
+    const isCurrentMonth = currentDay.getMonth() === month;
+    const isPast = currentDay < today;
+    const isToday = currentDay.toDateString() === today.toDateString();
+
+    calendar.push({
+      date: currentDay.getDate(),
+      isCurrentMonth,
+      isPast,
+      isToday,
+      fullDate: currentDay.toISOString().split('T')[0], // "YYYY-MM-DD"
+      dayOfWeek: currentDay.getDay() // 0 = domingo, 1 = lunes, etc.
+    });
+  }
+
+  // Agrupar en semanas (arrays de 7 días)
+  const weeks = [];
+  for (let i = 0; i < 42; i += 7) {
+    weeks.push(calendar.slice(i, i + 7));
+  }
+
+  return weeks;
+};
+
+const fetchAvailableTables = async (date, time) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/tables/available?date=${date}&time=${time}`);
+    const data = await response.json();
+    setAvailableTables(data.tables || []);
+  } catch (error) {
+    console.error('Error al obtener mesas disponibles:', error);
+    setAvailableTables([]);
+  }
+};
+
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      fetchAvailableTables(selectedDate, selectedTime);
     }
-    
-    return calendar;
-  };
+  }, [selectedDate, selectedTime]);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -115,13 +133,12 @@ const Reservas = () => {
   };
 
   const handleDateSelect = (date) => {
-    if (date.isSelectable) {
+    if (!date.isCurrentMonth || date.isPast) return;
       setSelectedDate(date.fullDate);
       setReservationData(prev => ({
         ...prev,
         fecha_hora: date.fullDate
       }));
-    }
   };
 
   const handleTimeSelect = (time) => {
@@ -202,6 +219,18 @@ const handleSubmitReservation = async () => {
 
         Te contactaremos pronto para confirmar los detalles.`);
         
+        // Guardar la reserva en el historial local
+        const historialReservas = JSON.parse(localStorage.getItem('historialReservas') || '[]');
+        historialReservas.push({
+          id: result.data.reserva._id,
+          fecha: reservationData.fecha_hora,
+          estado: result.data.reserva.estado,
+          personas: selectedGuests,
+          mesa: result.data.reserva.mesa_numero,
+          observaciones: reservationData.comentarios
+        });
+        localStorage.setItem('historialReservas', JSON.stringify(historialReservas));
+
         // Resetear el formulario
         setReservationData({
           nombre: '', apellidos: '', telefono: '', email_envio: '', num_comensales: 1, fecha_hora: '', comentarios: ''
@@ -235,7 +264,10 @@ const handleSubmitReservation = async () => {
     });
   };
 
-  const calendar = generateCalendar();
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // 0 = enero
+  const calendar = generateCalendar(year, month);
 
   return (
     <>
