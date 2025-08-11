@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-// Importa el pool de conexiones a la base de datos
+// IMPORTAR POOL DE CONEXIONES A LA BASE DE DATOS
 const pool = require('../config/db');
 
-// Importa middlewares de autenticación y autorización
+// IMPORTAR MIDDLEWARES DE AUTENTICACIÓN Y AUTORIZACIÓN
 const { verificarAdmin, verificarToken } = require('../middlewares/auth');
 
 // POST - CREAR NUEVA RESERVA
@@ -133,5 +133,5 @@ router.put('/:id/estado', async (req, res) => {
   }
 });
 
-// Exporta el router para usar en la aplicación principal
+// EXPORTAR ROUTER
 module.exports = router;
