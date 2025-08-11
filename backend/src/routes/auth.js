@@ -1,12 +1,13 @@
-// Carga variables de entorno desde archivo .env
+// CARGAR VARIABLES DESDE ARCHIVO '.ENV'
 require('dotenv').config();
-// Importa dependencias necesarias
+
+// IMPORTAR DEPENDENCIAS
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const { Pool } = require('pg');
 
-// Configura conexión a base de datos con variables de entorno
+// CONFIGURAR CONEXIÓN A BASE DE DATOS
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -15,7 +16,7 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
-// Ruta POST para registro de nuevos usuarios
+// POST - REGISTRO DE NUEVOS USUARIOS
 router.post('/register', async (req, res) => {
   try {
     const {
@@ -58,12 +59,12 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Importa JWT para autenticación
+// IMPORTAR JWT PARA AUTNTICACIÓN
 const jwt = require('jsonwebtoken');
-// Obtiene clave secreta para firmar tokens
+// OBTENER CLAVE SECRETA PARA TOKENS
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Ruta POST para inicio de sesión
+// POST - INICIO DE SESIÓN
 router.post('/login', async (req, res) => {
   const { nombre_usuario, contraseña } = req.body;
 
@@ -109,5 +110,5 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Exporta el router para usar en la aplicación principal
+// EXPORTAR ROUTER
 module.exports = router;
