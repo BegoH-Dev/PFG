@@ -1,3 +1,4 @@
+-- SPANISH --
 # TFG - BOOK & BITE  
 **Aplicación web para gestión de pedidos a domicilio y reservas de mesas para restaurantes**
 
@@ -178,5 +179,189 @@ Ciclo: Técnico Superior en Desarrollo de Aplicaciones Web
 - Paleta de colores: Pokemon Palette - Persian
 - EmailJS
 
+
 ## LICENCIA
 Proyecto académico desarrollado como Trabajo Fin de Ciclo.
+
+
+
+-- ENGLISH --
+# TFG - BOOK & BITE  
+**Web application for managing home delivery orders and table reservations for restaurants**
+
+**Project Status**  
+This project is continuously evolving and improving to provide a better experience and functionality. Some features may be adjusted or expanded in future versions. I appreciate any feedback or suggestions that contribute to its growth.
+
+---
+
+## Description  
+**Book & Bite** is a comprehensive web application that optimizes the management of orders and table reservations in restaurants. Developed as a complete solution for the hospitality industry.
+
+## What problem does it solve?  
+- Automates order and reservation management  
+- Reduces human errors in order taking  
+- Improves the customer experience with an intuitive interface  
+
+## Who is it for?  
+- **Customers**: Users who want to place home delivery orders or reserve tables  
+- **Restaurant managers**: Staff who manage orders, reservations, and operations (FUTURE IMPROVEMENTS)  
+- **Restaurants**: Businesses looking to digitalize and optimize their processes
+
+---
+
+## TECHNOLOGIES USED
+
+### Frontend  
+- **React** – User interface library  
+- **Bootstrap** – CSS framework for responsive design  
+- **React Router** – Routing for SPA  
+- **React Bootstrap** – Bootstrap components for React  
+
+### Backend  
+- **Node.js** – JavaScript runtime environment  
+- **Express** – Web framework for Node.js  
+- **PostgreSQL** – Relational database  
+- **JWT** – Token-based authentication  
+- **bcrypt** – Password hashing  
+
+### Additional Tools  
+- **Docker** – Containerization of the application  
+- **Swagger** – API documentation  
+- **Postman** – Endpoint testing  
+- **EmailJS** – Sending emails  
+- **CORS** – Cross-origin request handling
+
+---
+
+## INSTALLATION AND SETUP
+
+### Prerequisites  
+- Docker (recommended)  
+Or:  
+- Node.js (v14 or higher)  
+- PostgreSQL  
+- Git  
+
+### Option 1: Using Docker (Recommended)
+
+#### 1. Clone the repository:  
+git clone https://github.com/BegoH-Dev/PFG  
+cd codigo
+
+#### 2. Start all services:
+docker-compose up --build
+
+#### 3. Access the application:
+Frontend: http://localhost:3000
+Backend: http://localhost:5000
+Swagger: http://localhost:5000/api-docs
+
+### Option 2: Manual Installation
+
+#### 1. Clone the repository and create the database:
+git clone https://github.com/BegoH-Dev/PFG  
+cd codigo  
+psql -U postgres  
+CREATE DATABASE restaurante_db;
+
+#### 2. Configure the Backend:
+cd backend  
+npm install
+
+Create a .env file in the backend folder with the following format:
+##### Database configuration
+DB_USER=your_user  
+DB_PASSWORD=your_password  
+DB_HOST=localhost  
+DB_PORT=5432  
+DB_NAME=restaurante_db  
+##### JWT configuration  
+JWT_SECRET=your_jwt_secret  
+##### EmailJS configuration  
+REACT_APP_EMAILJS_SERVICE_ID=your_service_id  
+REACT_APP_EMAILJS_TEMPLATE_ID=your_template_id  
+REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key  
+
+#### SECURITY NOTE:
+Credentials and API keys are unique to each installation. They are not publicly shared and must be created by you.
+
+Run the server:
+npm run dev
+
+#### 3. Configure the Frontend:
+cd ../frontend  
+npm install
+
+Create a .env file in the frontend folder:
+REACT_APP_API_URL=http://localhost:5000
+
+Start the frontend:
+npm start
+
+### Project Structure
+codigo/
+├── backend/    # Node.js + Express server  
+│   ├── routes/  
+│   ├── config/  
+│   ├── middleware/  
+│   └── index.js  
+├── frontend/   # React application  
+│   ├── src/  
+│   │   ├── components/  
+│   │   ├── pages/  
+│   │   └── App.js  
+├── docker-compose.yml  # Container orchestration  
+├── Dockerfile          # Docker image  
+└── README.md
+
+## MAIN FEATURES
+### For Customers
+- Home delivery orders: Product selection, automatic totals
+- Table reservations: Real-time availability check
+- Profile management: Registration, login, and previous orders
+- Responsive interface: Adapted for mobile, tablet, and desktop
+- Notifications: Email confirmations
+
+### For Managers (FUTURE IMPROVEMENTS)
+- Management dashboard: Real-time orders and reservations
+- Menu management: Full CRUD of products
+- Reports: Sales and trends analysis
+- Order confirmation: Efficient workflow
+- Secure access: JWT authentication
+
+### Technical Features
+- Security: Password hashing, XSS protection
+- Performance: Optimized SQL queries
+- PWA Ready: Prepared for mobile app (FUTURE IMPROVEMENTS)
+- Dockerized: Easy deployment and scalability
+
+### Testing Access:
+- Swagger UI: http://localhost:5000/api-docs
+
+## ADDITIONAL PROJECT DOCUMENTATION
+
+### Common Issues and Solutions
+Issue - Database connection error	
+Solution - Check credentials in .env
+
+Issue - Port already in use	
+Solution - Change port in docker-compose.yml
+
+Issue - Missing dependencies
+Solution - Run npm install in each folder
+
+Issue - CORS errors	
+Solution - Verify CORS configuration in backend
+
+## AUTHORSHIP
+Author: Begoña Horgué Aldomán
+Course: Higher Technician in Web Application Development
+
+## USEFUL LINKS
+- API Documentation: http://localhost:5000/api-docs
+- Color Palette: Pokemon Palette - Persian
+- EmailJS
+
+## LICENSE
+Academic project developed as a Final Degree Project.
+
