@@ -31,7 +31,7 @@ const options = {
     apis: ['./index.js'], 
 };
 
-// Genera la especificación Swagger combinando definición y anotaciones
+// GENERAR SWAGGER
 const swaggerSpec = swaggerJSDoc(options);
-// Exporta la especificación para usar en el servidor principal
+// EXPORTAR ESPECIFICACIÓN
 module.exports = swaggerSpec;
