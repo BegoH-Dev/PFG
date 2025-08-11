@@ -1,27 +1,27 @@
-
-# PFG
-# Book & Bite  
+# PFG - BOOK & BITE  
 **Aplicación web para gestión de pedidos a domicilio y reservas de mesas para restaurantes**
+
+**Estado del Proyecto**
+Este proyecto está en constante evolución y mejora para ofrecer una mejor experiencia y funcionalidad. Algunas características pueden ser ajustadas o ampliadas en futuras versiones. Agradezco cualquier comentario o sugerencia que contribuya a su crecimiento.
 
 ---
 
 ## Descripción
-**Book & Bite** es una aplicación web integral que optimiza la gestión de pedidos y reservas en restaurantes. Desarrollada como solución completa para la industria de la hostelería, permite tanto a clientes como a gerentes gestionar eficientemente pedidos a domicilio, reservas de mesa y toda la operativa del restaurante.
+**Book & Bite** es una aplicación web integral que optimiza la gestión de pedidos y reservas de mesa en restaurantes. Desarrollada como solución completa para la industria de la hostelería.
 
 ### ¿Qué problema resuelve?
 - Automatiza la gestión de pedidos y reservas  
 - Reduce errores humanos en la toma de pedidos  
 - Mejora la experiencia del cliente con una interfaz intuitiva  
-- Proporciona herramientas de análisis para el negocio
 
 ### ¿A quién va dirigido?
 - **Clientes**: Usuarios que desean hacer pedidos a domicilio o reservar mesas  
-- **Gerentes de restaurante**: Personal que gestiona pedidos, reservas y operaciones  
+- **Gerentes de restaurante**: Personal que gestiona pedidos, reservas y operaciones (FUTURAS MEJORAS)
 - **Restaurantes**: Negocios que buscan digitalizar y optimizar sus procesos
 
 ---
 
-## Tecnologías Utilizadas
+## TECNOLOGÍAS UTILIZADAS
 
 ### Frontend
 - **React** – Biblioteca para interfaces de usuario  
@@ -45,7 +45,7 @@
 
 ---
 
-## Instalación y Configuración
+## INSTALACIÓN Y CONFIGURACIÓN
 
 ### Requisitos Previos
 - Docker (recomendado)  
@@ -56,14 +56,14 @@ O bien:
 
 ### Opción 1: Con Docker (Recomendado)
 
-Clonar el repositorio:
-git clone https://github.com/BHA-FESAC/PFG
+1. Clonar el repositorio:
+git clone https://github.com/BegoH-Dev/PFG
 cd codigo
 
-Levantar todos los servicios:
+2. Levantar todos los servicios:
 docker-compose up --build
 
-Acceder a la aplicación:
+3. Acceder a la aplicación:
 Frontend: http://localhost:3000
 Backend: http://localhost:5000
 Swagger: http://localhost:5000/api-docs
@@ -71,35 +71,41 @@ Swagger: http://localhost:5000/api-docs
 
 # Opción 2: Instalación Manual
 
-Clonar y configurar la base de datos:
-git clone https://github.com/BHA-FESAC/PFG
+1. Clonar el repositorio y crear la base de datos:
+git clone https://github.com/BegoH-Dev/PFG
 cd codigo
 psql -U postgres
 CREATE DATABASE restaurante_db;
 
-Configurar el Backend:
+2. Configurar el Backend:
 cd backend
 npm install
 
-Crear archivo .env con:
-DB_USER=admin_user  
-DB_PASSWORD=admin  
-DB_HOST=localhost  
-DB_PORT=5432  
-DB_NAME=restaurante_db  
-JWT_SECRET=secreto123  
-REACT_APP_EMAILJS_SERVICE_ID=service_kx4rh4b  
-REACT_APP_EMAILJS_TEMPLATE_ID=template_bubou3k  
-REACT_APP_EMAILJS_PUBLIC_KEY=hXOVhDS7tdDuCAPoD  
+Crear un archivo .env en la carpeta backend siguiendo este formato:
+# Configuración de base de datos
+DB_USER=tu_usuario
+DB_PASSWORD=tu_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=restaurante_db
+# Configuración de JWT
+JWT_SECRET=tu_secreto_jwt
+# Configuración de EmailJS
+REACT_APP_EMAILJS_SERVICE_ID=tu_service_id
+REACT_APP_EMAILJS_TEMPLATE_ID=tu_template_id
+REACT_APP_EMAILJS_PUBLIC_KEY=tu_public_key 
+
+## NOTA DE SEGURIDAD:
+Las credenciales y claves API son únicas para cada instalación. No se comparten públicamente y deberás crearlas por tu cuenta.
+
 Ejecutar el servidor:
-
 npm run dev
-Configurar el Frontend:
 
+3. Configurar el Frontend:
 cd ../frontend
 npm install
 
-Crear archivo .env con:
+Crear un archivo .env en la carpeta frontend:
 REACT_APP_API_URL=http://localhost:5000
 
 Iniciar el frontend:
@@ -107,21 +113,21 @@ npm start
 
 # Estructura del Proyecto
 codigo/
-├── backend/               # Servidor Node.js + Express
-│   ├── routes/            # Rutas de la API
-│   ├── config/            # Configuración de BD
-│   ├── middleware/        # Middlewares personalizados
-│   └── index.js           # Punto de entrada del servidor
-├── frontend/              # Aplicación React
+├── backend/    # Servidor Node.js + Express
+│   ├── routes/ 
+│   ├── config/
+│   ├── middleware/ 
+│   └── index.js
+├── frontend/    # Aplicación React
 │   ├── src/
-│   │   ├── components/    # Componentes React
-│   │   ├── pages/         # Páginas principales
-│   │   └── App.js         # Componente principal
-├── docker-compose.yml     # Orquestación de contenedores
-├── Dockerfile             # Imagen Docker
-└── README.md              # Este archivo
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── App.js
+├── docker-compose.yml    # Orquestación de contenedores
+├── Dockerfile    # Imagen Docker
+└── README.md
 
-# Funcionalidades Principales
+# FUNCIONALIDADES PRINCIPALES
 # Para Clientes
 - Pedidos a domicilio: Selección de productos, totales automáticos
 - Reservas de mesa: Consulta de disponibilidad en tiempo real
@@ -129,7 +135,7 @@ codigo/
 - Interfaz responsive: Adaptada para móviles, tablets y escritorio
 - Notificaciones: Confirmaciones por email
 
-# Para Gerentes
+# Para Gerentes (FUTURAS MEJORAS)
 - Panel de gestión: Pedidos y reservas en tiempo real
 - Gestión del menú: CRUD completo de productos
 - Reportes: Análisis de ventas y tendencias
@@ -139,69 +145,39 @@ codigo/
 # Características Técnicas
 - Seguridad: Cifrado de contraseñas, protección contra XSS
 - Rendimiento: Consultas SQL optimizadas
-- PWA Ready: Preparado para app móvil
+- PWA Ready: Preparado para app móvil (FUTURAS MEJORAS) 
 - Dockerizado: Despliegue y escalabilidad sencilla
-
-# Capturas de Pantalla
-Las capturas están disponibles en la documentación del proyecto y en los anexos del TFG.
-- Landing Page (PC y móvil)
-- Wireflow
-
-# Testing
-El proyecto incluye documentación completa de pruebas:
-- Postman: Testing de endpoints de API
-- Swagger: Documentación interactiva de la API
-- Pruebas manuales: Casos de uso para pedidos y reservas
 
 # Acceso a pruebas:
 - Swagger UI: http://localhost:5000/api-docs
 
-# Documentación adicional en carpeta del proyecto
+
+# DOCUMENTACIÓN ADICIONAL A CARPETA DEL PROYECTO
 
 # Problemas Comunes y Soluciones
-Problema
-Error de conexión a BD	
-Solución
-Verificar credenciales en .env
+Problema - Error de conexión a BD	
+Solución - Verificar credenciales en .env
 
-Problema
-Puerto ocupado	
-Solución
-Cambiar puerto en docker-compose.yml
+Problema - Puerto ocupado	
+Solución - Cambiar puerto en docker-compose.yml
 
-Problema
-Dependencias faltantes	
-Solución
-Ejecutar npm install en cada carpeta
+Problema - Dependencias faltantes	
+Solución - Ejecutar npm install en cada carpeta
 
-Problema
-CORS errors	
-Solución
-Verificar configuración de CORS en backend
+Problema - CORS errors	
+Solución - Verificar configuración de CORS en backend
 
-# Documentación completa en el archivo "Problemas y Soluciones" del proyecto.
-- Futuras Mejoras
-- Despliegue en la nube (Render, Railway)
-- Sistema de valoraciones de productos
-- Notificaciones push en tiempo real
-- Integración con PayPal y pagos seguros
-- Ofertas y descuentos personalizados
-- Dashboard avanzado para gerentes
-- Modificación/cancelación de reservas por parte del cliente
-- hCaptcha para protección contra bots
 
-# Autoría
+# AUTORÍA
 Autora: Begoña Horgué Aldomán
-Tutor: Pablo Rodríguez
-Fecha: 9 de junio de 2025
-Ciclo: Técnico Superior en Desarrollo de Aplicaciones Multiplataforma
+Ciclo: Técnico Superior en Desarrollo de Aplicaciones Web
 
-# Enlaces Útiles
-- Repositorio en GitHub
+
+# ENLACES ÚTILES
 - Documentación API: http://localhost:5000/api-docs
 - Paleta de colores: Pokemon Palette - Persian
-- EmailJS: Documentación oficial
+- EmailJS
 
-# Licencia
+
+# LICENCIA
 Proyecto académico desarrollado como Trabajo Fin de Ciclo.
-¿Encontraste algún problema o tienes sugerencias? ¡Abre un issue en el repositorio! 🚀
