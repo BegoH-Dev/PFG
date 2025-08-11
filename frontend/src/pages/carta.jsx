@@ -580,7 +580,7 @@ const Carta = () => {
         </div>
       </section>
 
-      {/* Componente de pie de página */}
+      {/* FOOTER */}
       <Footer />
     </>
   );
