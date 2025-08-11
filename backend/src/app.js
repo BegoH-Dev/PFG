@@ -1,17 +1,17 @@
-// Importa el framework Express para crear el servidor web
+// IMPORTAR EXPRESS
 const express = require('express');
-// Crea una instancia de la aplicación Express
+// CREAR INSTANCIA DE EXPRESS
 const app = express();
-// Define el puerto del servidor
+// DEFINIR PUERTO
 const PORT = process.env.PORT || 3000;
 
-// Carga las variables de entorno desde el archivo .env
+// CARGAR VARIABLES DESDE '.ENV'
 require('dotenv').config();
 
-/* MIDDLEWARES */
+// MIDDLEWARES
 app.use(express.json());
 
-/* RUTAS */
+// RUTAS
 app.get('/', (req, res) => {
   res.send('Servidor backend funcionando');
 });
