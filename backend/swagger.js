@@ -1,7 +1,7 @@
-// Importa la librería para generar documentación Swagger/OpenAPI
+// IMPORTAR LA LIBRERÍA PARA GENERAR DOCUMENTACIÓN SWAGGER
 const swaggerJSDoc = require('swagger-jsdoc');
 
-// Configuración principal de la documentación OpenAPI 3.0
+// CONFIGURACIÓN DE LA DOCUMENTACIÓN OPENAPI 3.0
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
@@ -9,7 +9,6 @@ const swaggerDefinition = {
         version: '1.0.0',
         description: 'Documentación de la API del restaurante con Express y PostgreSQL',
     },
-    // Define esquemas de seguridad disponibles en la API
     components: {
         securitySchemes: {
         bearerAuth: { 
@@ -19,7 +18,6 @@ const swaggerDefinition = {
         }
         }
     },
-    // Aplica seguridad global a todas las rutas (puede sobrescribirse por ruta)
     security: [
         { 
             bearerAuth: [] 
@@ -27,7 +25,7 @@ const swaggerDefinition = {
     ],
 };
 
-// Opciones de configuración para swagger-jsdoc
+// OPCIONES DE CONFIGURACIÓN PARA SWAGGER-JSDOC
 const options = {
     swaggerDefinition,    
     apis: ['./index.js'], 
