@@ -47,7 +47,6 @@ const MiPerfil = () => {
 // Función para guardar los cambios
   const handleSaveChanges = async () => {
     try {
-      // Validación básica
       if (!formData.nombre || !formData.email) {
         setUpdateError('Nombre y email son obligatorios');
         return;
