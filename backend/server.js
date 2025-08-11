@@ -1,6 +1,6 @@
-// Carga variables de entorno desde archivo .env
+// CARGAR VARIABLES DE ENTORNO DESDE ARCHIVO '.ENV'
 require('dotenv').config();
-// Importa dependencias necesarias
+// IMPORTAR DEPENDENCIAS
 const express = require('express'); 
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -8,14 +8,14 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const authRoutes = require('./routes/auth');
 
-// Crea instancia de la aplicación Express
+// CREAR INSTACIA DE EXPRESS
 const app = express();
-// Middleware para parsear JSON en el cuerpo de las peticiones
+// MIDDLEWARE PARA PARSEAR JSON EN LAS PETICIONES
 app.use(bodyParser.json());
-// Habilita CORS solo para el frontend en localhost:3000
+// HABILITAR CORS PARA FRONTEND EN LOCALHOST:3000
 app.use(cors({ origin: 'http://localhost:3000' }));
 
-// Configuración del pool de conexiones a PostgreSQL usando variables de entorno
+// CONFIGURACIÓN DE CONEXIONES A POSTGRESQL
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST, 
@@ -24,10 +24,10 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
-// Monta las rutas de autenticación bajo el prefijo '/api'
+// MONTAR RUTAS DE AUTENTICACIÓN CON '/api'
 app.use('/api', authRoutes);
 
-// Inicia el servidor en el puerto 5000
+// INICIAR SERVIDOR EN PUERTO 5000
 app.listen(5000, () => { 
-  console.log('Server is running on port 5000'); 
+  console.log('Corriendo en puerto 5000'); 
 });
