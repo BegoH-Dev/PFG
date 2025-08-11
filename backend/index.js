@@ -7,10 +7,10 @@ require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-// Importar la conexión a la base de datos
+// IMPORTAR CONEXIÓN A LA BASE DE DATOS
 const pool = require('./src/config/db');
 
-// Middlewares personalizados
+// MIDDLEWARES PERSONALIZADOS
 const { verificarToken, verificarAdmin } = require('./src/middlewares/auth');
 
 // IMPORTAR LAS RUTAS
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Hacer disponible la conexión para las rutas
+// HACER DISPONIBLE LA CONEXIÓN PARA LAS RUTAS
 app.locals.db = pool;
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -288,7 +288,7 @@ app.post('/pedidos', async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // Crear el pedido principal
+    // CREAR EL PEDIDO
     const pedidoResult = await client.query(
       `INSERT INTO pedidos 
        (usuario_id, total, estado, direccion_entrega, metodo_pago, notas, datos_entrega) 
@@ -307,7 +307,7 @@ app.post('/pedidos', async (req, res) => {
 
     const pedidoId = pedidoResult.rows[0].id;
 
-    // Insertar los detalles del pedido
+    // INSERTAR DETALLES DEL PEDIDO
     for (const producto of productos) {
       await client.query(
         `INSERT INTO detalles_pedido 
@@ -419,7 +419,7 @@ app.post('/api/suscripciones', async (req, res) => {
     
     const { email } = req.body;
 
-    // Validaciones
+    // VALIDACIONES
     if (!email) {
       console.log('Error: Email no proporcionado');
       return res.status(400).json({
@@ -437,11 +437,11 @@ app.post('/api/suscripciones', async (req, res) => {
       });
     }
 
-    // Verificar conexión a la base de datos
+    // VERIFICAR CONEXIÓN CON LA BASE DE DATOS
     console.log('Verificando conexión a la base de datos...');
     await pool.query('SELECT 1');
 
-    // Verificar si el email ya existe
+    // VERIFICAR SI EL EMAIL YA EXISTE
     console.log('Verificando si el email ya existe...');
     const checkQuery = 'SELECT id FROM suscripciones WHERE email = $1';
     const existingSubscription = await pool.query(checkQuery, [email]);
@@ -454,7 +454,7 @@ app.post('/api/suscripciones', async (req, res) => {
       });
     }
 
-    // Insertar nueva suscripción
+    // INSERTAR NUEVA SUSCRIPCIÓN
     console.log('Insertando nueva suscripción...');
     const insertQuery = `
       INSERT INTO suscripciones (email, fecha_suscripcion) 
@@ -491,7 +491,7 @@ app.post('/api/suscripciones', async (req, res) => {
       });
     }
 
-    // Error de conexión a la base de datos
+    // ERROR DE CONEXIÓN EN LA BASE DE DATOS
     if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
       return res.status(503).json({
         success: false,
@@ -692,12 +692,12 @@ app.delete('/api/suscripciones/:email', async (req, res) => {
   }
 });
 
-// Ruta protegida "/perfil" que solo se accede con token válido.
+// RUTA PROTEGIDA "/perfil" QUE SÓLO SE ACCEDE CON TOKEN VÁLIDO
 app.get('/perfil', verificarToken, (req, res) => {
   res.json({ mensaje: 'Ruta protegida', user: req.user });
 });
 
-// Iniciar el servidor
+// INICIAR EL SERVIDOR
 app.listen(port, () => {
   console.log(`Servidor corriendo en puerto ${port}`);
 });
