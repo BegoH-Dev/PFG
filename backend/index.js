@@ -301,7 +301,7 @@ app.post('/pedidos', async (req, res) => {
         direccion, 
         metodoPago, 
         notas || null,
-        JSON.stringify(datosEntrega) // Guardar como JSON
+        JSON.stringify(datosEntrega) // -> Guardar como JSON
       ]
     );
 
