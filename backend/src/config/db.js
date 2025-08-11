@@ -1,7 +1,7 @@
-// Importa la clase Pool de pg para manejar conexiones a PostgreSQL
+// IMPORTAR POOL DE PG PARA MANEJAR CONEXIONES A POSTGRESQL
 const { Pool } = require('pg');
 
-// Crea un pool de conexiones con configuración desde variables de entorno
+// CREAR UN POOL DE CONEXIONES
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -10,15 +10,15 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
-// Evento que se dispara cuando se establece una conexión exitosa
+// EVENTO PARA CUANDO SE ESTABLECE UNA CONEXIÓN EXITOSA
 pool.on('connect', () => {
-  console.log('Conectado a la base de datos PostgreSQL');
+  console.log('Conectado a la base de datos');
 });
 
-// Evento que se dispara cuando ocurre un error en el pool de conexiones
+// EVENTO PARA CUANDO OCURRE UN ERROR EN LA CONEXIÓN
 pool.on('error', (err) => {
   console.error('Error en la conexión a la base de datos:', err);
 });
 
-// Exporta el pool para usarlo en otros módulos de la aplicación
+// EXPORTAR EL POOL
 module.exports = pool;
